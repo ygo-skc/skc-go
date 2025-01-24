@@ -1,6 +1,7 @@
 package model
 
 import (
+	"sort"
 	"strings"
 )
 
@@ -66,4 +67,12 @@ func CleanupToken(t *QuotedToken) {
 
 	*t = strings.Trim(*t, "'")
 	*t = strings.Trim(*t, `"`)
+}
+
+type Cards []Card
+
+func (cards Cards) SortCardsByName() {
+	sort.SliceStable(cards, func(i, j int) bool {
+		return (cards)[i].CardName < (cards)[j].CardName
+	})
 }
