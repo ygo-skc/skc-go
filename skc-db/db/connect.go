@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ygo-skc/skc-go/skc-db/util"
+	"github.com/ygo-skc/skc-go/common/util"
 )
 
 const (
