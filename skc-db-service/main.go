@@ -4,14 +4,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ygo-skc/skc-go/skc-db/db"
+	"github.com/ygo-skc/skc-go/skc-db-service/db"
 
 	_ "github.com/go-sql-driver/mysql"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 )
 
 const (
-	ENV_VARIABLE_NAME string = "SKC_API_GO_DOT_ENV_FILE"
+	ENV_VARIABLE_NAME string = "SKC_DB_SERVICE_DOT_ENV_FILE"
 )
 
 func init() {
