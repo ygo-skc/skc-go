@@ -1,26 +1,14 @@
-package main
+package api
 
 import (
 	"context"
-	"log"
-	"net"
 	"net/http"
 
-	pb "github.com/ygo-skc/skc-go/skc-db-service/api"
-	"github.com/ygo-skc/skc-go/skc-db-service/db"
-	"google.golang.org/grpc"
+	"github.com/ygo-skc/skc-go/skc-db-service/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
-
-var (
-	skcDBInterface db.SKCDatabaseAccessObject = db.SKCDAOImplementation{}
-)
-
-type Server struct {
-	pb.CardServiceServer
-}
 
 func (s *Server) GetYGOCard(ctx context.Context, req *pb.YGOCardRequest) (*pb.YGOCardResponse, error) {
 	if c, err := skcDBInterface.GetDesiredCardInDBUsingID(ctx, req.CardID); err != nil && err.StatusCode == http.StatusNotFound {
@@ -49,22 +37,5 @@ func (s *Server) GetYGOCard(ctx context.Context, req *pb.YGOCardRequest) (*pb.YG
 		}
 
 		return res, nil
-	}
-}
-
-func listen() {
-	listener, err := net.Listen("tcp", ":9090")
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
-	}
-
-	grpcServer := grpc.NewServer()
-
-	// Register the service implementation with the server
-	pb.RegisterCardServiceServer(grpcServer, &Server{})
-
-	log.Println("gRPC server is listening on port 9090...")
-	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ygo-skc/skc-go/skc-db-service/api"
 	"github.com/ygo-skc/skc-go/skc-db-service/db"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -23,6 +24,6 @@ func init() {
 
 func main() {
 	db.EstablishDBConn()
-	go listen()
+	go api.RunService()
 	select {}
 }

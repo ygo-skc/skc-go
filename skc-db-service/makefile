@@ -1,12 +1,12 @@
 # Variables
-GENERATED_DIR := ./api
+GENERATED_DIR := ./pb
 
 # Default target
 all: clean generate
 
 # Target to generate Go code from .proto files
 generate:
-	protoc --go_out=./ --go-grpc_out=./ $(GENERATED_DIR)/skc.proto
+	protoc --go_out=./ --go-grpc_out=./ skc-db-service.proto
 
 # Clean up generated files
 clean:
