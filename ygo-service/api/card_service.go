@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/ygo-skc/skc-go/common/util"
@@ -11,6 +12,9 @@ import (
 )
 
 func (s *Server) QueryCard(ctx context.Context, req *pb.YGOResource) (*pb.YGOCard, error) {
+	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
+	logger.Info(fmt.Sprintf("Fetching card details using %v", req))
+
 	if c, err := skcDBInterface.GetDesiredCardInDBUsingID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
 		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
 	} else if err != nil {
