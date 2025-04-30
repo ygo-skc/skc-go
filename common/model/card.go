@@ -12,8 +12,8 @@ type Card struct {
 	Attribute   string  `db:"card_attribute" json:"cardAttribute"`
 	Effect      string  `db:"card_effect" json:"cardEffect"`
 	MonsterType *string `db:"monster_type" json:"monsterType,omitempty"`
-	Attack      *uint16 `db:"monster_attack" json:"monsterAttack,omitempty"`
-	Defense     *uint16 `db:"monster_defense" json:"monsterDefense,omitempty"`
+	Attack      *uint32 `db:"monster_attack" json:"monsterAttack,omitempty"`
+	Defense     *uint32 `db:"monster_defense" json:"monsterDefense,omitempty"`
 }
 
 func (c Card) IsExtraDeckMonster() bool {

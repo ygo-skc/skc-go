@@ -11,29 +11,29 @@ import (
 )
 
 func (s *Server) GetYGOCard(ctx context.Context, req *pb.YGOCardRequest) (*pb.YGOCardResponse, error) {
-	if c, err := skcDBInterface.GetDesiredCardInDBUsingID(ctx, req.CardID); err != nil && err.StatusCode == http.StatusNotFound {
+	if c, err := skcDBInterface.GetDesiredCardInDBUsingID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
 		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
 	} else if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
 		res := &pb.YGOCardResponse{
-			CardID:        c.CardID,
-			CardColor:     c.CardColor,
-			CardName:      c.CardName,
-			CardAttribute: c.CardAttribute,
-			CardEffect:    c.CardEffect,
+			ID:        c.ID,
+			Color:     c.Color,
+			Name:      c.Name,
+			Attribute: c.Attribute,
+			Effect:    c.Effect,
 		}
 
 		if c.MonsterType != nil {
 			res.MonsterType = wrapperspb.String(*c.MonsterType)
 		}
 
-		if c.MonsterAttack != nil {
-			res.MonsterAttack = wrapperspb.UInt32(uint32(*c.MonsterAttack))
+		if c.Attack != nil {
+			res.Attack = wrapperspb.UInt32(*c.Attack)
 		}
 
-		if c.MonsterDefense != nil {
-			res.MonsterDefense = wrapperspb.UInt32(uint32(*c.MonsterDefense))
+		if c.Defense != nil {
+			res.Defense = wrapperspb.UInt32(*c.Defense)
 		}
 
 		return res, nil

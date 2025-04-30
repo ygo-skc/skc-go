@@ -10,16 +10,16 @@ service CardService {
 }
 
 message YGOCardRequest {
-  string cardID = 1;
+  string ID = 1;
 }
 
 message YGOCardResponse {
-  string cardID = 1;
-  string cardColor = 2;
-  string cardName = 3;
-  string cardAttribute = 4;
-  string cardEffect = 5;
+  string ID = 1;
+  string color = 2;
+  string name = 3;
+  string attribute = 4;
+  string effect = 5;
   google.protobuf.StringValue monsterType = 6;
-  google.protobuf.UInt32Value monsterAttack = 7;
-  google.protobuf.UInt32Value MonsterDefense = 8;
+  google.protobuf.UInt32Value attack = 7;
+  google.protobuf.UInt32Value defense = 8;
 }
