@@ -18,7 +18,7 @@ type Server struct {
 }
 
 func RunService() {
-	listener, err := net.Listen("tcp", ":9090")
+	listener, err := net.Listen("tcp", ":9020")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}

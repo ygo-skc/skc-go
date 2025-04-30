@@ -26,13 +26,13 @@ settings.json
 # Mac
 .DS_Store
 
-# Senseitve Files
+# Sensitive Files
 .env*
 certs/*
 coverage.*
 
-/**__debug**
-skc-api-go
+/**__debug
+*/ygo-service
 
 # gRPC generated code
 *.pb.go
