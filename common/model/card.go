@@ -6,18 +6,18 @@ import (
 )
 
 type Card struct {
-	CardID         string  `db:"card_number" json:"cardID"`
-	CardColor      string  `db:"card_color" json:"cardColor"`
-	CardName       string  `db:"card_name" json:"cardName"`
-	CardAttribute  string  `db:"card_attribute" json:"cardAttribute"`
-	CardEffect     string  `db:"card_effect" json:"cardEffect"`
-	MonsterType    *string `db:"monster_type" json:"monsterType,omitempty"`
-	MonsterAttack  *uint16 `db:"monster_attack" json:"monsterAttack,omitempty"`
-	MonsterDefense *uint16 `db:"monster_defense" json:"monsterDefense,omitempty"`
+	ID        string  `db:"card_number" json:"cardID"`
+	Color     string  `db:"card_color" json:"cardColor"`
+	Name      string  `db:"card_name" json:"cardName"`
+	Attribute string  `db:"card_attribute" json:"cardAttribute"`
+	Effect    string  `db:"card_effect" json:"cardEffect"`
+	Type      *string `db:"monster_type" json:"monsterType,omitempty"`
+	Attack    *uint16 `db:"monster_attack" json:"monsterAttack,omitempty"`
+	Defense   *uint16 `db:"monster_defense" json:"monsterDefense,omitempty"`
 }
 
 func (c Card) IsExtraDeckMonster() bool {
-	color := strings.ToUpper(c.CardColor)
+	color := strings.ToUpper(c.Color)
 	return strings.Contains(color, "FUSION") || strings.Contains(color, "SYNCHRO") || strings.Contains(color, "XYZ") || strings.Contains(color, "PENDULUM") || strings.Contains(color, "LINK")
 }
 
@@ -29,15 +29,15 @@ func (card Card) GetPotentialMaterialsAsString() string {
 		return ""
 	}
 
-	color := strings.ToUpper(card.CardColor)
+	color := strings.ToUpper(card.Color)
 	if strings.Contains(color, "PENDULUM") && color != "PENDULUM-EFFECT" && color != "PENDULUM-NORMAL" {
-		effectTokens = strings.SplitAfter(strings.SplitAfter(card.CardEffect, "\n\nMonster Effect\n")[1], "\n")
+		effectTokens = strings.SplitAfter(strings.SplitAfter(card.Effect, "\n\nMonster Effect\n")[1], "\n")
 	} else {
-		effectTokens = strings.SplitAfter(card.CardEffect, "\n")
+		effectTokens = strings.SplitAfter(card.Effect, "\n")
 	}
 
 	if len(effectTokens) < 2 {
-		return card.CardEffect
+		return card.Effect
 	}
 	return effectTokens[0]
 }
@@ -48,7 +48,7 @@ func (c Card) IsCardNameInTokens(tokens []QuotedToken) bool {
 	for _, token := range tokens {
 		CleanupToken(&token)
 
-		if strings.EqualFold(c.CardName, token) {
+		if strings.EqualFold(c.Name, token) {
 			isFound = true
 			break
 		}
@@ -73,6 +73,6 @@ type Cards []Card
 
 func (cards Cards) SortCardsByName() {
 	sort.SliceStable(cards, func(i, j int) bool {
-		return (cards)[i].CardName < (cards)[j].CardName
+		return (cards)[i].Name < (cards)[j].Name
 	})
 }

@@ -1,15 +1,15 @@
 package model
 
 type Product struct {
-	ProductID          string           `json:"productId"`
-	ProductLocale      string           `json:"productLocale"`
-	ProductName        string           `json:"productName"`
-	ProductType        string           `json:"productType"`
-	ProductSubType     string           `json:"productSubType"`
-	ProductReleaseDate string           `json:"productReleaseDate"`
-	ProductTotal       int              `json:"productTotal,omitempty"`
-	ProductRarityStats map[string]int   `json:"productRarityStats,omitempty"`
-	ProductContent     []ProductContent `json:"productContent,omitempty"`
+	ID          string           `json:"productId"`
+	Locale      string           `json:"productLocale"`
+	Name        string           `json:"productName"`
+	Type        string           `json:"productType"`
+	SubType     string           `json:"productSubType"`
+	ReleaseDate string           `json:"productReleaseDate"`
+	Total       int              `json:"productTotal,omitempty"`
+	RarityStats map[string]int   `json:"productRarityStats,omitempty"`
+	Content     []ProductContent `json:"productContent,omitempty"`
 }
 
 type ProductContent struct {
