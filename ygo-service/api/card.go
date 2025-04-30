@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ygo-skc/skc-go/common/util"
-	"github.com/ygo-skc/skc-go/skc-db-service/pb"
+	"github.com/ygo-skc/skc-go/ygo-service/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

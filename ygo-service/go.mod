@@ -1,4 +1,4 @@
-module github.com/ygo-skc/skc-go/skc-db-service
+module github.com/ygo-skc/skc-go/ygo-service
 
 go 1.24.2
 

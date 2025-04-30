@@ -6,7 +6,7 @@ all: clean generate
 
 # Target to generate Go code from .proto files
 generate:
-	protoc --go_out=./ --go-grpc_out=./ skc-db-service.proto
+	protoc --go_out=./ --go-grpc_out=./ ygo-service.proto
 
 # Clean up generated files
 clean:

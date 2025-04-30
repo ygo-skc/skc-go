@@ -4,8 +4,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ygo-skc/skc-go/skc-db-service/api"
-	"github.com/ygo-skc/skc-go/skc-db-service/db"
+	"github.com/ygo-skc/skc-go/ygo-service/api"
+	"github.com/ygo-skc/skc-go/ygo-service/db"
 
 	_ "github.com/go-sql-driver/mysql"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
