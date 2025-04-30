@@ -9,3 +9,8 @@ func InlineStringPointer(s string) *string {
 func InlineUInt16Pointer(i uint16) *uint16 {
 	return &i
 }
+
+// transforms unsigned 32 byte int literal to unsigned 32 byte int pointer, without this function an inline unsigned 32 byte int pointer cannot be created
+func InlineUInt32Pointer(i uint32) *uint32 {
+	return &i
+}
