@@ -10,13 +10,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) GetYGOCard(ctx context.Context, req *pb.YGOCardRequest) (*pb.YGOCardResponse, error) {
+func (s *Server) QueryCard(ctx context.Context, req *pb.YGOResource) (*pb.YGOCard, error) {
 	if c, err := skcDBInterface.GetDesiredCardInDBUsingID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
 		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
 	} else if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
-		res := &pb.YGOCardResponse{
+		res := &pb.YGOCard{
 			ID:          c.ID,
 			Color:       c.Color,
 			Name:        c.Name,

@@ -6,14 +6,14 @@ package pb;
 import "google/protobuf/wrappers.proto";
 
 service CardService {
-  rpc GetYGOCard (YGOCardRequest) returns (YGOCardResponse);
+  rpc QueryCard (YGOResource) returns (YGOCard);
 }
 
-message YGOCardRequest {
+message YGOResource {
   string ID = 1;
 }
 
-message YGOCardResponse {
+message YGOCard {
   string ID = 1;
   string color = 2;
   string name = 3;
