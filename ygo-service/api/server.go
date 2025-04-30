@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net"
 
@@ -13,12 +14,16 @@ var (
 	skcDBInterface db.SKCDatabaseAccessObject = db.SKCDAOImplementation{}
 )
 
+const (
+	port = 9020
+)
+
 type Server struct {
 	pb.CardServiceServer
 }
 
 func RunService() {
-	listener, err := net.Listen("tcp", ":9020")
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -28,7 +33,7 @@ func RunService() {
 	// Register the service implementation with the server
 	pb.RegisterCardServiceServer(grpcServer, &Server{})
 
-	log.Println("gRPC server is listening on port 9090...")
+	log.Printf("gRPC server is listening on port %d...", port)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

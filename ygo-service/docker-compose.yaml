@@ -1,0 +1,41 @@
+services:
+  ygo-service:
+    image: alpine:latest
+    command: ./ygo-service
+    working_dir: /app
+    ports:
+      - "9020:9020"
+    volumes:
+      - "./ygo-service:/app/ygo-service"
+      - "./certs/:/app/certs/"
+      - "./.env_prod:/app/.env_prod"
+      - "/usr/share/zoneinfo/:/usr/share/zoneinfo/"
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 75m
+    networks:
+      - skc
+    environment:
+      - YGO_SERVICE_DOT_ENV_FILE=.env_prod
+    labels:
+      com.datadoghq.ad.init_configs: "[{}]"
+      com.datadoghq.ad.instances: '[{"host":"%%host%%", "port": "%%port%%"}]'
+      com.datadoghq.ad.logs: >-
+        [{
+          "source": "go",
+          "service": "ygo-service",
+          "log_processing_rules": [{
+            "type": "exclude_at_match",
+            "name": "exclude_health_check"
+          }]
+        }]
+      com.datadoghq.tags.env: "prod"
+      com.datadoghq.tags.service: "ygo-service"
+
+networks:
+  skc:
+    name: skc
+    driver: bridge
+    external: true # network was already created, if you need to recreate the network - make this false

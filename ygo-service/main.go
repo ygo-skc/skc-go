@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	ENV_VARIABLE_NAME string = "SKC_DB_SERVICE_DOT_ENV_FILE"
+	ENV_VARIABLE_NAME string = "YGO_SERVICE_DOT_ENV_FILE"
 )
 
 func init() {
