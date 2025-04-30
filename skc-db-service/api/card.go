@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/skc-db-service/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func (s *Server) GetYGOCard(ctx context.Context, req *pb.YGOCardRequest) (*pb.YGOCardResponse, error) {
@@ -17,23 +17,14 @@ func (s *Server) GetYGOCard(ctx context.Context, req *pb.YGOCardRequest) (*pb.YG
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
 		res := &pb.YGOCardResponse{
-			ID:        c.ID,
-			Color:     c.Color,
-			Name:      c.Name,
-			Attribute: c.Attribute,
-			Effect:    c.Effect,
-		}
-
-		if c.MonsterType != nil {
-			res.MonsterType = wrapperspb.String(*c.MonsterType)
-		}
-
-		if c.Attack != nil {
-			res.Attack = wrapperspb.UInt32(*c.Attack)
-		}
-
-		if c.Defense != nil {
-			res.Defense = wrapperspb.UInt32(*c.Defense)
+			ID:          c.ID,
+			Color:       c.Color,
+			Name:        c.Name,
+			Attribute:   c.Attribute,
+			Effect:      c.Effect,
+			MonsterType: util.PBStringValue(c.MonsterType),
+			Attack:      util.PBUInt32Value(c.Attack),
+			Defense:     util.PBUInt32Value(c.Defense),
 		}
 
 		return res, nil
