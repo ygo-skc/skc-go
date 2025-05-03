@@ -7,10 +7,15 @@ import "google/protobuf/wrappers.proto";
 
 service CardService {
   rpc QueryCard (YGOResource) returns (YGOCard);
+  rpc QueryCards (YGOResources) returns (YGOCards);
 }
 
 message YGOResource {
   string ID = 1;
+}
+
+message YGOResources {
+  repeated string ID = 1;
 }
 
 message YGOCard {
@@ -22,4 +27,9 @@ message YGOCard {
   google.protobuf.StringValue monsterType = 6;
   google.protobuf.UInt32Value attack = 7;
   google.protobuf.UInt32Value defense = 8;
+}
+
+message YGOCards {
+	repeated YGOCard cards = 1;
+	repeated string unknownResources = 2;
 }
