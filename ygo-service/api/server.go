@@ -5,8 +5,8 @@ import (
 	"log"
 	"net"
 
+	"github.com/ygo-skc/skc-go/common/pb"
 	"github.com/ygo-skc/skc-go/ygo-service/db"
-	"github.com/ygo-skc/skc-go/ygo-service/pb"
 	"google.golang.org/grpc"
 )
 

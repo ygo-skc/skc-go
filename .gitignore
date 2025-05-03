@@ -33,7 +33,3 @@ coverage.*
 
 /**__debug
 */ygo-service
-
-# gRPC generated code
-*.pb.go
-*_grpc.pb.go
