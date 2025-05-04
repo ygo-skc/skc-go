@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) QueryCard(ctx context.Context, req *ygo.Resource) (*ygo.Card, error) {
+func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*ygo.Card, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
 	logger.Info(fmt.Sprintf("Fetching card details using %v", req))
 
@@ -25,7 +25,7 @@ func (s *Server) QueryCard(ctx context.Context, req *ygo.Resource) (*ygo.Card, e
 	}
 }
 
-func (s *Server) QueryCards(ctx context.Context, req *ygo.Resources) (*ygo.Cards, error) {
+func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (*ygo.Cards, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
 	logger.Info(fmt.Sprintf("Fetching card details using %v", req))
 
