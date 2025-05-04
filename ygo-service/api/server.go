@@ -8,6 +8,7 @@ import (
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 	"github.com/ygo-skc/skc-go/ygo-service/db"
+	"github.com/ygo-skc/skc-go/ygo-service/health"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -20,7 +21,11 @@ const (
 	port = 9020
 )
 
-type Server struct {
+type healthServiceServer struct {
+	health.HealthServiceServer
+}
+
+type ygoServiceServer struct {
 	ygo.CardServiceServer
 }
 
@@ -32,7 +37,8 @@ func RunService() {
 	} else {
 		// Register the service implementation with the server
 		grpcServer := grpc.NewServer(grpc.Creds(creds))
-		ygo.RegisterCardServiceServer(grpcServer, &Server{})
+		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
+		ygo.RegisterCardServiceServer(grpcServer, &ygoServiceServer{})
 
 		log.Printf("Starting gRPC service on port %d...", port)
 		listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
