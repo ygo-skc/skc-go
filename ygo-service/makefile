@@ -12,13 +12,11 @@ build:
 	env GOOS=linux GOARCH=arm64 go build .
 
 clean:
-	rm -rf $(API_HEALTH_GRPC_DIR)/*.pb.go
-	rm -f health
+	rm -rf "${API_HEALTH_GRPC_DIR}"
 
 deps:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	go mod tidy
 
 help:
 	@echo "Makefile Commands:"
