@@ -28,8 +28,8 @@ settings.json
 
 # Sensitive Files
 .env*
-certs/*
+certs
 coverage.*
 
 /**__debug
-*/ygo-service
+ygo-service/ygo-service
