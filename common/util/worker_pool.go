@@ -66,7 +66,7 @@ func (wp *WorkerPool) worker(wg *sync.WaitGroup) {
 func (wp *WorkerPool) Run() {
 	wg := sync.WaitGroup{}
 
-	for i := 0; i < wp.workers; i++ {
+	for range wp.workers {
 		wg.Add(1)
 		go wp.worker(&wg)
 	}
