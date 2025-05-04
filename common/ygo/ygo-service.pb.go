@@ -4,7 +4,7 @@
 // 	protoc        v5.29.3
 // source: ygo-service.proto
 
-package pb
+package ygo
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -22,27 +22,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type YGOResource struct {
+type Resource struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ID            string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *YGOResource) Reset() {
-	*x = YGOResource{}
+func (x *Resource) Reset() {
+	*x = Resource{}
 	mi := &file_ygo_service_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *YGOResource) String() string {
+func (x *Resource) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*YGOResource) ProtoMessage() {}
+func (*Resource) ProtoMessage() {}
 
-func (x *YGOResource) ProtoReflect() protoreflect.Message {
+func (x *Resource) ProtoReflect() protoreflect.Message {
 	mi := &file_ygo_service_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -54,39 +54,39 @@ func (x *YGOResource) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use YGOResource.ProtoReflect.Descriptor instead.
-func (*YGOResource) Descriptor() ([]byte, []int) {
+// Deprecated: Use Resource.ProtoReflect.Descriptor instead.
+func (*Resource) Descriptor() ([]byte, []int) {
 	return file_ygo_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *YGOResource) GetID() string {
+func (x *Resource) GetID() string {
 	if x != nil {
 		return x.ID
 	}
 	return ""
 }
 
-type YGOResources struct {
+type Resources struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ID            []string               `protobuf:"bytes,1,rep,name=ID,proto3" json:"ID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *YGOResources) Reset() {
-	*x = YGOResources{}
+func (x *Resources) Reset() {
+	*x = Resources{}
 	mi := &file_ygo_service_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *YGOResources) String() string {
+func (x *Resources) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*YGOResources) ProtoMessage() {}
+func (*Resources) ProtoMessage() {}
 
-func (x *YGOResources) ProtoReflect() protoreflect.Message {
+func (x *Resources) ProtoReflect() protoreflect.Message {
 	mi := &file_ygo_service_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -98,19 +98,19 @@ func (x *YGOResources) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use YGOResources.ProtoReflect.Descriptor instead.
-func (*YGOResources) Descriptor() ([]byte, []int) {
+// Deprecated: Use Resources.ProtoReflect.Descriptor instead.
+func (*Resources) Descriptor() ([]byte, []int) {
 	return file_ygo_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *YGOResources) GetID() []string {
+func (x *Resources) GetID() []string {
 	if x != nil {
 		return x.ID
 	}
 	return nil
 }
 
-type YGOCard struct {
+type Card struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	ID            string                  `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
 	Color         string                  `protobuf:"bytes,2,opt,name=color,proto3" json:"color,omitempty"`
@@ -124,20 +124,20 @@ type YGOCard struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *YGOCard) Reset() {
-	*x = YGOCard{}
+func (x *Card) Reset() {
+	*x = Card{}
 	mi := &file_ygo_service_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *YGOCard) String() string {
+func (x *Card) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*YGOCard) ProtoMessage() {}
+func (*Card) ProtoMessage() {}
 
-func (x *YGOCard) ProtoReflect() protoreflect.Message {
+func (x *Card) ProtoReflect() protoreflect.Message {
 	mi := &file_ygo_service_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -149,89 +149,89 @@ func (x *YGOCard) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use YGOCard.ProtoReflect.Descriptor instead.
-func (*YGOCard) Descriptor() ([]byte, []int) {
+// Deprecated: Use Card.ProtoReflect.Descriptor instead.
+func (*Card) Descriptor() ([]byte, []int) {
 	return file_ygo_service_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *YGOCard) GetID() string {
+func (x *Card) GetID() string {
 	if x != nil {
 		return x.ID
 	}
 	return ""
 }
 
-func (x *YGOCard) GetColor() string {
+func (x *Card) GetColor() string {
 	if x != nil {
 		return x.Color
 	}
 	return ""
 }
 
-func (x *YGOCard) GetName() string {
+func (x *Card) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *YGOCard) GetAttribute() string {
+func (x *Card) GetAttribute() string {
 	if x != nil {
 		return x.Attribute
 	}
 	return ""
 }
 
-func (x *YGOCard) GetEffect() string {
+func (x *Card) GetEffect() string {
 	if x != nil {
 		return x.Effect
 	}
 	return ""
 }
 
-func (x *YGOCard) GetMonsterType() *wrapperspb.StringValue {
+func (x *Card) GetMonsterType() *wrapperspb.StringValue {
 	if x != nil {
 		return x.MonsterType
 	}
 	return nil
 }
 
-func (x *YGOCard) GetAttack() *wrapperspb.UInt32Value {
+func (x *Card) GetAttack() *wrapperspb.UInt32Value {
 	if x != nil {
 		return x.Attack
 	}
 	return nil
 }
 
-func (x *YGOCard) GetDefense() *wrapperspb.UInt32Value {
+func (x *Card) GetDefense() *wrapperspb.UInt32Value {
 	if x != nil {
 		return x.Defense
 	}
 	return nil
 }
 
-type YGOCards struct {
+type Cards struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Cards            []*YGOCard             `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
+	Cards            []*Card                `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
 	UnknownResources []string               `protobuf:"bytes,2,rep,name=unknownResources,proto3" json:"unknownResources,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *YGOCards) Reset() {
-	*x = YGOCards{}
+func (x *Cards) Reset() {
+	*x = Cards{}
 	mi := &file_ygo_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *YGOCards) String() string {
+func (x *Cards) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*YGOCards) ProtoMessage() {}
+func (*Cards) ProtoMessage() {}
 
-func (x *YGOCards) ProtoReflect() protoreflect.Message {
+func (x *Cards) ProtoReflect() protoreflect.Message {
 	mi := &file_ygo_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -243,19 +243,19 @@ func (x *YGOCards) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use YGOCards.ProtoReflect.Descriptor instead.
-func (*YGOCards) Descriptor() ([]byte, []int) {
+// Deprecated: Use Cards.ProtoReflect.Descriptor instead.
+func (*Cards) Descriptor() ([]byte, []int) {
 	return file_ygo_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *YGOCards) GetCards() []*YGOCard {
+func (x *Cards) GetCards() []*Card {
 	if x != nil {
 		return x.Cards
 	}
 	return nil
 }
 
-func (x *YGOCards) GetUnknownResources() []string {
+func (x *Cards) GetUnknownResources() []string {
 	if x != nil {
 		return x.UnknownResources
 	}
@@ -266,12 +266,12 @@ var File_ygo_service_proto protoreflect.FileDescriptor
 
 const file_ygo_service_proto_rawDesc = "" +
 	"\n" +
-	"\x11ygo-service.proto\x12\x02pb\x1a\x1egoogle/protobuf/wrappers.proto\"\x1d\n" +
-	"\vYGOResource\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\"\x1e\n" +
-	"\fYGOResources\x12\x0e\n" +
-	"\x02ID\x18\x01 \x03(\tR\x02ID\"\xa7\x02\n" +
-	"\aYGOCard\x12\x0e\n" +
+	"\x11ygo-service.proto\x12\x03ygo\x1a\x1egoogle/protobuf/wrappers.proto\"\x1a\n" +
+	"\bResource\x12\x0e\n" +
+	"\x02ID\x18\x01 \x01(\tR\x02ID\"\x1b\n" +
+	"\tResources\x12\x0e\n" +
+	"\x02ID\x18\x01 \x03(\tR\x02ID\"\xa4\x02\n" +
+	"\x04Card\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x14\n" +
 	"\x05color\x18\x02 \x01(\tR\x05color\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1c\n" +
@@ -279,14 +279,15 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x06effect\x18\x05 \x01(\tR\x06effect\x12>\n" +
 	"\vmonsterType\x18\x06 \x01(\v2\x1c.google.protobuf.StringValueR\vmonsterType\x124\n" +
 	"\x06attack\x18\a \x01(\v2\x1c.google.protobuf.UInt32ValueR\x06attack\x126\n" +
-	"\adefense\x18\b \x01(\v2\x1c.google.protobuf.UInt32ValueR\adefense\"Y\n" +
-	"\bYGOCards\x12!\n" +
-	"\x05cards\x18\x01 \x03(\v2\v.pb.YGOCardR\x05cards\x12*\n" +
-	"\x10unknownResources\x18\x02 \x03(\tR\x10unknownResources2f\n" +
-	"\vCardService\x12)\n" +
-	"\tQueryCard\x12\x0f.pb.YGOResource\x1a\v.pb.YGOCard\x12,\n" +
+	"\adefense\x18\b \x01(\v2\x1c.google.protobuf.UInt32ValueR\adefense\"T\n" +
+	"\x05Cards\x12\x1f\n" +
+	"\x05cards\x18\x01 \x03(\v2\t.ygo.CardR\x05cards\x12*\n" +
+	"\x10unknownResources\x18\x02 \x03(\tR\x10unknownResources2^\n" +
+	"\vCardService\x12%\n" +
+	"\tQueryCard\x12\r.ygo.Resource\x1a\t.ygo.Card\x12(\n" +
 	"\n" +
-	"QueryCards\x12\x10.pb.YGOResources\x1a\f.pb.YGOCardsB\x05Z\x03/pbb\x06proto3"
+	"QueryCards\x12\x0e.ygo.Resources\x1a\n" +
+	".ygo.CardsB\x06Z\x04/ygob\x06proto3"
 
 var (
 	file_ygo_service_proto_rawDescOnce sync.Once
@@ -302,22 +303,22 @@ func file_ygo_service_proto_rawDescGZIP() []byte {
 
 var file_ygo_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_ygo_service_proto_goTypes = []any{
-	(*YGOResource)(nil),            // 0: pb.YGOResource
-	(*YGOResources)(nil),           // 1: pb.YGOResources
-	(*YGOCard)(nil),                // 2: pb.YGOCard
-	(*YGOCards)(nil),               // 3: pb.YGOCards
+	(*Resource)(nil),               // 0: ygo.Resource
+	(*Resources)(nil),              // 1: ygo.Resources
+	(*Card)(nil),                   // 2: ygo.Card
+	(*Cards)(nil),                  // 3: ygo.Cards
 	(*wrapperspb.StringValue)(nil), // 4: google.protobuf.StringValue
 	(*wrapperspb.UInt32Value)(nil), // 5: google.protobuf.UInt32Value
 }
 var file_ygo_service_proto_depIdxs = []int32{
-	4, // 0: pb.YGOCard.monsterType:type_name -> google.protobuf.StringValue
-	5, // 1: pb.YGOCard.attack:type_name -> google.protobuf.UInt32Value
-	5, // 2: pb.YGOCard.defense:type_name -> google.protobuf.UInt32Value
-	2, // 3: pb.YGOCards.cards:type_name -> pb.YGOCard
-	0, // 4: pb.CardService.QueryCard:input_type -> pb.YGOResource
-	1, // 5: pb.CardService.QueryCards:input_type -> pb.YGOResources
-	2, // 6: pb.CardService.QueryCard:output_type -> pb.YGOCard
-	3, // 7: pb.CardService.QueryCards:output_type -> pb.YGOCards
+	4, // 0: ygo.Card.monsterType:type_name -> google.protobuf.StringValue
+	5, // 1: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
+	5, // 2: ygo.Card.defense:type_name -> google.protobuf.UInt32Value
+	2, // 3: ygo.Cards.cards:type_name -> ygo.Card
+	0, // 4: ygo.CardService.QueryCard:input_type -> ygo.Resource
+	1, // 5: ygo.CardService.QueryCards:input_type -> ygo.Resources
+	2, // 6: ygo.CardService.QueryCard:output_type -> ygo.Card
+	3, // 7: ygo.CardService.QueryCards:output_type -> ygo.Cards
 	6, // [6:8] is the sub-list for method output_type
 	4, // [4:6] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

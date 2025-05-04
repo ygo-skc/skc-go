@@ -1,24 +1,24 @@
 syntax = "proto3";
 
-option go_package = "/pb";
-package pb;
+option go_package = "/ygo";
+package ygo;
 
 import "google/protobuf/wrappers.proto";
 
 service CardService {
-  rpc QueryCard (YGOResource) returns (YGOCard);
-  rpc QueryCards (YGOResources) returns (YGOCards);
+  rpc QueryCard (Resource) returns (Card);
+  rpc QueryCards (Resources) returns (Cards);
 }
 
-message YGOResource {
+message Resource {
   string ID = 1;
 }
 
-message YGOResources {
+message Resources {
   repeated string ID = 1;
 }
 
-message YGOCard {
+message Card {
   string ID = 1;
   string color = 2;
   string name = 3;
@@ -29,7 +29,7 @@ message YGOCard {
   google.protobuf.UInt32Value defense = 8;
 }
 
-message YGOCards {
-	repeated YGOCard cards = 1;
+message Cards {
+	repeated Card cards = 1;
 	repeated string unknownResources = 2;
 }

@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/ygo-skc/skc-go/common/pb"
+	"github.com/ygo-skc/skc-go/common/ygo"
 	"github.com/ygo-skc/skc-go/ygo-service/db"
 	"google.golang.org/grpc"
 )
@@ -19,7 +19,7 @@ const (
 )
 
 type Server struct {
-	pb.CardServiceServer
+	ygo.CardServiceServer
 }
 
 func RunService() {
@@ -31,7 +31,7 @@ func RunService() {
 	grpcServer := grpc.NewServer()
 
 	// Register the service implementation with the server
-	pb.RegisterCardServiceServer(grpcServer, &Server{})
+	ygo.RegisterCardServiceServer(grpcServer, &Server{})
 
 	log.Printf("gRPC server is listening on port %d...", port)
 	if err := grpcServer.Serve(listener); err != nil {

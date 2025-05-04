@@ -4,7 +4,7 @@
 // - protoc             v5.29.3
 // source: ygo-service.proto
 
-package pb
+package ygo
 
 import (
 	context "context"
@@ -19,16 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CardService_QueryCard_FullMethodName  = "/pb.CardService/QueryCard"
-	CardService_QueryCards_FullMethodName = "/pb.CardService/QueryCards"
+	CardService_QueryCard_FullMethodName  = "/ygo.CardService/QueryCard"
+	CardService_QueryCards_FullMethodName = "/ygo.CardService/QueryCards"
 )
 
 // CardServiceClient is the client API for CardService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CardServiceClient interface {
-	QueryCard(ctx context.Context, in *YGOResource, opts ...grpc.CallOption) (*YGOCard, error)
-	QueryCards(ctx context.Context, in *YGOResources, opts ...grpc.CallOption) (*YGOCards, error)
+	QueryCard(ctx context.Context, in *Resource, opts ...grpc.CallOption) (*Card, error)
+	QueryCards(ctx context.Context, in *Resources, opts ...grpc.CallOption) (*Cards, error)
 }
 
 type cardServiceClient struct {
@@ -39,9 +39,9 @@ func NewCardServiceClient(cc grpc.ClientConnInterface) CardServiceClient {
 	return &cardServiceClient{cc}
 }
 
-func (c *cardServiceClient) QueryCard(ctx context.Context, in *YGOResource, opts ...grpc.CallOption) (*YGOCard, error) {
+func (c *cardServiceClient) QueryCard(ctx context.Context, in *Resource, opts ...grpc.CallOption) (*Card, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(YGOCard)
+	out := new(Card)
 	err := c.cc.Invoke(ctx, CardService_QueryCard_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -49,9 +49,9 @@ func (c *cardServiceClient) QueryCard(ctx context.Context, in *YGOResource, opts
 	return out, nil
 }
 
-func (c *cardServiceClient) QueryCards(ctx context.Context, in *YGOResources, opts ...grpc.CallOption) (*YGOCards, error) {
+func (c *cardServiceClient) QueryCards(ctx context.Context, in *Resources, opts ...grpc.CallOption) (*Cards, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(YGOCards)
+	out := new(Cards)
 	err := c.cc.Invoke(ctx, CardService_QueryCards_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -63,8 +63,8 @@ func (c *cardServiceClient) QueryCards(ctx context.Context, in *YGOResources, op
 // All implementations must embed UnimplementedCardServiceServer
 // for forward compatibility.
 type CardServiceServer interface {
-	QueryCard(context.Context, *YGOResource) (*YGOCard, error)
-	QueryCards(context.Context, *YGOResources) (*YGOCards, error)
+	QueryCard(context.Context, *Resource) (*Card, error)
+	QueryCards(context.Context, *Resources) (*Cards, error)
 	mustEmbedUnimplementedCardServiceServer()
 }
 
@@ -75,10 +75,10 @@ type CardServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCardServiceServer struct{}
 
-func (UnimplementedCardServiceServer) QueryCard(context.Context, *YGOResource) (*YGOCard, error) {
+func (UnimplementedCardServiceServer) QueryCard(context.Context, *Resource) (*Card, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryCard not implemented")
 }
-func (UnimplementedCardServiceServer) QueryCards(context.Context, *YGOResources) (*YGOCards, error) {
+func (UnimplementedCardServiceServer) QueryCards(context.Context, *Resources) (*Cards, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryCards not implemented")
 }
 func (UnimplementedCardServiceServer) mustEmbedUnimplementedCardServiceServer() {}
@@ -103,7 +103,7 @@ func RegisterCardServiceServer(s grpc.ServiceRegistrar, srv CardServiceServer) {
 }
 
 func _CardService_QueryCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(YGOResource)
+	in := new(Resource)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -115,13 +115,13 @@ func _CardService_QueryCard_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: CardService_QueryCard_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CardServiceServer).QueryCard(ctx, req.(*YGOResource))
+		return srv.(CardServiceServer).QueryCard(ctx, req.(*Resource))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _CardService_QueryCards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(YGOResources)
+	in := new(Resources)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func _CardService_QueryCards_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: CardService_QueryCards_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CardServiceServer).QueryCards(ctx, req.(*YGOResources))
+		return srv.(CardServiceServer).QueryCards(ctx, req.(*Resources))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -142,7 +142,7 @@ func _CardService_QueryCards_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var CardService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.CardService",
+	ServiceName: "ygo.CardService",
 	HandlerType: (*CardServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

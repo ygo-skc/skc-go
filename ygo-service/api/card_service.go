@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ygo-skc/skc-go/common/pb"
 	"github.com/ygo-skc/skc-go/common/util"
+	"github.com/ygo-skc/skc-go/common/ygo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) QueryCard(ctx context.Context, req *pb.YGOResource) (*pb.YGOCard, error) {
+func (s *Server) QueryCard(ctx context.Context, req *ygo.Resource) (*ygo.Card, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
 	logger.Info(fmt.Sprintf("Fetching card details using %v", req))
 
@@ -25,7 +25,7 @@ func (s *Server) QueryCard(ctx context.Context, req *pb.YGOResource) (*pb.YGOCar
 	}
 }
 
-func (s *Server) QueryCards(ctx context.Context, req *pb.YGOResources) (*pb.YGOCards, error) {
+func (s *Server) QueryCards(ctx context.Context, req *ygo.Resources) (*ygo.Cards, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
 	logger.Info(fmt.Sprintf("Fetching card details using %v", req))
 
@@ -34,12 +34,12 @@ func (s *Server) QueryCards(ctx context.Context, req *pb.YGOResources) (*pb.YGOC
 	} else if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
-		pbCards := make([]*pb.YGOCard, len(cards.CardInfo))
+		pbCards := make([]*ygo.Card, len(cards.CardInfo))
 		i := 0
 		for _, c := range cards.CardInfo {
 			pbCards[i] = c.ToPB()
 			i++
 		}
-		return &pb.YGOCards{Cards: pbCards, UnknownResources: cards.UnknownResources}, nil
+		return &ygo.Cards{Cards: pbCards, UnknownResources: cards.UnknownResources}, nil
 	}
 }

@@ -1,5 +1,5 @@
 # vars
-GENERATED_DIR := ./pb
+YGO_GRPC_DIR := ./ygo
 
 # default
 all: deps clean generate-grpc
@@ -8,7 +8,7 @@ generate-grpc:
 	protoc --go_out=./ --go-grpc_out=./ ygo-service.proto
 
 clean:
-	rm -rf $(GENERATED_DIR)/*.pb.go
+	rm -rf $(YGO_GRPC_DIR)/*.pb.go
 
 deps:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest

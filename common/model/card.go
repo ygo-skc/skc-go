@@ -4,8 +4,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ygo-skc/skc-go/common/pb"
 	"github.com/ygo-skc/skc-go/common/util"
+	"github.com/ygo-skc/skc-go/common/ygo"
 )
 
 type Card struct {
@@ -80,8 +80,8 @@ func (cards Cards) SortCardsByName() {
 	})
 }
 
-func (c Card) ToPB() *pb.YGOCard {
-	return &pb.YGOCard{
+func (c Card) ToPB() *ygo.Card {
+	return &ygo.Card{
 		ID:          c.ID,
 		Color:       c.Color,
 		Name:        c.Name,
