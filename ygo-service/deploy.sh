@@ -24,4 +24,4 @@ ssh -i ~/.ssh/skc-server.pem "${USER}@${SERVER}" <<EOF
 	docker-compose up -d
 EOF
 
-# bash aws-cert-update.sh
+bash aws-cert-update.sh
