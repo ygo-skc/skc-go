@@ -3,6 +3,9 @@ package model
 import (
 	"sort"
 	"strings"
+
+	"github.com/ygo-skc/skc-go/common/pb"
+	"github.com/ygo-skc/skc-go/common/util"
 )
 
 type Card struct {
@@ -75,4 +78,17 @@ func (cards Cards) SortCardsByName() {
 	sort.SliceStable(cards, func(i, j int) bool {
 		return (cards)[i].Name < (cards)[j].Name
 	})
+}
+
+func (c Card) ToPB() *pb.YGOCard {
+	return &pb.YGOCard{
+		ID:          c.ID,
+		Color:       c.Color,
+		Name:        c.Name,
+		Attribute:   c.Attribute,
+		Effect:      c.Effect,
+		MonsterType: util.PBStringValue(c.MonsterType),
+		Attack:      util.PBUInt32Value(c.Attack),
+		Defense:     util.PBUInt32Value(c.Defense),
+	}
 }
