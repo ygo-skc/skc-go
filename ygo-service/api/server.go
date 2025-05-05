@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
@@ -11,6 +12,7 @@ import (
 	"github.com/ygo-skc/skc-go/ygo-service/health"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/keepalive"
 )
 
 var (
@@ -36,7 +38,14 @@ func RunService() {
 		log.Fatalf("Unable to create TLS credentials: %v", err)
 	} else {
 		// Register the service implementation with the server
-		grpcServer := grpc.NewServer(grpc.Creds(creds))
+		grpcServer := grpc.NewServer(
+			grpc.Creds(creds),
+			grpc.KeepaliveParams(keepalive.ServerParameters{
+				MaxConnectionIdle:     5 * time.Minute,
+				MaxConnectionAge:      60 * time.Minute,
+				MaxConnectionAgeGrace: 5 * time.Minute,
+				Time:                  1 * time.Minute,
+			}))
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
 		ygo.RegisterCardServiceServer(grpcServer, &ygoServiceServer{})
 
