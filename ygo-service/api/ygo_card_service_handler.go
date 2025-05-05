@@ -34,12 +34,10 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 	} else if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
-		pbCards := make([]*ygo.Card, len(cards.CardInfo))
-		i := 0
+		pbCards := make(map[string]*ygo.Card, len(cards.CardInfo))
 		for _, c := range cards.CardInfo {
-			pbCards[i] = c.ToPB()
-			i++
+			pbCards[c.ID] = c.ToPB()
 		}
-		return &ygo.Cards{Cards: pbCards, UnknownResources: cards.UnknownResources}, nil
+		return &ygo.Cards{CardInfo: pbCards, UnknownResources: cards.UnknownResources}, nil
 	}
 }

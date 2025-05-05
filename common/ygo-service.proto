@@ -24,12 +24,12 @@ message Card {
   string name = 3;
   string attribute = 4;
   string effect = 5;
-  google.protobuf.StringValue monsterType = 6;
+  google.protobuf.StringValue monster_type = 6;
   google.protobuf.UInt32Value attack = 7;
   google.protobuf.UInt32Value defense = 8;
 }
 
 message Cards {
-	repeated Card cards = 1;
-	repeated string unknownResources = 2;
+	map<string, Card> card_info = 1;
+	repeated string unknown_resources = 2;
 }

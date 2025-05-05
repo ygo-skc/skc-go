@@ -117,7 +117,7 @@ type Card struct {
 	Name          string                  `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Attribute     string                  `protobuf:"bytes,4,opt,name=attribute,proto3" json:"attribute,omitempty"`
 	Effect        string                  `protobuf:"bytes,5,opt,name=effect,proto3" json:"effect,omitempty"`
-	MonsterType   *wrapperspb.StringValue `protobuf:"bytes,6,opt,name=monsterType,proto3" json:"monsterType,omitempty"`
+	MonsterType   *wrapperspb.StringValue `protobuf:"bytes,6,opt,name=monster_type,json=monsterType,proto3" json:"monster_type,omitempty"`
 	Attack        *wrapperspb.UInt32Value `protobuf:"bytes,7,opt,name=attack,proto3" json:"attack,omitempty"`
 	Defense       *wrapperspb.UInt32Value `protobuf:"bytes,8,opt,name=defense,proto3" json:"defense,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -212,8 +212,8 @@ func (x *Card) GetDefense() *wrapperspb.UInt32Value {
 
 type Cards struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Cards            []*Card                `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
-	UnknownResources []string               `protobuf:"bytes,2,rep,name=unknownResources,proto3" json:"unknownResources,omitempty"`
+	CardInfo         map[string]*Card       `protobuf:"bytes,1,rep,name=card_info,json=cardInfo,proto3" json:"card_info,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	UnknownResources []string               `protobuf:"bytes,2,rep,name=unknown_resources,json=unknownResources,proto3" json:"unknown_resources,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -248,9 +248,9 @@ func (*Cards) Descriptor() ([]byte, []int) {
 	return file_ygo_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Cards) GetCards() []*Card {
+func (x *Cards) GetCardInfo() map[string]*Card {
 	if x != nil {
-		return x.Cards
+		return x.CardInfo
 	}
 	return nil
 }
@@ -270,19 +270,22 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\bResource\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\"\x1d\n" +
 	"\tResources\x12\x10\n" +
-	"\x03IDs\x18\x01 \x03(\tR\x03IDs\"\xa4\x02\n" +
+	"\x03IDs\x18\x01 \x03(\tR\x03IDs\"\xa5\x02\n" +
 	"\x04Card\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x14\n" +
 	"\x05color\x18\x02 \x01(\tR\x05color\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1c\n" +
 	"\tattribute\x18\x04 \x01(\tR\tattribute\x12\x16\n" +
-	"\x06effect\x18\x05 \x01(\tR\x06effect\x12>\n" +
-	"\vmonsterType\x18\x06 \x01(\v2\x1c.google.protobuf.StringValueR\vmonsterType\x124\n" +
+	"\x06effect\x18\x05 \x01(\tR\x06effect\x12?\n" +
+	"\fmonster_type\x18\x06 \x01(\v2\x1c.google.protobuf.StringValueR\vmonsterType\x124\n" +
 	"\x06attack\x18\a \x01(\v2\x1c.google.protobuf.UInt32ValueR\x06attack\x126\n" +
-	"\adefense\x18\b \x01(\v2\x1c.google.protobuf.UInt32ValueR\adefense\"T\n" +
-	"\x05Cards\x12\x1f\n" +
-	"\x05cards\x18\x01 \x03(\v2\t.ygo.CardR\x05cards\x12*\n" +
-	"\x10unknownResources\x18\x02 \x03(\tR\x10unknownResources2^\n" +
+	"\adefense\x18\b \x01(\v2\x1c.google.protobuf.UInt32ValueR\adefense\"\xb3\x01\n" +
+	"\x05Cards\x125\n" +
+	"\tcard_info\x18\x01 \x03(\v2\x18.ygo.Cards.CardInfoEntryR\bcardInfo\x12+\n" +
+	"\x11unknown_resources\x18\x02 \x03(\tR\x10unknownResources\x1aF\n" +
+	"\rCardInfoEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x1f\n" +
+	"\x05value\x18\x02 \x01(\v2\t.ygo.CardR\x05value:\x028\x012^\n" +
 	"\vCardService\x12%\n" +
 	"\tQueryCard\x12\r.ygo.Resource\x1a\t.ygo.Card\x12(\n" +
 	"\n" +
@@ -301,29 +304,31 @@ func file_ygo_service_proto_rawDescGZIP() []byte {
 	return file_ygo_service_proto_rawDescData
 }
 
-var file_ygo_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_ygo_service_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_ygo_service_proto_goTypes = []any{
 	(*Resource)(nil),               // 0: ygo.Resource
 	(*Resources)(nil),              // 1: ygo.Resources
 	(*Card)(nil),                   // 2: ygo.Card
 	(*Cards)(nil),                  // 3: ygo.Cards
-	(*wrapperspb.StringValue)(nil), // 4: google.protobuf.StringValue
-	(*wrapperspb.UInt32Value)(nil), // 5: google.protobuf.UInt32Value
+	nil,                            // 4: ygo.Cards.CardInfoEntry
+	(*wrapperspb.StringValue)(nil), // 5: google.protobuf.StringValue
+	(*wrapperspb.UInt32Value)(nil), // 6: google.protobuf.UInt32Value
 }
 var file_ygo_service_proto_depIdxs = []int32{
-	4, // 0: ygo.Card.monsterType:type_name -> google.protobuf.StringValue
-	5, // 1: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
-	5, // 2: ygo.Card.defense:type_name -> google.protobuf.UInt32Value
-	2, // 3: ygo.Cards.cards:type_name -> ygo.Card
-	0, // 4: ygo.CardService.QueryCard:input_type -> ygo.Resource
-	1, // 5: ygo.CardService.QueryCards:input_type -> ygo.Resources
-	2, // 6: ygo.CardService.QueryCard:output_type -> ygo.Card
-	3, // 7: ygo.CardService.QueryCards:output_type -> ygo.Cards
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	5, // 0: ygo.Card.monster_type:type_name -> google.protobuf.StringValue
+	6, // 1: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
+	6, // 2: ygo.Card.defense:type_name -> google.protobuf.UInt32Value
+	4, // 3: ygo.Cards.card_info:type_name -> ygo.Cards.CardInfoEntry
+	2, // 4: ygo.Cards.CardInfoEntry.value:type_name -> ygo.Card
+	0, // 5: ygo.CardService.QueryCard:input_type -> ygo.Resource
+	1, // 6: ygo.CardService.QueryCards:input_type -> ygo.Resources
+	2, // 7: ygo.CardService.QueryCard:output_type -> ygo.Card
+	3, // 8: ygo.CardService.QueryCards:output_type -> ygo.Cards
+	7, // [7:9] is the sub-list for method output_type
+	5, // [5:7] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_ygo_service_proto_init() }
@@ -337,7 +342,7 @@ func file_ygo_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ygo_service_proto_rawDesc), len(file_ygo_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
