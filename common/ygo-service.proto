@@ -15,7 +15,7 @@ message Resource {
 }
 
 message Resources {
-  repeated string ID = 1;
+  repeated string IDs = 1;
 }
 
 message Card {

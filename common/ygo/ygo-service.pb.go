@@ -68,7 +68,7 @@ func (x *Resource) GetID() string {
 
 type Resources struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ID            []string               `protobuf:"bytes,1,rep,name=ID,proto3" json:"ID,omitempty"`
+	IDs           []string               `protobuf:"bytes,1,rep,name=IDs,proto3" json:"IDs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -103,9 +103,9 @@ func (*Resources) Descriptor() ([]byte, []int) {
 	return file_ygo_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Resources) GetID() []string {
+func (x *Resources) GetIDs() []string {
 	if x != nil {
-		return x.ID
+		return x.IDs
 	}
 	return nil
 }
@@ -268,9 +268,9 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\n" +
 	"\x11ygo-service.proto\x12\x03ygo\x1a\x1egoogle/protobuf/wrappers.proto\"\x1a\n" +
 	"\bResource\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\"\x1b\n" +
-	"\tResources\x12\x0e\n" +
-	"\x02ID\x18\x01 \x03(\tR\x02ID\"\xa4\x02\n" +
+	"\x02ID\x18\x01 \x01(\tR\x02ID\"\x1d\n" +
+	"\tResources\x12\x10\n" +
+	"\x03IDs\x18\x01 \x03(\tR\x03IDs\"\xa4\x02\n" +
 	"\x04Card\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x14\n" +
 	"\x05color\x18\x02 \x01(\tR\x05color\x12\x12\n" +

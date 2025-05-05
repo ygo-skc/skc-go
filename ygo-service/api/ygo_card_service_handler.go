@@ -29,7 +29,7 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
 	logger.Info(fmt.Sprintf("Fetching card details using %v", req))
 
-	if cards, err := skcDBInterface.GetDesiredCardInDBUsingMultipleCardIDs(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
+	if cards, err := skcDBInterface.GetDesiredCardInDBUsingMultipleCardIDs(ctx, req.IDs); err != nil && err.StatusCode == http.StatusNotFound {
 		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
 	} else if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
