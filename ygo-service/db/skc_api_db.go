@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/ygo-skc/skc-go/common/model"
-	cModel "github.com/ygo-skc/skc-go/common/model"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 )
 
@@ -68,22 +67,22 @@ func variablePlaceholders(totalFields int) string {
 	}
 }
 
-func handleQueryError(logger *slog.Logger, err error) *cModel.APIError {
+func handleQueryError(logger *slog.Logger, err error) *model.APIError {
 	logger.Error(fmt.Sprintf("Error fetching data from DB - %v", err))
-	return &cModel.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
+	return &model.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
 }
 
-func handleRowParsingError(logger *slog.Logger, err error) *cModel.APIError {
+func handleRowParsingError(logger *slog.Logger, err error) *model.APIError {
 	logger.Error(fmt.Sprintf("Error parsing data from DB - %v", err))
-	return &cModel.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
+	return &model.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
 }
 
 // interface
 type SKCDatabaseAccessObject interface {
 	GetSKCDBVersion(context.Context) (string, error)
 
-	GetDesiredCardInDBUsingID(context.Context, string) (cModel.Card, *cModel.APIError)
-	GetDesiredCardInDBUsingMultipleCardIDs(context.Context, []string) (cModel.BatchCardData[cModel.CardIDs], *cModel.APIError)
+	GetDesiredCardInDBUsingID(context.Context, string) (model.YGOCardREST, *model.APIError)
+	GetDesiredCardInDBUsingMultipleCardIDs(context.Context, []string) (model.BatchCardData[model.CardIDs], *model.APIError)
 }
 
 // impl
@@ -94,39 +93,39 @@ func (imp SKCDAOImplementation) GetSKCDBVersion(ctx context.Context) (string, er
 	var version string
 	if err := skcDBConn.QueryRow(queryDBVersion).Scan(&version); err != nil {
 		cUtil.LoggerFromContext(ctx).Info(fmt.Sprintf("Error getting SKC DB version - %v", err))
-		return version, &cModel.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
+		return version, &model.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
 	}
 
 	return version, nil
 }
 
 // Leverages GetDesiredCardInDBUsingMultipleCardIDs to get information on a specific card using its identifier
-func (imp SKCDAOImplementation) GetDesiredCardInDBUsingID(ctx context.Context, cardID string) (cModel.Card, *cModel.APIError) {
+func (imp SKCDAOImplementation) GetDesiredCardInDBUsingID(ctx context.Context, cardID string) (model.YGOCardREST, *model.APIError) {
 	if results, err := imp.GetDesiredCardInDBUsingMultipleCardIDs(ctx, []string{cardID}); err != nil {
-		return cModel.Card{}, err
+		return model.YGOCardREST{}, err
 	} else {
 		if card, exists := results.CardInfo[cardID]; !exists {
-			return cModel.Card{}, &cModel.APIError{Message: fmt.Sprintf("No results found when querying by card ID %s", cardID), StatusCode: http.StatusNotFound}
+			return model.YGOCardREST{}, &model.APIError{Message: fmt.Sprintf("No results found when querying by card ID %s", cardID), StatusCode: http.StatusNotFound}
 		} else {
-			return card.(model.Card), nil
+			return card.(model.YGOCardREST), nil
 		}
 	}
 }
 
-func (imp SKCDAOImplementation) GetDesiredCardInDBUsingMultipleCardIDs(ctx context.Context, cardIDs []string) (cModel.BatchCardData[cModel.CardIDs], *cModel.APIError) {
+func (imp SKCDAOImplementation) GetDesiredCardInDBUsingMultipleCardIDs(ctx context.Context, cardIDs []string) (model.BatchCardData[model.CardIDs], *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info("Retrieving card data from DB")
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
-	cardData := make(cModel.CardDataMap, numCards) // used to store results
+	cardData := make(model.CardDataMap, numCards) // used to store results
 
 	query := fmt.Sprintf(queryCardUsingCardIDs, variablePlaceholders(numCards))
 
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
-		return cModel.BatchCardData[cModel.CardIDs]{}, handleQueryError(logger, err)
+		return model.BatchCardData[model.CardIDs]{}, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCard(ctx, rows); err != nil {
-			return cModel.BatchCardData[cModel.CardIDs]{}, err
+			return model.BatchCardData[model.CardIDs]{}, err
 		} else {
 			for _, card := range cards {
 				cardData[card.ID] = card
@@ -134,15 +133,15 @@ func (imp SKCDAOImplementation) GetDesiredCardInDBUsingMultipleCardIDs(ctx conte
 		}
 	}
 
-	return cModel.BatchCardData[cModel.CardIDs]{CardInfo: cardData, UnknownResources: cardData.FindMissingIDs(cardIDs)}, nil
+	return model.BatchCardData[model.CardIDs]{CardInfo: cardData, UnknownResources: cardData.FindMissingIDs(cardIDs)}, nil
 }
 
-func parseRowsForCard(ctx context.Context, rows *sql.Rows) ([]cModel.Card, *cModel.APIError) {
+func parseRowsForCard(ctx context.Context, rows *sql.Rows) ([]model.YGOCardREST, *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
-	cards := []cModel.Card{}
+	cards := []model.YGOCardREST{}
 
 	for rows.Next() {
-		var card cModel.Card
+		var card model.YGOCardREST
 		if err := rows.Scan(&card.ID, &card.Color, &card.Name, &card.Attribute, &card.Effect, &card.MonsterType, &card.Attack, &card.Defense); err != nil {
 			return nil, handleRowParsingError(logger, err)
 		} else {

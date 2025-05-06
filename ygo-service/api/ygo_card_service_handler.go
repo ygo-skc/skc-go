@@ -38,7 +38,7 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 		validIDs := make(model.CardIDs, len(cards.CardInfo))
 		ind := 0
 		for id, c := range cards.CardInfo {
-			pbCards[id] = c.(model.Card).ToPB()
+			pbCards[id] = c.(model.YGOCardREST).ToPB()
 			validIDs[ind] = id
 			ind++
 		}
