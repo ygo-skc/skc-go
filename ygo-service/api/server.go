@@ -40,11 +40,17 @@ func RunService() {
 		// Register the service implementation with the server
 		grpcServer := grpc.NewServer(
 			grpc.Creds(creds),
+			grpc.MaxConcurrentStreams(200),
 			grpc.KeepaliveParams(keepalive.ServerParameters{
-				MaxConnectionIdle:     5 * time.Minute,
-				MaxConnectionAge:      60 * time.Minute,
-				MaxConnectionAgeGrace: 5 * time.Minute,
-				Time:                  1 * time.Minute,
+				MaxConnectionIdle:     30 * time.Minute, // how long a connection can last while idle
+				MaxConnectionAge:      4 * time.Hour,    // total time a connection can live for before killed
+				MaxConnectionAgeGrace: 15 * time.Second, // time after MaxConnectionAge where connection can finish work
+				Time:                  30 * time.Second, // how often to ping client
+				Timeout:               1 * time.Second,  // how fast ping should be
+			}),
+			grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+				MinTime:             30 * time.Second, // prevents clients from sending pings too often
+				PermitWithoutStream: true,             // allow pings when no active RPC
 			}))
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
 		ygo.RegisterCardServiceServer(grpcServer, &ygoServiceServer{})

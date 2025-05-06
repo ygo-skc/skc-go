@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
+	_ "google.golang.org/grpc/encoding/gzip"
 )
 
 const (
