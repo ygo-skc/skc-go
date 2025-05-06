@@ -41,6 +41,10 @@ func (c YGOCard) GetColor() string         { return c.Color }
 func (c YGOCard) GetName() string          { return c.Name }
 func (c YGOCard) IsExtraDeckMonster() bool { return isEDColor(c.Color) }
 
+type YGOCards struct {
+	*ygo.Cards
+}
+
 func isEDColor(s string) bool {
 	color := strings.ToUpper(s)
 	return strings.Contains(color, "FUSION") || strings.Contains(color, "SYNCHRO") || strings.Contains(color, "XYZ") || strings.Contains(color, "PENDULUM") || strings.Contains(color, "LINK")
