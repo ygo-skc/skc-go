@@ -25,5 +25,6 @@ func EstablishDBConn() {
 	}
 
 	skcDBConn.SetMaxOpenConns(maxPoolSize)
-	skcDBConn.SetConnMaxIdleTime(10 * time.Minute)
+	skcDBConn.SetConnMaxLifetime(1 * time.Hour)
+	skcDBConn.SetConnMaxIdleTime(30 * time.Minute)
 }
