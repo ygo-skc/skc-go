@@ -12,6 +12,9 @@ type Product struct {
 	Content     []ProductContent `json:"productContent,omitempty"`
 }
 
+func (c Product) GetID() string   { return c.ID }
+func (c Product) GetName() string { return c.Name }
+
 type ProductContent struct {
 	Card            YGOCardREST `json:"card"`
 	ProductPosition string      `json:"productPosition"`

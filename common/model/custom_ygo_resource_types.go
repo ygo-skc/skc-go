@@ -1,5 +1,10 @@
 package model
 
+type YGOResource interface {
+	GetID() string
+	GetName() string
+}
+
 type QuotedToken = string
 
 // identifier arrays
