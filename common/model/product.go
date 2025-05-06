@@ -13,7 +13,7 @@ type Product struct {
 }
 
 type ProductContent struct {
-	Card            Card     `json:"card"`
-	ProductPosition string   `json:"productPosition"`
-	Rarities        []string `json:"rarities"`
+	Card            YGOCardREST `json:"card"`
+	ProductPosition string      `json:"productPosition"`
+	Rarities        []string    `json:"rarities"`
 }

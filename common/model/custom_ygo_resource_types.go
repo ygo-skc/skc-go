@@ -3,7 +3,6 @@ package model
 type QuotedToken = string
 
 // identifier arrays
-
 type CardIDs []string
 type CardNames []string
 type ProductIDs []string
@@ -13,7 +12,7 @@ type IdentifierSlice interface {
 }
 
 // data maps
-type CardDataMap map[string]CardDescriptor
+type CardDataMap map[string]YGOCard
 type ProductDataMap map[string]Product
 
 // finds all card IDs not found in CardDataMap keys
