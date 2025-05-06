@@ -14,9 +14,10 @@ import (
 
 func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*ygo.Card, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
-	logger.Info(fmt.Sprintf("Fetching card details using %v", req))
+	logger.Info(fmt.Sprintf("Fetching card details using cardID %v", req.ID))
 
 	if c, err := skcDBInterface.GetDesiredCardInDBUsingID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
+		logger.Info(fmt.Sprintf("%s Not found in DB", req.ID))
 		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
 	} else if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
@@ -28,17 +29,21 @@ func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*y
 
 func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (*ygo.Cards, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
-	logger.Info(fmt.Sprintf("Fetching card details using %v", req))
+	logger.Info(fmt.Sprintf("Fetching card details using cardIDs: %v", req.IDs))
 
-	if cards, err := skcDBInterface.GetDesiredCardInDBUsingMultipleCardIDs(ctx, req.IDs); err != nil && err.StatusCode == http.StatusNotFound {
-		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
-	} else if err != nil {
+	if cards, err := skcDBInterface.GetDesiredCardInDBUsingMultipleCardIDs(ctx, req.IDs); err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
 		pbCards := make(map[string]*ygo.Card, len(cards.CardInfo))
-		for _, c := range cards.CardInfo {
-			pbCards[c.GetID()] = c.(model.Card).ToPB()
+		validIDs := make(model.CardIDs, len(cards.CardInfo))
+		ind := 0
+		for id, c := range cards.CardInfo {
+			pbCards[id] = c.(model.Card).ToPB()
+			validIDs[ind] = id
+			ind++
 		}
+
+		logger.Info(fmt.Sprintf("Valid card IDs: %v. Invalid IDs: %v", validIDs, cards.UnknownResources))
 		return &ygo.Cards{CardInfo: pbCards, UnknownResources: cards.UnknownResources}, nil
 	}
 }
