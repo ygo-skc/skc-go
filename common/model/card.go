@@ -27,19 +27,19 @@ type Card struct {
 	Defense     *uint32 `db:"monster_defense" json:"monsterDefense,omitempty"`
 }
 
-func (c Card) GetID() string            { return c.ID }
-func (c Card) GetColor() string         { return c.Color }
-func (c Card) GetName() string          { return c.Name }
-func (c Card) IsExtraDeckMonster() bool { return isEDColor(c.Color) }
+func (c *Card) GetID() string            { return c.ID }
+func (c *Card) GetColor() string         { return c.Color }
+func (c *Card) GetName() string          { return c.Name }
+func (c *Card) IsExtraDeckMonster() bool { return isEDColor(c.Color) }
 
 type YGOCard struct {
 	*ygo.Card
 }
 
-func (c YGOCard) GetID() string            { return c.ID }
-func (c YGOCard) GetColor() string         { return c.Color }
-func (c YGOCard) GetName() string          { return c.Name }
-func (c YGOCard) IsExtraDeckMonster() bool { return isEDColor(c.Color) }
+func (c *YGOCard) GetID() string            { return c.ID }
+func (c *YGOCard) GetColor() string         { return c.Color }
+func (c *YGOCard) GetName() string          { return c.Name }
+func (c *YGOCard) IsExtraDeckMonster() bool { return isEDColor(c.Color) }
 
 func isEDColor(s string) bool {
 	color := strings.ToUpper(s)
