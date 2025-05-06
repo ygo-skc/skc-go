@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/ygo-skc/skc-go/common/model"
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 	"google.golang.org/grpc/codes"
@@ -36,7 +37,7 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 	} else {
 		pbCards := make(map[string]*ygo.Card, len(cards.CardInfo))
 		for _, c := range cards.CardInfo {
-			pbCards[c.ID] = c.ToPB()
+			pbCards[c.GetID()] = c.(model.Card).ToPB()
 		}
 		return &ygo.Cards{CardInfo: pbCards, UnknownResources: cards.UnknownResources}, nil
 	}

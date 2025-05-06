@@ -31,13 +31,13 @@ func TestIsCardNameFoundInTokens(t *testing.T) {
 
 	// exact match
 	scenario := Card{Name: "Elemental HERO Air Neos"}
-	assert.Equal(true, scenario.IsCardNameInTokens(tokens), fmt.Sprintf("%s expected to be in tokens %v", scenario.Name, tokens))
+	assert.Equal(true, IsCardNameInTokens(scenario, tokens), fmt.Sprintf("%s expected to be in tokens %v", scenario.Name, tokens))
 
 	// this method ignores case - so should be in token array
 	scenario = Card{Name: "Elemental Hero Air Neos"}
-	assert.Equal(true, scenario.IsCardNameInTokens(tokens), "Expected to find return true as method ignores case")
+	assert.Equal(true, IsCardNameInTokens(scenario, tokens), "Expected to find return true as method ignores case")
 
 	// not found in token array
 	scenario = Card{Name: "HEROs"}
-	assert.Equal(false, scenario.IsCardNameInTokens(tokens), fmt.Sprintf("%s not expected to be in tokens %v", scenario.Name, tokens))
+	assert.Equal(false, IsCardNameInTokens(scenario, tokens), fmt.Sprintf("%s not expected to be in tokens %v", scenario.Name, tokens))
 }

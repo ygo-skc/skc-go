@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/ygo-skc/skc-go/common/model"
 	cModel "github.com/ygo-skc/skc-go/common/model"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 )
@@ -107,7 +108,7 @@ func (imp SKCDAOImplementation) GetDesiredCardInDBUsingID(ctx context.Context, c
 		if card, exists := results.CardInfo[cardID]; !exists {
 			return cModel.Card{}, &cModel.APIError{Message: fmt.Sprintf("No results found when querying by card ID %s", cardID), StatusCode: http.StatusNotFound}
 		} else {
-			return card, nil
+			return card.(model.Card), nil
 		}
 	}
 }
