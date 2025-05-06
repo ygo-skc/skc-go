@@ -28,7 +28,8 @@ services:
           "service": "ygo-service",
           "log_processing_rules": [{
             "type": "exclude_at_match",
-            "name": "exclude_health_check"
+            "name": "exclude_health_check",
+            "pattern" : "\"operation\":\"Status\""
           }]
         }]
       com.datadoghq.tags.env: "prod"
