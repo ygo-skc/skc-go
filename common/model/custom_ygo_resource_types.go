@@ -13,8 +13,7 @@ type IdentifierSlice interface {
 }
 
 // data maps
-
-type CardDataMap map[string]Card
+type CardDataMap map[string]CardDescriptor
 type ProductDataMap map[string]Product
 
 // finds all card IDs not found in CardDataMap keys
