@@ -16,7 +16,7 @@ func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*y
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
 	logger.Info(fmt.Sprintf("Fetching card details using cardID %v", req.ID))
 
-	if c, err := skcDBInterface.GetDesiredCardInDBUsingID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
+	if c, err := skcDBInterface.GetCardByID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
 		logger.Info(fmt.Sprintf("%s Not found in DB", req.ID))
 		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
 	} else if err != nil {
@@ -31,7 +31,7 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
 	logger.Info(fmt.Sprintf("Fetching card details using cardIDs: %v", req.IDs))
 
-	if cards, err := skcDBInterface.GetDesiredCardInDBUsingMultipleCardIDs(ctx, req.IDs); err != nil {
+	if cards, err := skcDBInterface.GetCardsByIDs(ctx, req.IDs); err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
 		pbCards := make(map[string]*ygo.Card, len(cards.CardInfo))

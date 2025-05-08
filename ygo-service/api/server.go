@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	skcDBInterface db.SKCDatabaseAccessObject = db.SKCDAOImplementation{}
+	skcDBInterface db.CardRepository = db.YGOCardRepository{}
 )
 
 const (
