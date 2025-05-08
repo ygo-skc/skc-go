@@ -9,9 +9,8 @@ import (
 )
 
 type YGOCard interface {
-	GetID() string
+	YGOResource
 	GetColor() string
-	GetName() string
 	GetAttribute() string
 	GetEffect() string
 	GetMonsterType() *string
