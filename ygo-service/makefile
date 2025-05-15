@@ -9,7 +9,7 @@ generate-grpc:
 
 build:
 	go mod tidy
-	env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" .
+	env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -trimpath .
 
 clean:
 	rm -rf "${API_HEALTH_GRPC_DIR}"

@@ -52,6 +52,8 @@ func RunService() {
 				MinTime:             30 * time.Second, // prevents clients from sending pings too often
 				PermitWithoutStream: true,             // allow pings when no active RPC
 			}))
+
+		// register services
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
 		ygo.RegisterCardServiceServer(grpcServer, &ygoServiceServer{})
 
