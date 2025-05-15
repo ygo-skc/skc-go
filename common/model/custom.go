@@ -20,7 +20,7 @@ type IdentifierSlice interface {
 
 // data maps
 type CardDataMap map[string]YGOCard
-type ProductDataMap map[string]YGOProductREST
+type ProductDataMap map[string]YGOProduct
 
 // finds all card IDs not found in CardDataMap keys
 func (cardData CardDataMap) FindMissingIDs(cardIDs CardIDs) CardIDs {
