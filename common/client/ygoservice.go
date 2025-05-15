@@ -1,4 +1,4 @@
-package ygo
+package client
 
 import (
 	"crypto/tls"
@@ -6,17 +6,19 @@ import (
 	"log/slog"
 	"time"
 
-	grpc "google.golang.org/grpc"
+	"github.com/ygo-skc/skc-go/common/ygo"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
-func CreateCardServiceClient(sslServerName string, serviceHost string) (*CardServiceClient, error) {
+func CreateCardServiceClient(sslServerName string, serviceHost string) (*ygo.CardServiceClient, error) {
 	slog.Info(fmt.Sprintf("Creating Card Service gRPC Client using SSL Server Name %s and Host %s",
 		sslServerName,
 		serviceHost))
 
 	creds := credentials.NewTLS(&tls.Config{
+
 		InsecureSkipVerify: false,
 		ServerName:         sslServerName,
 	})
@@ -48,6 +50,6 @@ func CreateCardServiceClient(sslServerName string, serviceHost string) (*CardSer
 		return nil, err
 	}
 
-	CardServiceClient := NewCardServiceClient(conn)
+	CardServiceClient := ygo.NewCardServiceClient(conn)
 	return &CardServiceClient, nil
 }
