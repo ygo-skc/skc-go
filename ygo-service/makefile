@@ -1,3 +1,5 @@
+.PHONY: all deps clean build generate-grpc help
+
 # vars
 API_HEALTH_GRPC_DIR := ./health
 
