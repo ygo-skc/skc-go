@@ -24,7 +24,7 @@ message Card {
   string name = 3;
   string attribute = 4;
   string effect = 5;
-  google.protobuf.StringValue monster_type = 6;
+  google.protobuf.StringValue monster_type = 6 [json_name = "monsterType"];
   google.protobuf.UInt32Value attack = 7;
   google.protobuf.UInt32Value defense = 8;
 }

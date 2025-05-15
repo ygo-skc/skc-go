@@ -114,18 +114,15 @@ func GetPotentialMaterialsAsString(c YGOCard) string {
 }
 
 func IsCardNameInTokens(c YGOCard, tokens []QuotedToken) bool {
-	isFound := false
-
 	for _, token := range tokens {
 		CleanupToken(&token)
 
 		if strings.EqualFold(c.GetName(), token) {
-			isFound = true
-			break
+			return true
 		}
 	}
 
-	return isFound
+	return false
 }
 
 func (c YGOCards) SortCardsByName() {
