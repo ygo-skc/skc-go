@@ -1,6 +1,8 @@
 package model
 
-import "github.com/ygo-skc/skc-go/common/ygo"
+import (
+	"github.com/ygo-skc/skc-go/common/ygo"
+)
 
 type YGOResource interface {
 	GetID() string
@@ -92,7 +94,7 @@ type BatchData[IS IdentifierSlice] interface {
 func BatchCardDataFromPB(c *ygo.Cards) *BatchCardData[CardIDs] {
 	batchCardData := make(CardDataMap, len(c.CardInfo))
 	for k, v := range c.CardInfo {
-		batchCardData[k] = YGOCardGRPC{Card: v}
+		batchCardData[k] = YGOCardRESTFromPB(v)
 	}
 	return &BatchCardData[CardIDs]{CardInfo: batchCardData, UnknownResources: c.UnknownResources}
 }

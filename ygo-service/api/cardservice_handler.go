@@ -28,7 +28,7 @@ func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*y
 }
 
 func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (*ygo.Cards, error) {
-	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
+	logger, ctx := util.NewRequestSetup(ctx, "Query Cards")
 	logger.Info(fmt.Sprintf("Fetching card details using cardIDs: %v", req.IDs))
 
 	if cards, err := skcDBInterface.GetCardsByIDs(ctx, req.IDs); err != nil {
