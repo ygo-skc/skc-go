@@ -38,6 +38,9 @@ func QueryCards[T *ygo.Cards | *model.BatchCardData[model.CardIDs]](ctx context.
 				"Query Cards", status.Code(err), err))
 		return nil, &model.APIError{Message: "There was an error fetching batch card info", StatusCode: http.StatusInternalServerError}
 	} else {
+		if cards.UnknownResources == nil {
+			cards.UnknownResources = make([]string, 0)
+		}
 		return transformer(cards), nil
 	}
 }
