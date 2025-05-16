@@ -14,10 +14,9 @@ import (
 
 func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*ygo.Card, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
-	logger.Info(fmt.Sprintf("Fetching card details using cardID %v", req.ID))
+	logger.Info(fmt.Sprintf("Fetching card details using card ID: %v", req.ID))
 
 	if c, err := skcDBInterface.GetCardByID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
-		logger.Info(fmt.Sprintf("%s Not found in DB", req.ID))
 		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
 	} else if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
@@ -29,7 +28,7 @@ func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*y
 
 func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (*ygo.Cards, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Cards")
-	logger.Info(fmt.Sprintf("Fetching card details using cardIDs: %v", req.IDs))
+	logger.Info(fmt.Sprintf("Fetching card details using card ID's: %v", req.IDs))
 
 	if cards, err := skcDBInterface.GetCardsByIDs(ctx, req.IDs); err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
@@ -43,7 +42,6 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 			ind++
 		}
 
-		logger.Info(fmt.Sprintf("Valid card IDs: %v. Invalid IDs: %v", validIDs, cards.UnknownResources))
 		return &ygo.Cards{CardInfo: pbCards, UnknownResources: cards.UnknownResources}, nil
 	}
 }
