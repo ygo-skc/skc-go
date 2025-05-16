@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/google/uuid"
+	"google.golang.org/grpc/metadata"
 )
 
 func init() {
@@ -32,6 +33,15 @@ func LoggerFromContext(ctx context.Context) *slog.Logger {
 
 func NewRequestSetup(ctx context.Context, operation string, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
 	defaults := []any{slog.String("requestID", uuid.New().String()), slog.String("operation", operation)}
+
+	if md, ok := metadata.FromIncomingContext(ctx); ok {
+		if clientID := md.Get("client-id"); len(clientID) > 0 && clientID[0] != "" {
+			defaults = append(defaults, slog.String("clientID", clientID[0]))
+		}
+		if flow := md.Get("flow"); len(flow) > 0 && flow[0] != "" {
+			defaults = append(defaults, slog.String("flow", flow[0]))
+		}
+	}
 
 	for _, customAttribute := range customAttributes {
 		defaults = append(defaults, customAttribute)
