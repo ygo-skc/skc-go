@@ -39,7 +39,7 @@ func LoggerFromContext(ctx context.Context) *slog.Logger {
 
 func NewRequestSetup(ctx context.Context, flow string, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
 	defaults := []any{
-		slog.String(traceIDKey, uuid.New().String()),
+		slog.String(traceIDKey, traceFromContext(ctx)),
 		slog.String(spanIDKey, uuid.New().String()),
 		slog.String(flowKey, flow),
 	}
