@@ -42,6 +42,7 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 			ind++
 		}
 
+		logger.Info(fmt.Sprintf("The following Card ID's were invalid: %v", cards.UnknownResources))
 		return &ygo.Cards{CardInfo: pbCards, UnknownResources: cards.UnknownResources}, nil
 	}
 }

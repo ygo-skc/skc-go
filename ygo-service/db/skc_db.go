@@ -65,7 +65,5 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs []string
 		}
 	}
 
-	cd := model.BatchCardData[model.CardIDs]{CardInfo: cardData, UnknownResources: cardData.FindMissingIDs(cardIDs)}
-	logger.Info(fmt.Sprintf("The following Card ID's were invalid: %v", cd.UnknownResources))
-	return cd, nil
+	return model.BatchCardData[model.CardIDs]{CardInfo: cardData, UnknownResources: cardData.FindMissingIDs(cardIDs)}, nil
 }
