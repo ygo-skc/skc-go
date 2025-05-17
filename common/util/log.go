@@ -20,6 +20,12 @@ type contextKey string
 
 const (
 	loggerKey contextKey = "logger"
+
+	traceIDKey         = "trace_id"
+	spanIDKey          = "span_id"
+	flowKey            = "app.flow"
+	originatingFlowKey = "app.origin"
+	clientIDKey        = "client.id"
 )
 
 func LoggerFromContext(ctx context.Context) *slog.Logger {
@@ -31,15 +37,22 @@ func LoggerFromContext(ctx context.Context) *slog.Logger {
 	}
 }
 
-func NewRequestSetup(ctx context.Context, operation string, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
-	defaults := []any{slog.String("requestID", uuid.New().String()), slog.String("operation", operation)}
+func NewRequestSetup(ctx context.Context, flow string, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
+	defaults := []any{
+		slog.String(traceIDKey, uuid.New().String()),
+		slog.String(spanIDKey, uuid.New().String()),
+		slog.String(flowKey, flow),
+	}
 
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
-		if clientID := md.Get(clientIDMetaName); len(clientID) > 0 && clientID[0] != "" {
-			defaults = append(defaults, slog.String("clientID", clientID[0]))
-		}
 		if flow := md.Get(flowMetaName); len(flow) > 0 && flow[0] != "" {
-			defaults = append(defaults, slog.String("flow", flow[0]))
+			defaults = append(defaults, slog.String(originatingFlowKey, flow[0]))
+		}
+		if clientID := md.Get(clientIDMetaName); len(clientID) > 0 && clientID[0] != "" {
+			defaults = append(defaults, slog.String(clientIDKey, clientID[0]))
+		}
+		if traceID := md.Get(traceMetaName); len(traceID) > 0 && traceID[0] != "" {
+			defaults = append(defaults, slog.String(traceIDKey, traceID[0])) // overrides default
 		}
 	}
 

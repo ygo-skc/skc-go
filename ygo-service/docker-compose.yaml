@@ -29,7 +29,7 @@ services:
           "log_processing_rules": [{
             "type": "exclude_at_match",
             "name": "exclude_health_check",
-            "pattern" : "\"operation\":\"Status\""
+            "pattern" : "\"app.flow\":\"Status\""
           }]
         }]
       com.datadoghq.tags.env: "prod"
