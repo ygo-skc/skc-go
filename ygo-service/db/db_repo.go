@@ -11,6 +11,7 @@ import (
 
 	"github.com/ygo-skc/skc-go/common/model"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
+	"github.com/ygo-skc/skc-go/common/ygo"
 )
 
 var (
@@ -39,7 +40,7 @@ type CardRepository interface {
 	GetCardByID(context.Context, string) (model.YGOCardREST, *model.APIError)
 	GetCardsByIDs(context.Context, []string) (model.BatchCardData[model.CardIDs], *model.APIError)
 
-	GetRandomCard(context.Context, []string) (model.YGOCardREST, *model.APIError)
+	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
 }
 
 func convertToFullText(subject string) string {

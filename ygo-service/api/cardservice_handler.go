@@ -54,6 +54,6 @@ func (s *ygoServiceServer) RandomCard(ctx context.Context, req *ygo.BlackListedR
 	if c, err := skcDBInterface.GetRandomCard(ctx, req.BlackListedRefs); err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
-		return c.ToPB(), nil
+		return c, nil
 	}
 }

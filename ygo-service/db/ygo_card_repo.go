@@ -3,10 +3,13 @@ package db
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/ygo-skc/skc-go/common/model"
+	"github.com/ygo-skc/skc-go/common/util"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
+	"github.com/ygo-skc/skc-go/common/ygo"
 )
 
 type YGOCardRepository struct{}
@@ -67,15 +70,13 @@ func (imp YGOCardRepository) GetCardsByIDs(
 func (imp YGOCardRepository) GetRandomCard(
 	ctx context.Context,
 	blacklistedCards []string,
-) (model.YGOCardREST, *model.APIError) {
+) (*ygo.Card, *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
-	var card model.YGOCardREST
-
-	var query string
-	var args []interface{}
 
 	// pick correct query based on contents of blacklistedCards
 	numBlackListed := len(blacklistedCards)
+	var query string
+	var args []interface{}
 	if numBlackListed == 0 {
 		query = randomCardQuery
 	} else {
@@ -83,12 +84,28 @@ func (imp YGOCardRepository) GetRandomCard(
 		query = fmt.Sprintf(randomCardWithBlackListQuery, variablePlaceholders(numBlackListed))
 	}
 
-	if err := skcDBConn.QueryRow(query, args...).Scan(
-		&card.ID, &card.Color, &card.Name, &card.Attribute, &card.Effect,
-		&card.MonsterType, &card.Attack, &card.Defense); err != nil {
-		return card, handleQueryError(logger, err)
+	c, err := queryCard(logger, query, args)
+	logger.Info(fmt.Sprintf("Random card determined to be; ID: %s, Name: %s", c.ID, c.Name))
+	return c, err
+}
+
+func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *model.APIError) {
+	var id, color, name, attribute, effect string
+	var monsterType *string
+	var atk, def *uint32
+
+	if err := skcDBConn.QueryRow(query, args...).Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+		return nil, handleQueryError(logger, err)
 	}
 
-	logger.Info(fmt.Sprintf("Random card determined to be; ID: %s, Name: %s", card.ID, card.Name))
-	return card, nil
+	return &ygo.Card{
+		ID:          id,
+		Color:       color,
+		Name:        name,
+		Attribute:   attribute,
+		Effect:      effect,
+		MonsterType: util.PBStringValue(monsterType),
+		Attack:      util.PBUInt32Value(atk),
+		Defense:     util.PBUInt32Value(def),
+	}, nil
 }
