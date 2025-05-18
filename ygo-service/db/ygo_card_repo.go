@@ -9,12 +9,6 @@ import (
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 )
 
-type CardRepository interface {
-	GetDBVersion(context.Context) (string, error)
-
-	GetCardByID(context.Context, string) (model.YGOCardREST, *model.APIError)
-	GetCardsByIDs(context.Context, []string) (model.BatchCardData[model.CardIDs], *model.APIError)
-}
 type YGOCardRepository struct{}
 
 // Get version of MYSQL being used by SKC DB.
@@ -45,7 +39,9 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (mo
 	}
 }
 
-func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs []string) (model.BatchCardData[model.CardIDs], *model.APIError) {
+func (imp YGOCardRepository) GetCardsByIDs(
+	ctx context.Context, cardIDs []string,
+) (model.BatchCardData[model.CardIDs], *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
@@ -56,7 +52,7 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs []string
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return model.BatchCardData[model.CardIDs]{}, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCard(ctx, rows); err != nil {
+		if cards, err := parseRowsForCards(ctx, rows); err != nil {
 			return model.BatchCardData[model.CardIDs]{}, err
 		} else {
 			for _, card := range cards {
@@ -66,4 +62,31 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs []string
 	}
 
 	return model.BatchCardData[model.CardIDs]{CardInfo: cardData, UnknownResources: cardData.FindMissingIDs(cardIDs)}, nil
+}
+
+func (imp YGOCardRepository) GetRandomCard(
+	ctx context.Context,
+	blacklistedCards []string,
+) (model.YGOCardREST, *model.APIError) {
+	logger := cUtil.LoggerFromContext(ctx)
+	var card model.YGOCardREST
+
+	var query string
+	var args []interface{}
+
+	// pick correct query based on contents of blacklistedCards
+	numBlackListed := len(blacklistedCards)
+	if numBlackListed == 0 {
+		query = randomCardQuery
+	} else {
+		args, _ = buildVariableQuerySubjects(blacklistedCards)
+		query = fmt.Sprintf(randomCardWithBlackListQuery, variablePlaceholders(numBlackListed))
+	}
+
+	if err := skcDBConn.QueryRow(query, args...).Scan(
+		&card.ID, &card.Color, &card.Name, &card.Attribute, &card.Effect,
+		&card.MonsterType, &card.Attack, &card.Defense); err != nil {
+		return card, handleQueryError(logger, err)
+	}
+	return card, nil
 }
