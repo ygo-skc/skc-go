@@ -29,8 +29,8 @@ const (
 	cardByCardIDQuery   = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number = ?"
 	cardsByCardIDsQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number IN (%s)"
 
-	randomCardQuery              = "SELECT card_number FROM card_info WHERE card_color != 'Token' ORDER BY RAND() LIMIT 1"
-	randomCardWithBlackListQuery = "SELECT card_number FROM card_info WHERE card_number NOT IN (%s) AND card_color != 'Token' ORDER BY RAND() LIMIT 1"
+	randomCardQuery              = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_color != 'Token' ORDER BY RAND() LIMIT 1"
+	randomCardWithBlackListQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number NOT IN (%s) AND card_color != 'Token' ORDER BY RAND() LIMIT 1"
 )
 
 type CardRepository interface {
@@ -39,7 +39,7 @@ type CardRepository interface {
 	GetCardByID(context.Context, string) (model.YGOCardREST, *model.APIError)
 	GetCardsByIDs(context.Context, []string) (model.BatchCardData[model.CardIDs], *model.APIError)
 
-	GetRandomCard(context.Context, []string) (string, *model.APIError)
+	GetRandomCard(context.Context, []string) (model.YGOCardREST, *model.APIError)
 }
 
 func convertToFullText(subject string) string {

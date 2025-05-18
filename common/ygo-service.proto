@@ -8,6 +8,8 @@ import "google/protobuf/wrappers.proto";
 service CardService {
   rpc QueryCard (Resource) returns (Card);
   rpc QueryCards (Resources) returns (Cards);
+
+  rpc RandomCard (BlackListedResources) returns (Card);
 }
 
 message Resource {
@@ -16,6 +18,10 @@ message Resource {
 
 message Resources {
   repeated string IDs = 1;
+}
+
+message BlackListedResources {
+  repeated string black_listed_refs = 1;
 }
 
 message Card {

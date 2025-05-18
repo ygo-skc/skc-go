@@ -88,5 +88,7 @@ func (imp YGOCardRepository) GetRandomCard(
 		&card.MonsterType, &card.Attack, &card.Defense); err != nil {
 		return card, handleQueryError(logger, err)
 	}
+
+	logger.Info(fmt.Sprintf("Random card determined to be; ID: %s, Name: %s", card.ID, card.Name))
 	return card, nil
 }

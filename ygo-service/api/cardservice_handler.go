@@ -46,3 +46,14 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 		return &ygo.Cards{CardInfo: pbCards, UnknownResources: cards.UnknownResources}, nil
 	}
 }
+
+func (s *ygoServiceServer) RandomCard(ctx context.Context, req *ygo.BlackListedResources) (*ygo.Card, error) {
+	logger, ctx := util.NewRequestSetup(ctx, "Random Card")
+	logger.Info(fmt.Sprintf("Getting random card from DB. Client has provided %d blacklisted IDs", len(req.BlackListedRefs)))
+
+	if c, err := skcDBInterface.GetRandomCard(ctx, req.BlackListedRefs); err != nil {
+		return nil, status.Errorf(codes.Internal, "%s", err.Message)
+	} else {
+		return c.ToPB(), nil
+	}
+}
