@@ -39,7 +39,7 @@ type CardRepository interface {
 	GetDBVersion(context.Context) (string, error)
 
 	GetCardByID(context.Context, string) (*ygo.Card, *model.APIError)
-	GetCardsByIDs(context.Context, []string) (model.BatchCardData[model.CardIDs], *model.APIError)
+	GetCardsByIDs(context.Context, []string) (*ygo.Cards, *model.APIError)
 
 	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
 }
@@ -109,17 +109,29 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 	}, nil
 }
 
-func parseRowsForCards(ctx context.Context, rows *sql.Rows) ([]model.YGOCardREST, *model.APIError) {
-	cards := []model.YGOCardREST{}
+func parseRowsForCards(ctx context.Context, rows *sql.Rows) (*map[string]*ygo.Card, *model.APIError) {
+	cards := make(map[string]*ygo.Card)
 
 	for rows.Next() {
-		var card model.YGOCardREST
-		if err := rows.Scan(&card.ID, &card.Color, &card.Name, &card.Attribute, &card.Effect, &card.MonsterType, &card.Attack, &card.Defense); err != nil {
+		var id, color, name, attribute, effect string
+		var monsterType *string
+		var atk, def *uint32
+
+		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return nil, handleRowParsingError(cUtil.LoggerFromContext(ctx), err)
 		} else {
-			cards = append(cards, card)
+			cards[id] = &ygo.Card{
+				ID:          id,
+				Color:       color,
+				Name:        name,
+				Attribute:   attribute,
+				Effect:      effect,
+				MonsterType: util.PBStringValue(monsterType),
+				Attack:      util.PBUInt32Value(atk),
+				Defense:     util.PBUInt32Value(def),
+			}
 		}
 	}
 
-	return cards, nil // no parsing error
+	return &cards, nil // no parsing error
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ygo-skc/skc-go/common/model"
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 	"google.golang.org/grpc/codes"
@@ -32,17 +31,8 @@ func (s *ygoServiceServer) QueryCards(ctx context.Context, req *ygo.Resources) (
 	if cards, err := skcDBInterface.GetCardsByIDs(ctx, req.IDs); err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
-		pbCards := make(map[string]*ygo.Card, len(cards.CardInfo))
-		validIDs := make(model.CardIDs, len(cards.CardInfo))
-		ind := 0
-		for id, c := range cards.CardInfo {
-			pbCards[id] = c.(model.YGOCardREST).ToPB()
-			validIDs[ind] = id
-			ind++
-		}
-
 		logger.Info(fmt.Sprintf("The following Card ID's were invalid: %v", cards.UnknownResources))
-		return &ygo.Cards{CardInfo: pbCards, UnknownResources: cards.UnknownResources}, nil
+		return cards, nil
 	}
 }
 

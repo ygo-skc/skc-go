@@ -39,27 +39,24 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 
 func (imp YGOCardRepository) GetCardsByIDs(
 	ctx context.Context, cardIDs []string,
-) (model.BatchCardData[model.CardIDs], *model.APIError) {
+) (*ygo.Cards, *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
-	cardData := make(model.CardDataMap, numCards) // used to store results
 
 	query := fmt.Sprintf(cardsByCardIDsQuery, variablePlaceholders(numCards))
-
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
-		return model.BatchCardData[model.CardIDs]{}, handleQueryError(logger, err)
+		return nil, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCards(ctx, rows); err != nil {
-			return model.BatchCardData[model.CardIDs]{}, err
+			return nil, err
 		} else {
-			for _, card := range cards {
-				cardData[card.ID] = card
-			}
+			return &ygo.Cards{
+				CardInfo:         *cards,
+				UnknownResources: model.FindMissingIDs(*cards, cardIDs),
+			}, nil
 		}
 	}
-
-	return model.BatchCardData[model.CardIDs]{CardInfo: cardData, UnknownResources: cardData.FindMissingIDs(cardIDs)}, nil
 }
 
 func (imp YGOCardRepository) GetRandomCard(
