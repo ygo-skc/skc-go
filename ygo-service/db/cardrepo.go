@@ -3,11 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"net/http"
 
 	"github.com/ygo-skc/skc-go/common/model"
-	"github.com/ygo-skc/skc-go/common/util"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 )
@@ -25,21 +23,18 @@ func (imp YGOCardRepository) GetDBVersion(ctx context.Context) (string, error) {
 	return version, nil
 }
 
-// Leverages GetCardsByIDs to get information on a specific card using its identifier
-func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (model.YGOCardREST, *model.APIError) {
+func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
 
-	if results, err := imp.GetCardsByIDs(ctx, []string{cardID}); err != nil {
-		return model.YGOCardREST{}, err
+	args := make([]interface{}, 1)
+	args[0] = cardID
+	c, err := queryCard(logger, cardByCardIDQuery, args)
+	if err != nil && err.StatusCode == http.StatusNotFound {
+		logger.Info("Card ID is not valid")
 	} else {
-		if card, exists := results.CardInfo[cardID]; !exists {
-			logger.Warn("Card ID isn't valid")
-			return model.YGOCardREST{}, &model.APIError{Message: fmt.Sprintf("No results found when querying by card ID %s", cardID), StatusCode: http.StatusNotFound}
-		} else {
-			logger.Info("Card ID is valid")
-			return card.(model.YGOCardREST), nil
-		}
+		logger.Info("Card ID is valid")
 	}
+	return c, err
 }
 
 func (imp YGOCardRepository) GetCardsByIDs(
@@ -87,25 +82,4 @@ func (imp YGOCardRepository) GetRandomCard(
 	c, err := queryCard(logger, query, args)
 	logger.Info(fmt.Sprintf("Random card determined to be; ID: %s, Name: %s", c.ID, c.Name))
 	return c, err
-}
-
-func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *model.APIError) {
-	var id, color, name, attribute, effect string
-	var monsterType *string
-	var atk, def *uint32
-
-	if err := skcDBConn.QueryRow(query, args...).Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
-		return nil, handleQueryError(logger, err)
-	}
-
-	return &ygo.Card{
-		ID:          id,
-		Color:       color,
-		Name:        name,
-		Attribute:   attribute,
-		Effect:      effect,
-		MonsterType: util.PBStringValue(monsterType),
-		Attack:      util.PBUInt32Value(atk),
-		Defense:     util.PBUInt32Value(def),
-	}, nil
 }

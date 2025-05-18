@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/ygo-skc/skc-go/common/model"
+	"github.com/ygo-skc/skc-go/common/util"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 )
@@ -37,7 +38,7 @@ const (
 type CardRepository interface {
 	GetDBVersion(context.Context) (string, error)
 
-	GetCardByID(context.Context, string) (model.YGOCardREST, *model.APIError)
+	GetCardByID(context.Context, string) (*ygo.Card, *model.APIError)
 	GetCardsByIDs(context.Context, []string) (model.BatchCardData[model.CardIDs], *model.APIError)
 
 	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
@@ -72,12 +73,40 @@ func variablePlaceholders(totalFields int) string {
 
 func handleQueryError(logger *slog.Logger, err error) *model.APIError {
 	logger.Error(fmt.Sprintf("Error fetching data from DB - %v", err))
+
+	if err == sql.ErrNoRows {
+		return &model.APIError{
+			Message:    "No results found",
+			StatusCode: http.StatusNotFound,
+		}
+	}
 	return &model.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
 }
 
 func handleRowParsingError(logger *slog.Logger, err error) *model.APIError {
 	logger.Error(fmt.Sprintf("Error parsing data from DB - %v", err))
 	return &model.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
+}
+
+func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *model.APIError) {
+	var id, color, name, attribute, effect string
+	var monsterType *string
+	var atk, def *uint32
+
+	if err := skcDBConn.QueryRow(query, args...).Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+
+	return &ygo.Card{
+		ID:          id,
+		Color:       color,
+		Name:        name,
+		Attribute:   attribute,
+		Effect:      effect,
+		MonsterType: util.PBStringValue(monsterType),
+		Attack:      util.PBUInt32Value(atk),
+		Defense:     util.PBUInt32Value(def),
+	}, nil
 }
 
 func parseRowsForCards(ctx context.Context, rows *sql.Rows) ([]model.YGOCardREST, *model.APIError) {

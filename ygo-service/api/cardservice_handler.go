@@ -21,8 +21,7 @@ func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*y
 	} else if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
-
-		return c.ToPB(), nil
+		return c, nil
 	}
 }
 
