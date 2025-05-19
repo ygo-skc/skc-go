@@ -44,3 +44,18 @@ func QueryCards[T *ygo.Cards | *model.BatchCardData[model.CardIDs]](ctx context.
 		return transformer(cards), nil
 	}
 }
+
+func RandomCard[T *ygo.Card | *model.YGOCardREST | *model.YGOCardGRPC](ctx context.Context,
+	cardServiceClient ygo.CardServiceClient, blackListedIDs []string, transformer func(*ygo.Card) T) (T, *model.APIError) {
+	logger := util.LoggerFromContext(ctx)
+	logger.Info("Getting random card")
+
+	if cards, err := cardServiceClient.RandomCard(ctx, &ygo.BlackListedResources{BlackListedRefs: blackListedIDs}); err != nil {
+		logger.Error(
+			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
+				"Random Card", status.Code(err), err))
+		return nil, &model.APIError{Message: "There was an error fetching random card", StatusCode: http.StatusInternalServerError}
+	} else {
+		return transformer(cards), nil
+	}
+}
