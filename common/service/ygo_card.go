@@ -9,7 +9,22 @@ import (
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
+
+func CardColors(ctx context.Context, cardServiceClient ygo.CardServiceClient) (*ygo.CardColors, *model.APIError) {
+	logger := util.LoggerFromContext(ctx)
+	logger.Info("Retrieving card colors")
+
+	if cColors, err := cardServiceClient.Colors(ctx, &emptypb.Empty{}); err != nil {
+		logger.Error(
+			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
+				"Query Card", status.Code(err), err))
+		return nil, &model.APIError{Message: "There was an error fetching card info", StatusCode: http.StatusInternalServerError}
+	} else {
+		return cColors, nil
+	}
+}
 
 func QueryCard[T *ygo.Card | *model.YGOCardREST | *model.YGOCardGRPC](ctx context.Context,
 	cardServiceClient ygo.CardServiceClient, cardID string, transformer func(*ygo.Card) T) (T, *model.APIError) {
