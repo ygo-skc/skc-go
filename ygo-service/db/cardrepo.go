@@ -23,6 +23,29 @@ func (imp YGOCardRepository) GetDBVersion(ctx context.Context) (string, error) {
 	return version, nil
 }
 
+// Get IDs for all card colors currently in database.
+func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColors, *model.APIError) {
+	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info("Retrieving card color IDs from DB")
+	cardColorIDs := make(map[string]uint32)
+
+	if rows, err := skcDBConn.Query(cardColorIDsQuery); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		for rows.Next() {
+			var colorId uint32
+			var cardColor string
+
+			if err := rows.Scan(&colorId, &cardColor); err != nil {
+				return nil, handleRowParsingError(logger, err)
+			}
+
+			cardColorIDs[cardColor] = colorId
+		}
+		return &ygo.CardColors{Values: cardColorIDs}, nil
+	}
+}
+
 func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
 

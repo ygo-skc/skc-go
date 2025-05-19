@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	CardService_Colors_FullMethodName     = "/ygo.CardService/Colors"
 	CardService_QueryCard_FullMethodName  = "/ygo.CardService/QueryCard"
 	CardService_QueryCards_FullMethodName = "/ygo.CardService/QueryCards"
 	CardService_RandomCard_FullMethodName = "/ygo.CardService/RandomCard"
@@ -28,6 +30,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CardServiceClient interface {
+	Colors(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*CardColors, error)
 	QueryCard(ctx context.Context, in *Resource, opts ...grpc.CallOption) (*Card, error)
 	QueryCards(ctx context.Context, in *Resources, opts ...grpc.CallOption) (*Cards, error)
 	RandomCard(ctx context.Context, in *BlackListedResources, opts ...grpc.CallOption) (*Card, error)
@@ -39,6 +42,16 @@ type cardServiceClient struct {
 
 func NewCardServiceClient(cc grpc.ClientConnInterface) CardServiceClient {
 	return &cardServiceClient{cc}
+}
+
+func (c *cardServiceClient) Colors(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*CardColors, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CardColors)
+	err := c.cc.Invoke(ctx, CardService_Colors_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *cardServiceClient) QueryCard(ctx context.Context, in *Resource, opts ...grpc.CallOption) (*Card, error) {
@@ -75,6 +88,7 @@ func (c *cardServiceClient) RandomCard(ctx context.Context, in *BlackListedResou
 // All implementations must embed UnimplementedCardServiceServer
 // for forward compatibility.
 type CardServiceServer interface {
+	Colors(context.Context, *emptypb.Empty) (*CardColors, error)
 	QueryCard(context.Context, *Resource) (*Card, error)
 	QueryCards(context.Context, *Resources) (*Cards, error)
 	RandomCard(context.Context, *BlackListedResources) (*Card, error)
@@ -88,6 +102,9 @@ type CardServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCardServiceServer struct{}
 
+func (UnimplementedCardServiceServer) Colors(context.Context, *emptypb.Empty) (*CardColors, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Colors not implemented")
+}
 func (UnimplementedCardServiceServer) QueryCard(context.Context, *Resource) (*Card, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryCard not implemented")
 }
@@ -116,6 +133,24 @@ func RegisterCardServiceServer(s grpc.ServiceRegistrar, srv CardServiceServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&CardService_ServiceDesc, srv)
+}
+
+func _CardService_Colors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CardServiceServer).Colors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CardService_Colors_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CardServiceServer).Colors(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _CardService_QueryCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -179,6 +214,10 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "ygo.CardService",
 	HandlerType: (*CardServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Colors",
+			Handler:    _CardService_Colors_Handler,
+		},
 		{
 			MethodName: "QueryCard",
 			Handler:    _CardService_QueryCard_Handler,

@@ -26,7 +26,7 @@ const (
 
 	// queries
 	dbVersionQuery    = "SELECT VERSION()"
-	queryCardColorIDs = "SELECT color_id, card_color from card_colors ORDER BY color_id"
+	cardColorIDsQuery = "SELECT color_id, card_color from card_colors ORDER BY color_id"
 
 	cardByCardIDQuery   = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number = ?"
 	cardsByCardIDsQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number IN (%s)"
@@ -37,6 +37,7 @@ const (
 
 type CardRepository interface {
 	GetDBVersion(context.Context) (string, error)
+	GetCardColorIDs(context.Context) (*ygo.CardColors, *model.APIError)
 
 	GetCardByID(context.Context, string) (*ygo.Card, *model.APIError)
 	GetCardsByIDs(context.Context, []string) (*ygo.Cards, *model.APIError)

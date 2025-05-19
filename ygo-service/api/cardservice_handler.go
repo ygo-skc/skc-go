@@ -9,7 +9,19 @@ import (
 	"github.com/ygo-skc/skc-go/common/ygo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
+
+func (s *ygoServiceServer) Colors(ctx context.Context, req *emptypb.Empty) (*ygo.CardColors, error) {
+	logger, ctx := util.NewRequestSetup(ctx, "Card Colors")
+	logger.Info("Retrieving card colors")
+
+	if c, err := skcDBInterface.GetCardColorIDs(ctx); err != nil {
+		return nil, status.Errorf(codes.Internal, "%s", err.Message)
+	} else {
+		return c, nil
+	}
+}
 
 func (s *ygoServiceServer) QueryCard(ctx context.Context, req *ygo.Resource) (*ygo.Card, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card")
