@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: ygo-service.proto
+// source: ygo_service.proto
 
 package ygo
 
@@ -232,5 +232,5 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "ygo-service.proto",
+	Metadata: "ygo_service.proto",
 }

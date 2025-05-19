@@ -5,7 +5,7 @@ YGO_GRPC_DIR := ./ygo
 all: deps clean generate-grpc
 
 generate-grpc:
-	protoc --go_out=./ --go-grpc_out=./ ygo-service.proto
+	protoc --go_out=./ --go-grpc_out=./ ygo_service.proto
 
 clean:
 	rm -rf $(YGO_GRPC_DIR)/*.pb.go

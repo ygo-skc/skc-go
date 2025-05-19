@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v5.29.3
-// source: ygo-service.proto
+// source: ygo_service.proto
 
 package ygo
 
@@ -355,7 +355,7 @@ var File_ygo_service_proto protoreflect.FileDescriptor
 
 const file_ygo_service_proto_rawDesc = "" +
 	"\n" +
-	"\x11ygo-service.proto\x12\x03ygo\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1bgoogle/protobuf/empty.proto\"|\n" +
+	"\x11ygo_service.proto\x12\x03ygo\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1bgoogle/protobuf/empty.proto\"|\n" +
 	"\n" +
 	"CardColors\x123\n" +
 	"\x06values\x18\x01 \x03(\v2\x1b.ygo.CardColors.ValuesEntryR\x06values\x1a9\n" +
