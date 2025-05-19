@@ -4,10 +4,19 @@ option go_package = "/ygo";
 package ygo;
 
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
 
 service CardService {
+  rpc Colors(google.protobuf.Empty) returns (CardColors);
+
   rpc QueryCard (Resource) returns (Card);
   rpc QueryCards (Resources) returns (Cards);
+
+  rpc RandomCard (BlackListedResources) returns (Card);
+}
+
+message CardColors {
+  map<string, uint32> values = 1;
 }
 
 message Resource {
@@ -16,6 +25,10 @@ message Resource {
 
 message Resources {
   repeated string IDs = 1;
+}
+
+message BlackListedResources {
+  repeated string black_listed_refs = 1;
 }
 
 message Card {
