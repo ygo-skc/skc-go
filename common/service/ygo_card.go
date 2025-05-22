@@ -15,8 +15,8 @@ import (
 type YGOService interface {
 	GetCardColors(context.Context) (*ygo.CardColors, *model.APIError)
 
-	GetCardByID(context.Context, string) (*ygo.Card, *model.APIError)
-	GetCardByIDREST(context.Context, string) (*model.YGOCardREST, *model.APIError)
+	GetCardByIDProto(context.Context, string) (*ygo.Card, *model.APIError)
+	GetCardByID(context.Context, string) (*model.YGOCard, *model.APIError)
 
 	GetCardsByID(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
 	GetCardsByIDREST(context.Context, model.CardIDs) (*model.BatchCardData[model.CardIDs], *model.APIError)
@@ -24,20 +24,18 @@ type YGOService interface {
 	GetCardsByName(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
 	GetCardsByNameREST(context.Context, model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError)
 
-	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
-	GetRandomCardREST(context.Context, []string) (*model.YGOCardREST, *model.APIError)
+	GetRandomCardPB(context.Context, []string) (*ygo.Card, *model.APIError)
+	GetRandomCard(context.Context, []string) (*model.YGOCard, *model.APIError)
 }
 
 type YGOServiceV1 struct {
 	client           ygo.CardServiceClient
-	cardTransformer  model.YGOCardTransformer
 	cardsTransformer model.YGOCardsTransformer
 }
 
 func NewYGOServiceV1(client ygo.CardServiceClient) YGOServiceV1 {
 	return YGOServiceV1{
 		client:           client,
-		cardTransformer:  model.YGOCardTransformerV1{},
 		cardsTransformer: model.YGOCardsTransformerV1{},
 	}
 }
@@ -56,16 +54,20 @@ func (svc YGOServiceV1) GetCardColors(ctx context.Context) (*ygo.CardColors, *mo
 	}
 }
 
-func (svc YGOServiceV1) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *model.APIError) {
-	return getCardByID(ctx, svc.client, cardID, svc.cardTransformer.ToSelf)
+func (svc YGOServiceV1) GetCardByIDProto(ctx context.Context, cardID string) (*ygo.Card, *model.APIError) {
+	return getCardByID(ctx, svc.client, cardID)
 }
 
-func (svc YGOServiceV1) GetCardByIDREST(ctx context.Context, cardID string) (*model.YGOCardREST, *model.APIError) {
-	return getCardByID(ctx, svc.client, cardID, svc.cardTransformer.ToREST)
+func (svc YGOServiceV1) GetCardByID(ctx context.Context, cardID string) (*model.YGOCard, *model.APIError) {
+	c, err := getCardByID(ctx, svc.client, cardID)
+	if err == nil {
+		card := model.YGOCardRESTFromPB(c)
+		return &card, nil
+	}
+	return nil, err
 }
 
-func getCardByID[T *ygo.Card | *model.YGOCardREST | *model.YGOCardGRPC](ctx context.Context,
-	cardServiceClient ygo.CardServiceClient, cardID string, transformer func(*ygo.Card) T) (T, *model.APIError) {
+func getCardByID(ctx context.Context, cardServiceClient ygo.CardServiceClient, cardID string) (*ygo.Card, *model.APIError) {
 	logger := util.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Fetching card info using ID: %v", cardID))
 
@@ -75,7 +77,7 @@ func getCardByID[T *ygo.Card | *model.YGOCardREST | *model.YGOCardGRPC](ctx cont
 				"Get Card By ID", status.Code(err), err))
 		return nil, &model.APIError{Message: "There was an error fetching card info", StatusCode: http.StatusInternalServerError}
 	} else {
-		return transformer(cards), nil
+		return cards, nil
 	}
 }
 
@@ -133,25 +135,30 @@ func getCardsByName[T *ygo.Cards | *model.BatchCardData[model.CardNames]](ctx co
 	}
 }
 
-func (svc YGOServiceV1) GetRandomCard(ctx context.Context, blackListedIDs []string) (*ygo.Card, *model.APIError) {
-	return getRandomCard(ctx, svc.client, blackListedIDs, svc.cardTransformer.ToSelf)
+func (svc YGOServiceV1) GetRandomCardPB(ctx context.Context, blackListedIDs []string) (*ygo.Card, *model.APIError) {
+	return getRandomCard(ctx, svc.client, blackListedIDs)
 }
 
-func (svc YGOServiceV1) GetRandomCardREST(ctx context.Context, blackListedIDs []string) (*model.YGOCardREST, *model.APIError) {
-	return getRandomCard(ctx, svc.client, blackListedIDs, svc.cardTransformer.ToREST)
+func (svc YGOServiceV1) GetRandomCard(ctx context.Context, blackListedIDs []string) (*model.YGOCard, *model.APIError) {
+	c, err := getRandomCard(ctx, svc.client, blackListedIDs)
+	if err == nil {
+		card := model.YGOCardRESTFromPB(c)
+		return &card, nil
+	}
+	return nil, err
 }
 
-func getRandomCard[T *ygo.Card | *model.YGOCardREST | *model.YGOCardGRPC](ctx context.Context,
-	cardServiceClient ygo.CardServiceClient, blackListedIDs []string, transformer func(*ygo.Card) T) (T, *model.APIError) {
+func getRandomCard(ctx context.Context,
+	cardServiceClient ygo.CardServiceClient, blackListedIDs []string) (*ygo.Card, *model.APIError) {
 	logger := util.LoggerFromContext(ctx)
 	logger.Info("Getting random card")
 
-	if cards, err := cardServiceClient.GetRandomCard(ctx, &ygo.BlackListed{BlackListedRefs: blackListedIDs}); err != nil {
+	if card, err := cardServiceClient.GetRandomCard(ctx, &ygo.BlackListed{BlackListedRefs: blackListedIDs}); err != nil {
 		logger.Error(
 			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
 				"Random Card", status.Code(err), err))
 		return nil, &model.APIError{Message: "There was an error fetching random card", StatusCode: http.StatusInternalServerError}
 	} else {
-		return transformer(cards), nil
+		return card, nil
 	}
 }

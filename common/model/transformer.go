@@ -2,26 +2,18 @@ package model
 
 import "github.com/ygo-skc/skc-go/common/ygo"
 
-type YGOCardTransformer interface {
-	ToSelf(*ygo.Card) *ygo.Card
-	ToREST(*ygo.Card) *YGOCardREST
-}
-
-type YGOCardTransformerV1 struct{}
-
-func (t YGOCardTransformerV1) ToSelf(c *ygo.Card) *ygo.Card {
-	return c
-}
-
-func (t YGOCardTransformerV1) ToREST(c *ygo.Card) *YGOCardREST {
-	return YGOCardRESTFromPB(c)
-}
-
-func YGOCardRESTFromPB(c *ygo.Card) *YGOCardREST {
+func YGOCardRESTFromPB(c *ygo.Card) YGOCard {
 	ygoCardGRPC := YGOCardGRPC{Card: c}
-	return &YGOCardREST{ID: ygoCardGRPC.GetID(), Color: ygoCardGRPC.GetColor(), Name: ygoCardGRPC.GetName(),
-		Attribute: ygoCardGRPC.GetAttribute(), Effect: ygoCardGRPC.GetEffect(), MonsterType: ygoCardGRPC.GetMonsterType(),
-		Attack: ygoCardGRPC.GetAttack(), Defense: ygoCardGRPC.GetDefense()}
+	return YGOCardREST{
+		ID:          ygoCardGRPC.GetID(),
+		Color:       ygoCardGRPC.GetColor(),
+		Name:        ygoCardGRPC.GetName(),
+		Attribute:   ygoCardGRPC.GetAttribute(),
+		Effect:      ygoCardGRPC.GetEffect(),
+		MonsterType: ygoCardGRPC.GetMonsterType(),
+		Attack:      ygoCardGRPC.GetAttack(),
+		Defense:     ygoCardGRPC.GetDefense(),
+	}
 }
 
 type YGOCardsTransformer interface {
