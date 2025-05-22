@@ -55,13 +55,6 @@ func (c YGOCardREST) ToPB() *ygo.Card {
 	}
 }
 
-func YGOCardRESTFromPB(c *ygo.Card) *YGOCardREST {
-	ygoCardGRPC := YGOCardGRPC{Card: c}
-	return &YGOCardREST{ID: ygoCardGRPC.GetID(), Color: ygoCardGRPC.GetColor(), Name: ygoCardGRPC.GetName(),
-		Attribute: ygoCardGRPC.GetAttribute(), Effect: ygoCardGRPC.GetEffect(), MonsterType: ygoCardGRPC.GetMonsterType(),
-		Attack: ygoCardGRPC.GetAttack(), Defense: ygoCardGRPC.GetDefense()}
-}
-
 /*
 YGOCardGRPC Struct and CardDescriptor conformance
 */
