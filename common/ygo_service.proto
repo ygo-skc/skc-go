@@ -7,27 +7,33 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
 service CardService {
-  rpc Colors(google.protobuf.Empty) returns (CardColors);
+  rpc GetCardColors(google.protobuf.Empty) returns (CardColors);
 
-  rpc QueryCard (Resource) returns (Card);
-  rpc QueryCards (Resources) returns (Cards);
+  rpc GetCardByID (ResourceID) returns (Card);
+  rpc GetCardsByID (ResourceIDs) returns (Cards);
 
-  rpc RandomCard (BlackListedResources) returns (Card);
+  rpc GetCardsByName (ResourceNames) returns (Cards);
+
+  rpc GetRandomCard (BlackListed) returns (Card);
 }
 
 message CardColors {
   map<string, uint32> values = 1;
 }
 
-message Resource {
+message ResourceID {
   string ID = 1;
 }
 
-message Resources {
+message ResourceIDs {
   repeated string IDs = 1;
 }
 
-message BlackListedResources {
+message ResourceNames {
+  repeated string names = 1;
+}
+
+message BlackListed {
   repeated string black_listed_refs = 1;
 }
 
