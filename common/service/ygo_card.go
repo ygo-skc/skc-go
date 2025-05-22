@@ -13,34 +13,32 @@ import (
 )
 
 type YGOService interface {
-	GetCardColors(context.Context) (*ygo.CardColors, *model.APIError)
+	GetCardColorsProto(context.Context) (*ygo.CardColors, *model.APIError)
 
 	GetCardByIDProto(context.Context, string) (*ygo.Card, *model.APIError)
 	GetCardByID(context.Context, string) (*model.YGOCard, *model.APIError)
 
-	GetCardsByID(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
-	GetCardsByIDREST(context.Context, model.CardIDs) (*model.BatchCardData[model.CardIDs], *model.APIError)
+	GetCardsByIDProto(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
+	GetCardsByID(context.Context, model.CardIDs) (*model.BatchCardData[model.CardIDs], *model.APIError)
 
-	GetCardsByName(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
-	GetCardsByNameREST(context.Context, model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError)
+	GetCardsByNameProto(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
+	GetCardsByName(context.Context, model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError)
 
-	GetRandomCardPB(context.Context, []string) (*ygo.Card, *model.APIError)
+	GetRandomCardProto(context.Context, []string) (*ygo.Card, *model.APIError)
 	GetRandomCard(context.Context, []string) (*model.YGOCard, *model.APIError)
 }
 
 type YGOServiceV1 struct {
-	client           ygo.CardServiceClient
-	cardsTransformer model.YGOCardsTransformer
+	client ygo.CardServiceClient
 }
 
 func NewYGOServiceV1(client ygo.CardServiceClient) YGOServiceV1 {
 	return YGOServiceV1{
-		client:           client,
-		cardsTransformer: model.YGOCardsTransformerV1{},
+		client: client,
 	}
 }
 
-func (svc YGOServiceV1) GetCardColors(ctx context.Context) (*ygo.CardColors, *model.APIError) {
+func (svc YGOServiceV1) GetCardColorsProto(ctx context.Context) (*ygo.CardColors, *model.APIError) {
 	logger := util.LoggerFromContext(ctx)
 	logger.Info("Retrieving card colors")
 
@@ -81,17 +79,19 @@ func getCardByID(ctx context.Context, cardServiceClient ygo.CardServiceClient, c
 	}
 }
 
-func (svc YGOServiceV1) GetCardsByID(ctx context.Context, cardIDs model.CardIDs) (*ygo.Cards, *model.APIError) {
-	return getCardsByID(ctx, svc.client, cardIDs, svc.cardsTransformer.ToSelf)
+func (svc YGOServiceV1) GetCardsByIDProto(ctx context.Context, cardIDs model.CardIDs) (*ygo.Cards, *model.APIError) {
+	return getCardsByID(ctx, svc.client, cardIDs)
 }
 
-func (svc YGOServiceV1) GetCardsByIDREST(ctx context.Context, cardIDs model.CardIDs) (*model.BatchCardData[model.CardIDs], *model.APIError) {
-	return getCardsByID(ctx, svc.client, cardIDs, svc.cardsTransformer.ToBatchCardDataUsingID)
+func (svc YGOServiceV1) GetCardsByID(ctx context.Context, cardIDs model.CardIDs) (*model.BatchCardData[model.CardIDs], *model.APIError) {
+	c, err := getCardsByID(ctx, svc.client, cardIDs)
+	if err == nil {
+		return model.BatchCardDataFromPB[model.CardIDs](c), nil
+	}
+	return nil, err
 }
 
-func getCardsByID[T *ygo.Cards | *model.BatchCardData[model.CardIDs]](ctx context.Context,
-	cardServiceClient ygo.CardServiceClient, cardIDs model.CardIDs,
-	transformer func(*ygo.Cards) T) (T, *model.APIError) {
+func getCardsByID(ctx context.Context, cardServiceClient ygo.CardServiceClient, cardIDs model.CardIDs) (*ygo.Cards, *model.APIError) {
 	logger := util.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Fetching card info for the following IDs: %v", cardIDs))
 
@@ -104,21 +104,23 @@ func getCardsByID[T *ygo.Cards | *model.BatchCardData[model.CardIDs]](ctx contex
 		if cards.UnknownResources == nil {
 			cards.UnknownResources = make([]string, 0)
 		}
-		return transformer(cards), nil
+		return cards, nil
 	}
 }
 
-func (svc YGOServiceV1) GetCardsByName(ctx context.Context, cardNames model.CardNames) (*ygo.Cards, *model.APIError) {
-	return getCardsByName(ctx, svc.client, cardNames, svc.cardsTransformer.ToSelf)
+func (svc YGOServiceV1) GetCardsByNameProto(ctx context.Context, cardNames model.CardNames) (*ygo.Cards, *model.APIError) {
+	return getCardsByName(ctx, svc.client, cardNames)
 }
 
-func (svc YGOServiceV1) GetCardsByNameREST(ctx context.Context, cardNames model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError) {
-	return getCardsByName(ctx, svc.client, cardNames, svc.cardsTransformer.ToBatchCardDataUsingName)
+func (svc YGOServiceV1) GetCardsByName(ctx context.Context, cardNames model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError) {
+	c, err := getCardsByName(ctx, svc.client, cardNames)
+	if err == nil {
+		return model.BatchCardDataFromPB[model.CardNames](c), nil
+	}
+	return nil, err
 }
 
-func getCardsByName[T *ygo.Cards | *model.BatchCardData[model.CardNames]](ctx context.Context,
-	cardServiceClient ygo.CardServiceClient, cardNames model.CardNames,
-	transformer func(*ygo.Cards) T) (T, *model.APIError) {
+func getCardsByName(ctx context.Context, cardServiceClient ygo.CardServiceClient, cardNames model.CardNames) (*ygo.Cards, *model.APIError) {
 	logger := util.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Fetching card info using %d card name(s)", len(cardNames)))
 
@@ -131,11 +133,11 @@ func getCardsByName[T *ygo.Cards | *model.BatchCardData[model.CardNames]](ctx co
 		if cards.UnknownResources == nil {
 			cards.UnknownResources = make([]string, 0)
 		}
-		return transformer(cards), nil
+		return cards, nil
 	}
 }
 
-func (svc YGOServiceV1) GetRandomCardPB(ctx context.Context, blackListedIDs []string) (*ygo.Card, *model.APIError) {
+func (svc YGOServiceV1) GetRandomCardProto(ctx context.Context, blackListedIDs []string) (*ygo.Card, *model.APIError) {
 	return getRandomCard(ctx, svc.client, blackListedIDs)
 }
 
