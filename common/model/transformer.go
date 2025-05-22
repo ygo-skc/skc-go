@@ -26,7 +26,8 @@ func YGOCardRESTFromPB(c *ygo.Card) *YGOCardREST {
 
 type YGOCardsTransformer interface {
 	ToSelf(*ygo.Cards) *ygo.Cards
-	ToREST(*ygo.Cards) *BatchCardData[CardIDs]
+	ToBatchCardDataUsingID(*ygo.Cards) *BatchCardData[CardIDs]
+	ToBatchCardDataUsingName(*ygo.Cards) *BatchCardData[CardNames]
 }
 type YGOCardsTransformerV1 struct{}
 
@@ -34,14 +35,18 @@ func (t YGOCardsTransformerV1) ToSelf(c *ygo.Cards) *ygo.Cards {
 	return c
 }
 
-func (t YGOCardsTransformerV1) ToREST(c *ygo.Cards) *BatchCardData[CardIDs] {
-	return BatchCardDataFromPB(c)
+func (t YGOCardsTransformerV1) ToBatchCardDataUsingID(c *ygo.Cards) *BatchCardData[CardIDs] {
+	return BatchCardDataFromPB[CardIDs](c)
 }
 
-func BatchCardDataFromPB(c *ygo.Cards) *BatchCardData[CardIDs] {
+func (t YGOCardsTransformerV1) ToBatchCardDataUsingName(c *ygo.Cards) *BatchCardData[CardNames] {
+	return BatchCardDataFromPB[CardNames](c)
+}
+
+func BatchCardDataFromPB[T CardIDs | CardNames](c *ygo.Cards) *BatchCardData[T] {
 	batchCardData := make(CardDataMap, len(c.CardInfo))
 	for k, v := range c.CardInfo {
 		batchCardData[k] = YGOCardRESTFromPB(v)
 	}
-	return &BatchCardData[CardIDs]{CardInfo: batchCardData, UnknownResources: c.UnknownResources}
+	return &BatchCardData[T]{CardInfo: batchCardData, UnknownResources: c.UnknownResources}
 }
