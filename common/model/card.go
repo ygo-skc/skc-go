@@ -84,8 +84,11 @@ func (c YGOCardGRPC) GetDefense() *uint32 {
 	return &c.Defense.Value
 }
 
-func FindMissingIDs(cards map[string]*ygo.Card, cardIDs CardIDs) CardIDs {
-	missingIDs := make(CardIDs, 0, 10)
+/*
+ygo.Card PB helpers
+*/
+func FindMissingKeys[T CardIDs | CardNames](cards map[string]*ygo.Card, cardIDs T) T {
+	missingIDs := make(T, 0, 10)
 
 	for _, cardID := range cardIDs {
 		if _, containsKey := cards[cardID]; !containsKey {
@@ -94,6 +97,8 @@ func FindMissingIDs(cards map[string]*ygo.Card, cardIDs CardIDs) CardIDs {
 	}
 	return missingIDs
 }
+func CardIDAsKey(c *ygo.Card) string   { return c.ID }
+func CardNameAsKey(c *ygo.Card) string { return c.Name }
 
 /*
 CardDescriptor helper functions

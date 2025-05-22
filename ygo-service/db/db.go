@@ -31,6 +31,8 @@ const (
 	cardByCardIDQuery   = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number = ?"
 	cardsByCardIDsQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number IN (%s)"
 
+	cardsByCardNamesQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_name IN (%s)"
+
 	randomCardQuery              = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_color != 'Token' ORDER BY RAND() LIMIT 1"
 	randomCardWithBlackListQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number NOT IN (%s) AND card_color != 'Token' ORDER BY RAND() LIMIT 1"
 )
@@ -40,7 +42,9 @@ type CardRepository interface {
 	GetCardColorIDs(context.Context) (*ygo.CardColors, *model.APIError)
 
 	GetCardByID(context.Context, string) (*ygo.Card, *model.APIError)
-	GetCardsByIDs(context.Context, []string) (*ygo.Cards, *model.APIError)
+	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
+
+	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
 
 	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
 }
@@ -110,7 +114,7 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 	}, nil
 }
 
-func parseRowsForCards(ctx context.Context, rows *sql.Rows) (*map[string]*ygo.Card, *model.APIError) {
+func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (*map[string]*ygo.Card, *model.APIError) {
 	cards := make(map[string]*ygo.Card)
 
 	for rows.Next() {
@@ -121,7 +125,7 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows) (*map[string]*ygo.Ca
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return nil, handleRowParsingError(cUtil.LoggerFromContext(ctx), err)
 		} else {
-			cards[id] = &ygo.Card{
+			card := &ygo.Card{
 				ID:          id,
 				Color:       color,
 				Name:        name,
@@ -131,6 +135,7 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows) (*map[string]*ygo.Ca
 				Attack:      util.PBUInt32Value(atk),
 				Defense:     util.PBUInt32Value(def),
 			}
+			cards[keyFn(card)] = card
 		}
 	}
 
