@@ -33,6 +33,24 @@ func YGOCardRESTFromProto(c *ygo.Card) YGOCard {
 	}
 }
 
+func YGOCardListRESTFromProto(c *ygo.CardList) *[]YGOCard {
+	cards := make([]YGOCard, len(c.Cards))
+	for i, c := range c.Cards {
+		ygoCardGRPC := YGOCardGRPC{Card: c}
+		cards[i] = YGOCardREST{
+			ID:          ygoCardGRPC.GetID(),
+			Color:       ygoCardGRPC.GetColor(),
+			Name:        ygoCardGRPC.GetName(),
+			Attribute:   ygoCardGRPC.GetAttribute(),
+			Effect:      ygoCardGRPC.GetEffect(),
+			MonsterType: ygoCardGRPC.GetMonsterType(),
+			Attack:      ygoCardGRPC.GetAttack(),
+			Defense:     ygoCardGRPC.GetDefense(),
+		}
+	}
+	return &cards
+}
+
 func BatchCardDataFromProto[T CardIDs | CardNames](c *ygo.Cards) *BatchCardData[T] {
 	batchCardData := make(CardDataMap, len(c.CardInfo))
 	for k, v := range c.CardInfo {

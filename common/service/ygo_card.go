@@ -24,6 +24,9 @@ type YGOService interface {
 	GetCardsByNameProto(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
 	GetCardsByName(context.Context, model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError)
 
+	GetArchetypalCardsUsingCardNameProto(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetArchetypalCardsUsingCardName(context.Context, string) (*[]model.YGOCard, *model.APIError)
+
 	GetRandomCardProto(context.Context, []string) (*ygo.Card, *model.APIError)
 	GetRandomCard(context.Context, []string) (*model.YGOCard, *model.APIError)
 }
@@ -46,7 +49,7 @@ func (svc YGOServiceV1) GetCardColorsProto(ctx context.Context) (*ygo.CardColors
 		logger.Error(
 			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
 				"Get Card Colors", status.Code(err), err))
-		return nil, &model.APIError{Message: "There was an error fetching card info", StatusCode: http.StatusInternalServerError}
+		return nil, &model.APIError{Message: "There was an error fetching card color data", StatusCode: http.StatusInternalServerError}
 	} else {
 		return cColors, nil
 	}
@@ -133,6 +136,33 @@ func getCardsByName(ctx context.Context, cardServiceClient ygo.CardServiceClient
 		if cards.UnknownResources == nil {
 			cards.UnknownResources = make([]string, 0)
 		}
+		return cards, nil
+	}
+}
+
+func (svc YGOServiceV1) GetArchetypalCardsUsingCardNameProto(ctx context.Context, archetype string) (*ygo.CardList, *model.APIError) {
+	return getArchetypalCardsUsingCardName(ctx, svc.client, archetype)
+}
+
+func (svc YGOServiceV1) GetArchetypalCardsUsingCardName(ctx context.Context, archetype string) (*[]model.YGOCard, *model.APIError) {
+	c, err := getArchetypalCardsUsingCardName(ctx, svc.client, archetype)
+	if err == nil {
+		return model.YGOCardListRESTFromProto(c), nil
+	}
+	return nil, err
+}
+
+func getArchetypalCardsUsingCardName(ctx context.Context, cardServiceClient ygo.CardServiceClient,
+	archetype string) (*ygo.CardList, *model.APIError) {
+	logger := util.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Fetching cards with %s in their name", archetype))
+
+	if cards, err := cardServiceClient.GetArchetypalCardsUsingCardName(ctx, &ygo.Archetype{Archetype: archetype}); err != nil {
+		logger.Error(
+			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
+				"Get Archetypal Cards Using Name", status.Code(err), err))
+		return nil, &model.APIError{Message: "There was an error archetypal data", StatusCode: http.StatusInternalServerError}
+	} else {
 		return cards, nil
 	}
 }
