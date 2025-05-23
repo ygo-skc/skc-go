@@ -104,7 +104,7 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 }
 func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
-	logger.Info("Retrieving card data from DB for all cards that reference archetype in their name")
+	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference archetype %s in their name", archetypeName))
 	searchTerm := `%` + archetypeName + `%`
 
 	if rows, err := skcDBConn.Query(archetypalCardsUsingCardNameQuery, searchTerm); err != nil {

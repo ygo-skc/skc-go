@@ -25,7 +25,7 @@ func (s *ygoServiceServer) GetCardColors(ctx context.Context, req *emptypb.Empty
 
 func (s *ygoServiceServer) GetCardByID(ctx context.Context, req *ygo.ResourceID) (*ygo.Card, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Card By ID")
-	logger.Info(fmt.Sprintf("Fetching card details using card ID: %v", req.ID))
+	logger.Info(fmt.Sprintf("Getting card details using card ID: %v", req.ID))
 
 	if c, err := skcDBInterface.GetCardByID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
 		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
@@ -38,7 +38,7 @@ func (s *ygoServiceServer) GetCardByID(ctx context.Context, req *ygo.ResourceID)
 
 func (s *ygoServiceServer) GetCardsByID(ctx context.Context, req *ygo.ResourceIDs) (*ygo.Cards, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Cards By ID")
-	logger.Info(fmt.Sprintf("Fetching card details using card ID's: %v", req.IDs))
+	logger.Info(fmt.Sprintf("Getting card details using card ID's: %v", req.IDs))
 
 	if cards, err := skcDBInterface.GetCardsByIDs(ctx, req.IDs); err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
@@ -50,7 +50,7 @@ func (s *ygoServiceServer) GetCardsByID(ctx context.Context, req *ygo.ResourceID
 
 func (s *ygoServiceServer) GetCardsByName(ctx context.Context, req *ygo.ResourceNames) (*ygo.Cards, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Cards By Name")
-	logger.Info(fmt.Sprintf("Fetching card details using %d card name(s)", len(req.Names)))
+	logger.Info(fmt.Sprintf("Getting card details using %d card name(s)", len(req.Names)))
 
 	if cards, err := skcDBInterface.GetCardsByNames(ctx, req.Names); err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
@@ -62,12 +62,11 @@ func (s *ygoServiceServer) GetCardsByName(ctx context.Context, req *ygo.Resource
 
 func (s *ygoServiceServer) GetArchetypalCardsUsingCardName(ctx context.Context, req *ygo.Archetype) (*ygo.CardList, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Archetypal Cards Using Card Name")
-	logger.Info(fmt.Sprintf("Fetching archetypal cards using card name %s", req.Archetype))
 
 	if cards, err := skcDBInterface.GetArchetypalCardsUsingCardName(ctx, req.Archetype); err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Message)
 	} else {
-		logger.Info(fmt.Sprintf("Found %d cards in archetype", len(cards.Cards)))
+		logger.Info(fmt.Sprintf("Found %d cards in archetype %s", len(cards.Cards), req.Archetype))
 		return cards, nil
 	}
 }
