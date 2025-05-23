@@ -25,7 +25,7 @@ type YGOService interface {
 	GetCardsByName(context.Context, model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError)
 
 	GetArchetypalCardsUsingCardNameProto(context.Context, string) (*ygo.CardList, *model.APIError)
-	GetArchetypalCardsUsingCardName(context.Context, string) (*[]model.YGOCard, *model.APIError)
+	GetArchetypalCardsUsingCardName(context.Context, string) ([]model.YGOCard, *model.APIError)
 
 	GetRandomCardProto(context.Context, []string) (*ygo.Card, *model.APIError)
 	GetRandomCard(context.Context, []string) (*model.YGOCard, *model.APIError)
@@ -144,7 +144,7 @@ func (svc YGOServiceV1) GetArchetypalCardsUsingCardNameProto(ctx context.Context
 	return getArchetypalCardsUsingCardName(ctx, svc.client, archetype)
 }
 
-func (svc YGOServiceV1) GetArchetypalCardsUsingCardName(ctx context.Context, archetype string) (*[]model.YGOCard, *model.APIError) {
+func (svc YGOServiceV1) GetArchetypalCardsUsingCardName(ctx context.Context, archetype string) ([]model.YGOCard, *model.APIError) {
 	c, err := getArchetypalCardsUsingCardName(ctx, svc.client, archetype)
 	if err == nil {
 		return model.YGOCardListRESTFromProto(c), nil

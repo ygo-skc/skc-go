@@ -33,7 +33,7 @@ func YGOCardRESTFromProto(c *ygo.Card) YGOCard {
 	}
 }
 
-func YGOCardListRESTFromProto(c *ygo.CardList) *[]YGOCard {
+func YGOCardListRESTFromProto(c *ygo.CardList) []YGOCard {
 	cards := make([]YGOCard, len(c.Cards))
 	for i, c := range c.Cards {
 		ygoCardGRPC := YGOCardGRPC{Card: c}
@@ -48,7 +48,7 @@ func YGOCardListRESTFromProto(c *ygo.CardList) *[]YGOCard {
 			Defense:     ygoCardGRPC.GetDefense(),
 		}
 	}
-	return &cards
+	return cards
 }
 
 func BatchCardDataFromProto[T CardIDs | CardNames](c *ygo.Cards) *BatchCardData[T] {
