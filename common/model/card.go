@@ -42,7 +42,7 @@ func (c YGOCardREST) GetMonsterType() *string { return c.MonsterType }
 func (c YGOCardREST) GetAttack() *uint32      { return c.Attack }
 func (c YGOCardREST) GetDefense() *uint32     { return c.Defense }
 
-func (c YGOCardREST) ToPB() *ygo.Card {
+func (c YGOCardREST) ToProto() *ygo.Card {
 	return &ygo.Card{
 		ID:          c.ID,
 		Color:       c.Color,

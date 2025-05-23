@@ -59,7 +59,7 @@ func (svc YGOServiceV1) GetCardByIDProto(ctx context.Context, cardID string) (*y
 func (svc YGOServiceV1) GetCardByID(ctx context.Context, cardID string) (*model.YGOCard, *model.APIError) {
 	c, err := getCardByID(ctx, svc.client, cardID)
 	if err == nil {
-		card := model.YGOCardRESTFromPB(c)
+		card := model.YGOCardRESTFromProto(c)
 		return &card, nil
 	}
 	return nil, err
@@ -86,7 +86,7 @@ func (svc YGOServiceV1) GetCardsByIDProto(ctx context.Context, cardIDs model.Car
 func (svc YGOServiceV1) GetCardsByID(ctx context.Context, cardIDs model.CardIDs) (*model.BatchCardData[model.CardIDs], *model.APIError) {
 	c, err := getCardsByID(ctx, svc.client, cardIDs)
 	if err == nil {
-		return model.BatchCardDataFromPB[model.CardIDs](c), nil
+		return model.BatchCardDataFromProto[model.CardIDs](c), nil
 	}
 	return nil, err
 }
@@ -115,7 +115,7 @@ func (svc YGOServiceV1) GetCardsByNameProto(ctx context.Context, cardNames model
 func (svc YGOServiceV1) GetCardsByName(ctx context.Context, cardNames model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError) {
 	c, err := getCardsByName(ctx, svc.client, cardNames)
 	if err == nil {
-		return model.BatchCardDataFromPB[model.CardNames](c), nil
+		return model.BatchCardDataFromProto[model.CardNames](c), nil
 	}
 	return nil, err
 }
@@ -144,7 +144,7 @@ func (svc YGOServiceV1) GetRandomCardProto(ctx context.Context, blackListedIDs [
 func (svc YGOServiceV1) GetRandomCard(ctx context.Context, blackListedIDs []string) (*model.YGOCard, *model.APIError) {
 	c, err := getRandomCard(ctx, svc.client, blackListedIDs)
 	if err == nil {
-		card := model.YGOCardRESTFromPB(c)
+		card := model.YGOCardRESTFromProto(c)
 		return &card, nil
 	}
 	return nil, err

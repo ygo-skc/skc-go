@@ -33,6 +33,8 @@ const (
 
 	cardsByCardNamesQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_name IN (%s)"
 
+	archetypalCardsUsingCardNameQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_name LIKE BINARY ? ORDER BY card_name"
+
 	randomCardQuery              = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_color != 'Token' ORDER BY RAND() LIMIT 1"
 	randomCardWithBlackListQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number NOT IN (%s) AND card_color != 'Token' ORDER BY RAND() LIMIT 1"
 )
@@ -45,6 +47,8 @@ type CardRepository interface {
 	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
 
 	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
+
+	GetArchetypalCardsUsingCardName(context.Context, string) (*ygo.CardList, *model.APIError)
 
 	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
 }
@@ -125,19 +129,28 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return nil, handleRowParsingError(cUtil.LoggerFromContext(ctx), err)
 		} else {
-			card := &ygo.Card{
-				ID:          id,
-				Color:       color,
-				Name:        name,
-				Attribute:   attribute,
-				Effect:      effect,
-				MonsterType: util.PBStringValue(monsterType),
-				Attack:      util.PBUInt32Value(atk),
-				Defense:     util.PBUInt32Value(def),
-			}
+			card := model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def)
 			cards[keyFn(card)] = card
 		}
 	}
 
 	return &cards, nil // no parsing error
+}
+
+func parseRowsForCardList(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (*[]*ygo.Card, *model.APIError) {
+	cardList := make([]*ygo.Card, 0)
+
+	for rows.Next() {
+		var id, color, name, attribute, effect string
+		var monsterType *string
+		var atk, def *uint32
+
+		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+			return nil, handleRowParsingError(cUtil.LoggerFromContext(ctx), err)
+		} else {
+			cardList = append(cardList, model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def))
+		}
+	}
+
+	return &cardList, nil // no parsing error
 }

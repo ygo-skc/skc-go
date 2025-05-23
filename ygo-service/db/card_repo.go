@@ -102,6 +102,21 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 		}
 	}
 }
+func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
+	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info("Retrieving card data from DB for all cards that reference archetype in their name")
+	searchTerm := `%` + archetypeName + `%`
+
+	if rows, err := skcDBConn.Query(archetypalCardsUsingCardNameQuery, searchTerm); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		if cards, err := parseRowsForCardList(ctx, rows, model.CardNameAsKey); err != nil {
+			return nil, err
+		} else {
+			return &ygo.CardList{Cards: *cards}, err
+		}
+	}
+}
 
 func (imp YGOCardRepository) GetRandomCard(
 	ctx context.Context,
