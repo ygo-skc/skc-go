@@ -112,9 +112,9 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 		Name:        name,
 		Attribute:   attribute,
 		Effect:      effect,
-		MonsterType: util.PBStringValue(monsterType),
-		Attack:      util.PBUInt32Value(atk),
-		Defense:     util.PBUInt32Value(def),
+		MonsterType: util.ProtoStringValue(monsterType),
+		Attack:      util.ProtoUInt32Value(atk),
+		Defense:     util.ProtoUInt32Value(def),
 	}, nil
 }
 

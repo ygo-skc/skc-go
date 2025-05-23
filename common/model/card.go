@@ -49,9 +49,9 @@ func (c YGOCardREST) ToProto() *ygo.Card {
 		Name:        c.Name,
 		Attribute:   c.Attribute,
 		Effect:      c.Effect,
-		MonsterType: util.PBStringValue(c.MonsterType),
-		Attack:      util.PBUInt32Value(c.Attack),
-		Defense:     util.PBUInt32Value(c.Defense),
+		MonsterType: util.ProtoStringValue(c.MonsterType),
+		Attack:      util.ProtoUInt32Value(c.Attack),
+		Defense:     util.ProtoUInt32Value(c.Defense),
 	}
 }
 

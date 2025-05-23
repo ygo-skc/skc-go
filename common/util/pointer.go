@@ -19,14 +19,14 @@ func InlineUInt32Pointer(i uint32) *uint32 {
 	return &i
 }
 
-func PBStringValue(s *string) *wrapperspb.StringValue {
+func ProtoStringValue(s *string) *wrapperspb.StringValue {
 	if s != nil {
 		return wrapperspb.String(*s)
 	}
 	return nil
 }
 
-func PBUInt32Value(ui *uint32) *wrapperspb.UInt32Value {
+func ProtoUInt32Value(ui *uint32) *wrapperspb.UInt32Value {
 	if ui != nil {
 		return wrapperspb.UInt32(*ui)
 	}
