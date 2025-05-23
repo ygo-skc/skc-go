@@ -61,7 +61,7 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 }
 
 func (imp YGOCardRepository) GetCardsByIDs(
-	ctx context.Context, cardIDs []string,
+	ctx context.Context, cardIDs model.CardIDs,
 ) (*ygo.Cards, *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
 
@@ -71,13 +71,49 @@ func (imp YGOCardRepository) GetCardsByIDs(
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCards(ctx, rows); err != nil {
+		if cards, err := parseRowsForCards(ctx, rows, model.CardIDAsKey); err != nil {
 			return nil, err
 		} else {
 			return &ygo.Cards{
 				CardInfo:         *cards,
-				UnknownResources: model.FindMissingIDs(*cards, cardIDs),
+				UnknownResources: model.FindMissingKeys(*cards, cardIDs),
 			}, nil
+		}
+	}
+}
+
+// Uses card names to find instance of card
+func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames model.CardNames) (*ygo.Cards, *model.APIError) {
+	logger := cUtil.LoggerFromContext(ctx)
+
+	args, numCards := buildVariableQuerySubjects(cardNames)
+
+	query := fmt.Sprintf(cardsByCardNamesQuery, variablePlaceholders(numCards))
+	if rows, err := skcDBConn.Query(query, args...); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		if cards, err := parseRowsForCards(ctx, rows, model.CardNameAsKey); err != nil {
+			return nil, err
+		} else {
+			return &ygo.Cards{
+				CardInfo:         *cards,
+				UnknownResources: model.FindMissingKeys(*cards, cardNames),
+			}, nil
+		}
+	}
+}
+func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
+	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference archetype %s in their name", archetypeName))
+	searchTerm := `%` + archetypeName + `%`
+
+	if rows, err := skcDBConn.Query(archetypalCardsUsingCardNameQuery, searchTerm); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+			return nil, err
+		} else {
+			return &ygo.CardList{Cards: *cards}, err
 		}
 	}
 }

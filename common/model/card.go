@@ -42,24 +42,17 @@ func (c YGOCardREST) GetMonsterType() *string { return c.MonsterType }
 func (c YGOCardREST) GetAttack() *uint32      { return c.Attack }
 func (c YGOCardREST) GetDefense() *uint32     { return c.Defense }
 
-func (c YGOCardREST) ToPB() *ygo.Card {
+func (c YGOCardREST) ToProto() *ygo.Card {
 	return &ygo.Card{
 		ID:          c.ID,
 		Color:       c.Color,
 		Name:        c.Name,
 		Attribute:   c.Attribute,
 		Effect:      c.Effect,
-		MonsterType: util.PBStringValue(c.MonsterType),
-		Attack:      util.PBUInt32Value(c.Attack),
-		Defense:     util.PBUInt32Value(c.Defense),
+		MonsterType: util.ProtoStringValue(c.MonsterType),
+		Attack:      util.ProtoUInt32Value(c.Attack),
+		Defense:     util.ProtoUInt32Value(c.Defense),
 	}
-}
-
-func YGOCardRESTFromPB(c *ygo.Card) *YGOCardREST {
-	ygoCardGRPC := YGOCardGRPC{Card: c}
-	return &YGOCardREST{ID: ygoCardGRPC.GetID(), Color: ygoCardGRPC.GetColor(), Name: ygoCardGRPC.GetName(),
-		Attribute: ygoCardGRPC.GetAttribute(), Effect: ygoCardGRPC.GetEffect(), MonsterType: ygoCardGRPC.GetMonsterType(),
-		Attack: ygoCardGRPC.GetAttack(), Defense: ygoCardGRPC.GetDefense()}
 }
 
 /*
@@ -91,8 +84,11 @@ func (c YGOCardGRPC) GetDefense() *uint32 {
 	return &c.Defense.Value
 }
 
-func FindMissingIDs(cards map[string]*ygo.Card, cardIDs CardIDs) CardIDs {
-	missingIDs := make(CardIDs, 0, 10)
+/*
+ygo.Card PB helpers
+*/
+func FindMissingKeys[T CardIDs | CardNames](cards map[string]*ygo.Card, cardIDs T) T {
+	missingIDs := make(T, 0, 10)
 
 	for _, cardID := range cardIDs {
 		if _, containsKey := cards[cardID]; !containsKey {
@@ -101,6 +97,8 @@ func FindMissingIDs(cards map[string]*ygo.Card, cardIDs CardIDs) CardIDs {
 	}
 	return missingIDs
 }
+func CardIDAsKey(c *ygo.Card) string   { return c.ID }
+func CardNameAsKey(c *ygo.Card) string { return c.Name }
 
 /*
 CardDescriptor helper functions
