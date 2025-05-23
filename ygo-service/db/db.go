@@ -32,7 +32,9 @@ const (
 
 	cardsByCardNamesQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_name IN (%s)"
 
-	archetypalCardsUsingCardNameQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_name LIKE BINARY ? ORDER BY card_name"
+	archetypalCardsUsingCardNameQuery    = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_name LIKE BINARY ? ORDER BY card_name"
+	archetypalCardsUsingCardTextQuery    = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY card_name"
+	nonArchetypalCardsUsingCardTextQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY card_name"
 
 	randomCardQuery              = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_color != 'Token' ORDER BY RAND() LIMIT 1"
 	randomCardWithBlackListQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number NOT IN (%s) AND card_color != 'Token' ORDER BY RAND() LIMIT 1"
@@ -48,6 +50,8 @@ type CardRepository interface {
 	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
 
 	GetArchetypalCardsUsingCardName(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetExplicitArchetypalInclusions(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetExplicitArchetypalExclusions(context.Context, string) (*ygo.CardList, *model.APIError)
 
 	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
 }

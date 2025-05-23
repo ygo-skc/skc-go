@@ -71,6 +71,28 @@ func (s *ygoServiceServer) GetArchetypalCardsUsingCardName(ctx context.Context, 
 	}
 }
 
+func (s *ygoServiceServer) GetExplicitArchetypalInclusions(ctx context.Context, req *ygo.Archetype) (*ygo.CardList, error) {
+	logger, ctx := util.NewRequestSetup(ctx, "Query Archetypal Inclusions")
+
+	if cards, err := skcDBInterface.GetExplicitArchetypalInclusions(ctx, req.Archetype); err != nil {
+		return nil, status.Errorf(codes.Internal, "%s", err.Message)
+	} else {
+		logger.Info(fmt.Sprintf("Found %d cards that are also considered to be part of archetype %s", len(cards.Cards), req.Archetype))
+		return cards, nil
+	}
+}
+
+func (s *ygoServiceServer) GetExplicitArchetypalExclusions(ctx context.Context, req *ygo.Archetype) (*ygo.CardList, error) {
+	logger, ctx := util.NewRequestSetup(ctx, "Query Archetypal Exclusions")
+
+	if cards, err := skcDBInterface.GetExplicitArchetypalExclusions(ctx, req.Archetype); err != nil {
+		return nil, status.Errorf(codes.Internal, "%s", err.Message)
+	} else {
+		logger.Info(fmt.Sprintf("Found %d cards that are NOT considered to be part of archetype %s", len(cards.Cards), req.Archetype))
+		return cards, nil
+	}
+}
+
 func (s *ygoServiceServer) GetRandomCard(ctx context.Context, req *ygo.BlackListed) (*ygo.Card, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Random Card")
 	logger.Info(fmt.Sprintf("Getting random card from DB. Client has provided %d blacklisted IDs", len(req.BlackListedRefs)))

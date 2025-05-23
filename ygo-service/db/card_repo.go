@@ -118,6 +118,35 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	}
 }
 
+func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
+	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly considered part of archetype %s", archetypeName))
+
+	if rows, err := skcDBConn.Query(archetypalCardsUsingCardTextQuery, fmt.Sprintf(`+"This card is always treated as" +"%s card"`, archetypeName)); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+			return nil, err
+		} else {
+			return &ygo.CardList{Cards: *cards}, err
+		}
+	}
+}
+func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
+	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly NOT considered part of archetype %s", archetypeName))
+
+	if rows, err := skcDBConn.Query(nonArchetypalCardsUsingCardTextQuery, fmt.Sprintf(`+"This card is not treated as" +"%s card"`, archetypeName)); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+			return nil, err
+		} else {
+			return &ygo.CardList{Cards: *cards}, err
+		}
+	}
+}
+
 func (imp YGOCardRepository) GetRandomCard(
 	ctx context.Context,
 	blacklistedCards []string,
