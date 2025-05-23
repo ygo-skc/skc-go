@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CardService_GetCardColors_FullMethodName  = "/ygo.CardService/GetCardColors"
-	CardService_GetCardByID_FullMethodName    = "/ygo.CardService/GetCardByID"
-	CardService_GetCardsByID_FullMethodName   = "/ygo.CardService/GetCardsByID"
-	CardService_GetCardsByName_FullMethodName = "/ygo.CardService/GetCardsByName"
-	CardService_GetRandomCard_FullMethodName  = "/ygo.CardService/GetRandomCard"
+	CardService_GetCardColors_FullMethodName                   = "/ygo.CardService/GetCardColors"
+	CardService_GetCardByID_FullMethodName                     = "/ygo.CardService/GetCardByID"
+	CardService_GetCardsByID_FullMethodName                    = "/ygo.CardService/GetCardsByID"
+	CardService_GetCardsByName_FullMethodName                  = "/ygo.CardService/GetCardsByName"
+	CardService_GetArchetypalCardsUsingCardName_FullMethodName = "/ygo.CardService/GetArchetypalCardsUsingCardName"
+	CardService_GetRandomCard_FullMethodName                   = "/ygo.CardService/GetRandomCard"
 )
 
 // CardServiceClient is the client API for CardService service.
@@ -35,6 +36,7 @@ type CardServiceClient interface {
 	GetCardByID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Card, error)
 	GetCardsByID(ctx context.Context, in *ResourceIDs, opts ...grpc.CallOption) (*Cards, error)
 	GetCardsByName(ctx context.Context, in *ResourceNames, opts ...grpc.CallOption) (*Cards, error)
+	GetArchetypalCardsUsingCardName(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error)
 	GetRandomCard(ctx context.Context, in *BlackListed, opts ...grpc.CallOption) (*Card, error)
 }
 
@@ -86,6 +88,16 @@ func (c *cardServiceClient) GetCardsByName(ctx context.Context, in *ResourceName
 	return out, nil
 }
 
+func (c *cardServiceClient) GetArchetypalCardsUsingCardName(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CardList)
+	err := c.cc.Invoke(ctx, CardService_GetArchetypalCardsUsingCardName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cardServiceClient) GetRandomCard(ctx context.Context, in *BlackListed, opts ...grpc.CallOption) (*Card, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Card)
@@ -104,6 +116,7 @@ type CardServiceServer interface {
 	GetCardByID(context.Context, *ResourceID) (*Card, error)
 	GetCardsByID(context.Context, *ResourceIDs) (*Cards, error)
 	GetCardsByName(context.Context, *ResourceNames) (*Cards, error)
+	GetArchetypalCardsUsingCardName(context.Context, *Archetype) (*CardList, error)
 	GetRandomCard(context.Context, *BlackListed) (*Card, error)
 	mustEmbedUnimplementedCardServiceServer()
 }
@@ -126,6 +139,9 @@ func (UnimplementedCardServiceServer) GetCardsByID(context.Context, *ResourceIDs
 }
 func (UnimplementedCardServiceServer) GetCardsByName(context.Context, *ResourceNames) (*Cards, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCardsByName not implemented")
+}
+func (UnimplementedCardServiceServer) GetArchetypalCardsUsingCardName(context.Context, *Archetype) (*CardList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArchetypalCardsUsingCardName not implemented")
 }
 func (UnimplementedCardServiceServer) GetRandomCard(context.Context, *BlackListed) (*Card, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRandomCard not implemented")
@@ -223,6 +239,24 @@ func _CardService_GetCardsByName_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CardService_GetArchetypalCardsUsingCardName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Archetype)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CardServiceServer).GetArchetypalCardsUsingCardName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CardService_GetArchetypalCardsUsingCardName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CardServiceServer).GetArchetypalCardsUsingCardName(ctx, req.(*Archetype))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CardService_GetRandomCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BlackListed)
 	if err := dec(in); err != nil {
@@ -263,6 +297,10 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCardsByName",
 			Handler:    _CardService_GetCardsByName_Handler,
+		},
+		{
+			MethodName: "GetArchetypalCardsUsingCardName",
+			Handler:    _CardService_GetArchetypalCardsUsingCardName_Handler,
 		},
 		{
 			MethodName: "GetRandomCard",

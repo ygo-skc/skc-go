@@ -14,6 +14,8 @@ service CardService {
 
   rpc GetCardsByName (ResourceNames) returns (Cards);
 
+  rpc GetArchetypalCardsUsingCardName (Archetype) returns (CardList);
+
   rpc GetRandomCard (BlackListed) returns (Card);
 }
 
@@ -31,6 +33,10 @@ message ResourceIDs {
 
 message ResourceNames {
   repeated string names = 1;
+}
+
+message Archetype {
+	string archetype = 1;
 }
 
 message BlackListed {
@@ -51,4 +57,8 @@ message Card {
 message Cards {
 	map<string, Card> card_info = 1;
 	repeated string unknown_resources = 2;
+}
+
+message CardList {
+	repeated Card cards = 1;
 }

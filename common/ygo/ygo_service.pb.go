@@ -199,6 +199,50 @@ func (x *ResourceNames) GetNames() []string {
 	return nil
 }
 
+type Archetype struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Archetype     string                 `protobuf:"bytes,1,opt,name=archetype,proto3" json:"archetype,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Archetype) Reset() {
+	*x = Archetype{}
+	mi := &file_ygo_service_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Archetype) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Archetype) ProtoMessage() {}
+
+func (x *Archetype) ProtoReflect() protoreflect.Message {
+	mi := &file_ygo_service_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Archetype.ProtoReflect.Descriptor instead.
+func (*Archetype) Descriptor() ([]byte, []int) {
+	return file_ygo_service_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Archetype) GetArchetype() string {
+	if x != nil {
+		return x.Archetype
+	}
+	return ""
+}
+
 type BlackListed struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	BlackListedRefs []string               `protobuf:"bytes,1,rep,name=black_listed_refs,json=blackListedRefs,proto3" json:"black_listed_refs,omitempty"`
@@ -208,7 +252,7 @@ type BlackListed struct {
 
 func (x *BlackListed) Reset() {
 	*x = BlackListed{}
-	mi := &file_ygo_service_proto_msgTypes[4]
+	mi := &file_ygo_service_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -220,7 +264,7 @@ func (x *BlackListed) String() string {
 func (*BlackListed) ProtoMessage() {}
 
 func (x *BlackListed) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[4]
+	mi := &file_ygo_service_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -233,7 +277,7 @@ func (x *BlackListed) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlackListed.ProtoReflect.Descriptor instead.
 func (*BlackListed) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{4}
+	return file_ygo_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *BlackListed) GetBlackListedRefs() []string {
@@ -259,7 +303,7 @@ type Card struct {
 
 func (x *Card) Reset() {
 	*x = Card{}
-	mi := &file_ygo_service_proto_msgTypes[5]
+	mi := &file_ygo_service_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -271,7 +315,7 @@ func (x *Card) String() string {
 func (*Card) ProtoMessage() {}
 
 func (x *Card) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[5]
+	mi := &file_ygo_service_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -284,7 +328,7 @@ func (x *Card) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Card.ProtoReflect.Descriptor instead.
 func (*Card) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{5}
+	return file_ygo_service_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Card) GetID() string {
@@ -353,7 +397,7 @@ type Cards struct {
 
 func (x *Cards) Reset() {
 	*x = Cards{}
-	mi := &file_ygo_service_proto_msgTypes[6]
+	mi := &file_ygo_service_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -365,7 +409,7 @@ func (x *Cards) String() string {
 func (*Cards) ProtoMessage() {}
 
 func (x *Cards) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[6]
+	mi := &file_ygo_service_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -378,7 +422,7 @@ func (x *Cards) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Cards.ProtoReflect.Descriptor instead.
 func (*Cards) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{6}
+	return file_ygo_service_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Cards) GetCardInfo() map[string]*Card {
@@ -391,6 +435,50 @@ func (x *Cards) GetCardInfo() map[string]*Card {
 func (x *Cards) GetUnknownResources() []string {
 	if x != nil {
 		return x.UnknownResources
+	}
+	return nil
+}
+
+type CardList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cards         []*Card                `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CardList) Reset() {
+	*x = CardList{}
+	mi := &file_ygo_service_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CardList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CardList) ProtoMessage() {}
+
+func (x *CardList) ProtoReflect() protoreflect.Message {
+	mi := &file_ygo_service_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CardList.ProtoReflect.Descriptor instead.
+func (*CardList) Descriptor() ([]byte, []int) {
+	return file_ygo_service_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CardList) GetCards() []*Card {
+	if x != nil {
+		return x.Cards
 	}
 	return nil
 }
@@ -412,7 +500,9 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\vResourceIDs\x12\x10\n" +
 	"\x03IDs\x18\x01 \x03(\tR\x03IDs\"%\n" +
 	"\rResourceNames\x12\x14\n" +
-	"\x05names\x18\x01 \x03(\tR\x05names\"9\n" +
+	"\x05names\x18\x01 \x03(\tR\x05names\")\n" +
+	"\tArchetype\x12\x1c\n" +
+	"\tarchetype\x18\x01 \x01(\tR\tarchetype\"9\n" +
 	"\vBlackListed\x12*\n" +
 	"\x11black_listed_refs\x18\x01 \x03(\tR\x0fblackListedRefs\"\xa5\x02\n" +
 	"\x04Card\x12\x0e\n" +
@@ -429,14 +519,17 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x11unknown_resources\x18\x02 \x03(\tR\x10unknownResources\x1aF\n" +
 	"\rCardInfoEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x1f\n" +
-	"\x05value\x18\x02 \x01(\v2\t.ygo.CardR\x05value:\x028\x012\x80\x02\n" +
+	"\x05value\x18\x02 \x01(\v2\t.ygo.CardR\x05value:\x028\x01\"+\n" +
+	"\bCardList\x12\x1f\n" +
+	"\x05cards\x18\x01 \x03(\v2\t.ygo.CardR\x05cards2\xc2\x02\n" +
 	"\vCardService\x128\n" +
 	"\rGetCardColors\x12\x16.google.protobuf.Empty\x1a\x0f.ygo.CardColors\x12)\n" +
 	"\vGetCardByID\x12\x0f.ygo.ResourceID\x1a\t.ygo.Card\x12,\n" +
 	"\fGetCardsByID\x12\x10.ygo.ResourceIDs\x1a\n" +
 	".ygo.Cards\x120\n" +
 	"\x0eGetCardsByName\x12\x12.ygo.ResourceNames\x1a\n" +
-	".ygo.Cards\x12,\n" +
+	".ygo.Cards\x12@\n" +
+	"\x1fGetArchetypalCardsUsingCardName\x12\x0e.ygo.Archetype\x1a\r.ygo.CardList\x12,\n" +
 	"\rGetRandomCard\x12\x10.ygo.BlackListed\x1a\t.ygo.CardB\x06Z\x04/ygob\x06proto3"
 
 var (
@@ -451,43 +544,48 @@ func file_ygo_service_proto_rawDescGZIP() []byte {
 	return file_ygo_service_proto_rawDescData
 }
 
-var file_ygo_service_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_ygo_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_ygo_service_proto_goTypes = []any{
 	(*CardColors)(nil),             // 0: ygo.CardColors
 	(*ResourceID)(nil),             // 1: ygo.ResourceID
 	(*ResourceIDs)(nil),            // 2: ygo.ResourceIDs
 	(*ResourceNames)(nil),          // 3: ygo.ResourceNames
-	(*BlackListed)(nil),            // 4: ygo.BlackListed
-	(*Card)(nil),                   // 5: ygo.Card
-	(*Cards)(nil),                  // 6: ygo.Cards
-	nil,                            // 7: ygo.CardColors.ValuesEntry
-	nil,                            // 8: ygo.Cards.CardInfoEntry
-	(*wrapperspb.StringValue)(nil), // 9: google.protobuf.StringValue
-	(*wrapperspb.UInt32Value)(nil), // 10: google.protobuf.UInt32Value
-	(*emptypb.Empty)(nil),          // 11: google.protobuf.Empty
+	(*Archetype)(nil),              // 4: ygo.Archetype
+	(*BlackListed)(nil),            // 5: ygo.BlackListed
+	(*Card)(nil),                   // 6: ygo.Card
+	(*Cards)(nil),                  // 7: ygo.Cards
+	(*CardList)(nil),               // 8: ygo.CardList
+	nil,                            // 9: ygo.CardColors.ValuesEntry
+	nil,                            // 10: ygo.Cards.CardInfoEntry
+	(*wrapperspb.StringValue)(nil), // 11: google.protobuf.StringValue
+	(*wrapperspb.UInt32Value)(nil), // 12: google.protobuf.UInt32Value
+	(*emptypb.Empty)(nil),          // 13: google.protobuf.Empty
 }
 var file_ygo_service_proto_depIdxs = []int32{
-	7,  // 0: ygo.CardColors.values:type_name -> ygo.CardColors.ValuesEntry
-	9,  // 1: ygo.Card.monster_type:type_name -> google.protobuf.StringValue
-	10, // 2: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
-	10, // 3: ygo.Card.defense:type_name -> google.protobuf.UInt32Value
-	8,  // 4: ygo.Cards.card_info:type_name -> ygo.Cards.CardInfoEntry
-	5,  // 5: ygo.Cards.CardInfoEntry.value:type_name -> ygo.Card
-	11, // 6: ygo.CardService.GetCardColors:input_type -> google.protobuf.Empty
-	1,  // 7: ygo.CardService.GetCardByID:input_type -> ygo.ResourceID
-	2,  // 8: ygo.CardService.GetCardsByID:input_type -> ygo.ResourceIDs
-	3,  // 9: ygo.CardService.GetCardsByName:input_type -> ygo.ResourceNames
-	4,  // 10: ygo.CardService.GetRandomCard:input_type -> ygo.BlackListed
-	0,  // 11: ygo.CardService.GetCardColors:output_type -> ygo.CardColors
-	5,  // 12: ygo.CardService.GetCardByID:output_type -> ygo.Card
-	6,  // 13: ygo.CardService.GetCardsByID:output_type -> ygo.Cards
-	6,  // 14: ygo.CardService.GetCardsByName:output_type -> ygo.Cards
-	5,  // 15: ygo.CardService.GetRandomCard:output_type -> ygo.Card
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	9,  // 0: ygo.CardColors.values:type_name -> ygo.CardColors.ValuesEntry
+	11, // 1: ygo.Card.monster_type:type_name -> google.protobuf.StringValue
+	12, // 2: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
+	12, // 3: ygo.Card.defense:type_name -> google.protobuf.UInt32Value
+	10, // 4: ygo.Cards.card_info:type_name -> ygo.Cards.CardInfoEntry
+	6,  // 5: ygo.CardList.cards:type_name -> ygo.Card
+	6,  // 6: ygo.Cards.CardInfoEntry.value:type_name -> ygo.Card
+	13, // 7: ygo.CardService.GetCardColors:input_type -> google.protobuf.Empty
+	1,  // 8: ygo.CardService.GetCardByID:input_type -> ygo.ResourceID
+	2,  // 9: ygo.CardService.GetCardsByID:input_type -> ygo.ResourceIDs
+	3,  // 10: ygo.CardService.GetCardsByName:input_type -> ygo.ResourceNames
+	4,  // 11: ygo.CardService.GetArchetypalCardsUsingCardName:input_type -> ygo.Archetype
+	5,  // 12: ygo.CardService.GetRandomCard:input_type -> ygo.BlackListed
+	0,  // 13: ygo.CardService.GetCardColors:output_type -> ygo.CardColors
+	6,  // 14: ygo.CardService.GetCardByID:output_type -> ygo.Card
+	7,  // 15: ygo.CardService.GetCardsByID:output_type -> ygo.Cards
+	7,  // 16: ygo.CardService.GetCardsByName:output_type -> ygo.Cards
+	8,  // 17: ygo.CardService.GetArchetypalCardsUsingCardName:output_type -> ygo.CardList
+	6,  // 18: ygo.CardService.GetRandomCard:output_type -> ygo.Card
+	13, // [13:19] is the sub-list for method output_type
+	7,  // [7:13] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_ygo_service_proto_init() }
@@ -501,7 +599,7 @@ func file_ygo_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ygo_service_proto_rawDesc), len(file_ygo_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
