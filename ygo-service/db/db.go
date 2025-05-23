@@ -11,7 +11,6 @@ import (
 
 	"github.com/ygo-skc/skc-go/common/model"
 	"github.com/ygo-skc/skc-go/common/util"
-	cUtil "github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 )
 
@@ -127,7 +126,7 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 		var atk, def *uint32
 
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
-			return nil, handleRowParsingError(cUtil.LoggerFromContext(ctx), err)
+			return nil, handleRowParsingError(util.LoggerFromContext(ctx), err)
 		} else {
 			card := model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def)
 			cards[keyFn(card)] = card
@@ -137,7 +136,7 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 	return &cards, nil // no parsing error
 }
 
-func parseRowsForCardList(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (*[]*ygo.Card, *model.APIError) {
+func parseRowsForCardList(ctx context.Context, rows *sql.Rows) (*[]*ygo.Card, *model.APIError) {
 	cardList := make([]*ygo.Card, 0)
 
 	for rows.Next() {
@@ -146,7 +145,7 @@ func parseRowsForCardList(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.C
 		var atk, def *uint32
 
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
-			return nil, handleRowParsingError(cUtil.LoggerFromContext(ctx), err)
+			return nil, handleRowParsingError(util.LoggerFromContext(ctx), err)
 		} else {
 			cardList = append(cardList, model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def))
 		}

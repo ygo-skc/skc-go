@@ -110,7 +110,7 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	if rows, err := skcDBConn.Query(archetypalCardsUsingCardNameQuery, searchTerm); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows, model.CardNameAsKey); err != nil {
+		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: *cards}, err
