@@ -34,9 +34,12 @@ const (
 
 	cardsByCardNamesQuery = "SELECT %s FROM card_info WHERE card_name IN (%s)"
 
+	archetypeInclusionSubQuery = `SELECT %s FROM card_info WHERE MATCH (card_effect) AGAINST ('+"This card is always treated as" +"%s"' IN BOOLEAN MODE)`
+	archetypeExclusionSubQuery = `SELECT %s FROM card_info WHERE MATCH (card_effect) AGAINST ('+"This card is not treated as" +"%s"'  IN BOOLEAN MODE)`
+
 	archetypalCardsUsingCardNameQuery    = "SELECT %s FROM card_info WHERE card_name LIKE BINARY ? ORDER BY card_name"
-	archetypalCardsUsingCardTextQuery    = "SELECT %s FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY card_name"
-	nonArchetypalCardsUsingCardTextQuery = "SELECT %s FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY card_name"
+	archetypalCardsUsingCardTextQuery    = `SELECT a.* FROM (%s) a WHERE a.card_effect REGEXP 'always treated as a.*"%s".* card' ORDER BY card_name`
+	nonArchetypalCardsUsingCardTextQuery = `SELECT a.* FROM (%s) a WHERE a.card_effect REGEXP 'not treated as.*"%s".* card' ORDER BY card_name`
 
 	randomCardQuery              = "SELECT %s FROM card_info WHERE card_color != 'Token' ORDER BY RAND() LIMIT 1"
 	randomCardWithBlackListQuery = "SELECT %s FROM card_info WHERE card_number NOT IN (%s) AND card_color != 'Token' ORDER BY RAND() LIMIT 1"

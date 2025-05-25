@@ -125,8 +125,9 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly considered part of archetype %s", archetypeName))
 
-	query := fmt.Sprintf(archetypalCardsUsingCardTextQuery, cardAttributes)
-	if rows, err := skcDBConn.Query(query, fmt.Sprintf(`+"This card is always treated as" +"%s card"`, archetypeName)); err != nil {
+	subQuery := fmt.Sprintf(archetypeInclusionSubQuery, cardAttributes, archetypeName)
+	query := fmt.Sprintf(archetypalCardsUsingCardTextQuery, subQuery, archetypeName)
+	if rows, err := skcDBConn.Query(query); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
@@ -140,8 +141,9 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly NOT considered part of archetype %s", archetypeName))
 
-	query := fmt.Sprintf(nonArchetypalCardsUsingCardTextQuery, cardAttributes)
-	if rows, err := skcDBConn.Query(query, fmt.Sprintf(`+"This card is not treated as" +"%s card"`, archetypeName)); err != nil {
+	subQuery := fmt.Sprintf(archetypeExclusionSubQuery, cardAttributes, archetypeName)
+	query := fmt.Sprintf(nonArchetypalCardsUsingCardTextQuery, subQuery, archetypeName)
+	if rows, err := skcDBConn.Query(query); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
