@@ -75,8 +75,8 @@ func (imp YGOCardRepository) GetCardsByIDs(
 			return nil, err
 		} else {
 			return &ygo.Cards{
-				CardInfo:         *cards,
-				UnknownResources: model.FindMissingKeys(*cards, cardIDs),
+				CardInfo:         cards,
+				UnknownResources: model.FindMissingKeys(cards, cardIDs),
 			}, nil
 		}
 	}
@@ -96,8 +96,8 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 			return nil, err
 		} else {
 			return &ygo.Cards{
-				CardInfo:         *cards,
-				UnknownResources: model.FindMissingKeys(*cards, cardNames),
+				CardInfo:         cards,
+				UnknownResources: model.FindMissingKeys(cards, cardNames),
 			}, nil
 		}
 	}
@@ -113,7 +113,7 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
 			return nil, err
 		} else {
-			return &ygo.CardList{Cards: *cards}, err
+			return &ygo.CardList{Cards: cards}, err
 		}
 	}
 }
@@ -128,7 +128,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
 			return nil, err
 		} else {
-			return &ygo.CardList{Cards: *cards}, err
+			return &ygo.CardList{Cards: cards}, err
 		}
 	}
 }
@@ -142,7 +142,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
 			return nil, err
 		} else {
-			return &ygo.CardList{Cards: *cards}, err
+			return &ygo.CardList{Cards: cards}, err
 		}
 	}
 }

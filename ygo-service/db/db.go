@@ -130,7 +130,7 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 	}, nil
 }
 
-func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (*map[string]*ygo.Card, *model.APIError) {
+func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (map[string]*ygo.Card, *model.APIError) {
 	cards := make(map[string]*ygo.Card)
 
 	for rows.Next() {
@@ -146,10 +146,10 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 		}
 	}
 
-	return &cards, nil
+	return cards, nil
 }
 
-func parseRowsForCardList(ctx context.Context, rows *sql.Rows) (*[]*ygo.Card, *model.APIError) {
+func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *model.APIError) {
 	cardList := make([]*ygo.Card, 0)
 
 	for rows.Next() {
@@ -164,7 +164,7 @@ func parseRowsForCardList(ctx context.Context, rows *sql.Rows) (*[]*ygo.Card, *m
 		}
 	}
 
-	return &cardList, nil
+	return cardList, nil
 }
 
 func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *model.APIError) {
