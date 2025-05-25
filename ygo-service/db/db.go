@@ -23,21 +23,23 @@ const (
 	// errors
 	genericError = "Error occurred while querying DB"
 
+	cardAttributes = "card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense"
+
 	// queries
 	dbVersionQuery    = "SELECT VERSION()"
 	cardColorIDsQuery = "SELECT color_id, card_color from card_colors ORDER BY color_id"
 
-	cardByCardIDQuery   = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number = ?"
-	cardsByCardIDsQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number IN (%s)"
+	cardByCardIDQuery   = "SELECT %s FROM card_info WHERE card_number = ?"
+	cardsByCardIDsQuery = "SELECT %s FROM card_info WHERE card_number IN (%s)"
 
-	cardsByCardNamesQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_name IN (%s)"
+	cardsByCardNamesQuery = "SELECT %s FROM card_info WHERE card_name IN (%s)"
 
-	archetypalCardsUsingCardNameQuery    = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_name LIKE BINARY ? ORDER BY card_name"
-	archetypalCardsUsingCardTextQuery    = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY card_name"
-	nonArchetypalCardsUsingCardTextQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY card_name"
+	archetypalCardsUsingCardNameQuery    = "SELECT %s FROM card_info WHERE card_name LIKE BINARY ? ORDER BY card_name"
+	archetypalCardsUsingCardTextQuery    = "SELECT %s FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY card_name"
+	nonArchetypalCardsUsingCardTextQuery = "SELECT %s FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY card_name"
 
-	randomCardQuery              = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_color != 'Token' ORDER BY RAND() LIMIT 1"
-	randomCardWithBlackListQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense FROM card_info WHERE card_number NOT IN (%s) AND card_color != 'Token' ORDER BY RAND() LIMIT 1"
+	randomCardQuery              = "SELECT %s FROM card_info WHERE card_color != 'Token' ORDER BY RAND() LIMIT 1"
+	randomCardWithBlackListQuery = "SELECT %s FROM card_info WHERE card_number NOT IN (%s) AND card_color != 'Token' ORDER BY RAND() LIMIT 1"
 )
 
 type CardRepository interface {
@@ -58,7 +60,7 @@ type CardRepository interface {
 
 const (
 	productDetailsQuery   = "SELECT product_id, product_locale, product_name, product_type, product_sub_type, product_release_date FROM products where product_id = ?"
-	cardsByProductIDQuery = "SELECT card_number, card_color, card_name, card_attribute, card_effect, monster_type, monster_attack, monster_defense, product_position, card_rarity FROM product_contents WHERE product_id= ? ORDER BY product_position"
+	cardsByProductIDQuery = "SELECT %s, product_position, card_rarity FROM product_contents WHERE product_id= ? ORDER BY product_position"
 )
 
 type ProductRepository interface {

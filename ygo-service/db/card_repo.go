@@ -51,7 +51,9 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 
 	args := make([]interface{}, 1)
 	args[0] = cardID
-	c, err := queryCard(logger, cardByCardIDQuery, args)
+	query := fmt.Sprintf(cardByCardIDQuery, cardAttributes)
+
+	c, err := queryCard(logger, query, args)
 	if err != nil && err.StatusCode == http.StatusNotFound {
 		logger.Info("Card ID is not valid")
 	} else {
@@ -66,8 +68,8 @@ func (imp YGOCardRepository) GetCardsByIDs(
 	logger := cUtil.LoggerFromContext(ctx)
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
+	query := fmt.Sprintf(cardsByCardIDsQuery, cardAttributes, variablePlaceholders(numCards))
 
-	query := fmt.Sprintf(cardsByCardIDsQuery, variablePlaceholders(numCards))
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
@@ -87,8 +89,8 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	logger := cUtil.LoggerFromContext(ctx)
 
 	args, numCards := buildVariableQuerySubjects(cardNames)
+	query := fmt.Sprintf(cardsByCardNamesQuery, cardAttributes, variablePlaceholders(numCards))
 
-	query := fmt.Sprintf(cardsByCardNamesQuery, variablePlaceholders(numCards))
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
@@ -107,7 +109,8 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference archetype %s in their name", archetypeName))
 	searchTerm := `%` + archetypeName + `%`
 
-	if rows, err := skcDBConn.Query(archetypalCardsUsingCardNameQuery, searchTerm); err != nil {
+	query := fmt.Sprintf(archetypalCardsUsingCardNameQuery, cardAttributes)
+	if rows, err := skcDBConn.Query(query, searchTerm); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
@@ -122,7 +125,8 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly considered part of archetype %s", archetypeName))
 
-	if rows, err := skcDBConn.Query(archetypalCardsUsingCardTextQuery, fmt.Sprintf(`+"This card is always treated as" +"%s card"`, archetypeName)); err != nil {
+	query := fmt.Sprintf(archetypalCardsUsingCardTextQuery, cardAttributes)
+	if rows, err := skcDBConn.Query(query, fmt.Sprintf(`+"This card is always treated as" +"%s card"`, archetypeName)); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
@@ -136,7 +140,8 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly NOT considered part of archetype %s", archetypeName))
 
-	if rows, err := skcDBConn.Query(nonArchetypalCardsUsingCardTextQuery, fmt.Sprintf(`+"This card is not treated as" +"%s card"`, archetypeName)); err != nil {
+	query := fmt.Sprintf(nonArchetypalCardsUsingCardTextQuery, cardAttributes)
+	if rows, err := skcDBConn.Query(query, fmt.Sprintf(`+"This card is not treated as" +"%s card"`, archetypeName)); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
@@ -158,10 +163,10 @@ func (imp YGOCardRepository) GetRandomCard(
 	var query string
 	var args []interface{}
 	if numBlackListed == 0 {
-		query = randomCardQuery
+		query = fmt.Sprintf(randomCardQuery, cardAttributes)
 	} else {
 		args, _ = buildVariableQuerySubjects(blacklistedCards)
-		query = fmt.Sprintf(randomCardWithBlackListQuery, variablePlaceholders(numBlackListed))
+		query = fmt.Sprintf(randomCardWithBlackListQuery, cardAttributes, variablePlaceholders(numBlackListed))
 	}
 
 	c, err := queryCard(logger, query, args)

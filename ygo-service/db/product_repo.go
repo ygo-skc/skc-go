@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ygo-skc/skc-go/common/model"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
@@ -16,7 +17,8 @@ func (imp YGOProductRepository) GetCardsByProduct(ctx context.Context, productID
 	if product, err := queryProductInfo(logger, productID); err != nil {
 		return nil, err
 	} else {
-		if rows, err := skcDBConn.Query(cardsByProductIDQuery, productID); err != nil {
+		query := fmt.Sprintf(cardsByProductIDQuery, cardAttributes)
+		if rows, err := skcDBConn.Query(query, productID); err != nil {
 			return nil, handleQueryError(cUtil.LoggerFromContext(ctx), err)
 		} else {
 			if items, rarityDistribution, err := parseRowsForProductItems(ctx, rows); err != nil {
