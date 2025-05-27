@@ -60,6 +60,17 @@ func (s *ygoCardServiceServer) GetCardsByName(ctx context.Context, req *ygo.Reso
 	}
 }
 
+func (s *ygoCardServiceServer) SearchForCardRefUsingEffect(ctx context.Context, req *ygo.SearchTerm) (*ygo.CardList, error) {
+	logger, ctx := util.NewRequestSetup(ctx, "Find Refs Using Card Effect")
+
+	if cards, err := cardRepo.SearchForCardRefUsingEffect(ctx, req.Name, req.ID); err != nil {
+		return nil, status.Errorf(codes.Internal, "%s", err.Message)
+	} else {
+		logger.Info(fmt.Sprintf("Found %d occurrences of card %s in other cards text", len(cards.Cards), req.Name))
+		return cards, nil
+	}
+}
+
 func (s *ygoCardServiceServer) GetArchetypalCardsUsingCardName(ctx context.Context, req *ygo.Archetype) (*ygo.CardList, error) {
 	logger, ctx := util.NewRequestSetup(ctx, "Query Archetypal Cards Using Card Name")
 

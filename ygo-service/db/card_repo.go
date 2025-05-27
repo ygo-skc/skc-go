@@ -104,6 +104,22 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 		}
 	}
 }
+func (imp YGOCardRepository) SearchForCardRefUsingEffect(ctx context.Context, cardName string, cardID string) (*ygo.CardList, *model.APIError) {
+	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference card %s in their text", cardName))
+
+	query := fmt.Sprintf(searchCardUsingEffectQuery, cardAttributes)
+	if rows, err := skcDBConn.Query(query, convertToFullText(cardName), cardID); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+			return nil, err
+		} else {
+			return &ygo.CardList{Cards: cards}, err
+		}
+	}
+}
+
 func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference archetype %s in their name", archetypeName))

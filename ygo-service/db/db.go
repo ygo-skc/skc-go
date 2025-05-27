@@ -32,7 +32,8 @@ const (
 	cardByCardIDQuery   = "SELECT %s FROM card_info WHERE card_number = ?"
 	cardsByCardIDsQuery = "SELECT %s FROM card_info WHERE card_number IN (%s)"
 
-	cardsByCardNamesQuery = "SELECT %s FROM card_info WHERE card_name IN (%s)"
+	cardsByCardNamesQuery      = "SELECT %s FROM card_info WHERE card_name IN (%s)"
+	searchCardUsingEffectQuery = "SELECT %s FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) AND card_number != ? ORDER BY color_id, card_name"
 
 	archetypeInclusionSubQuery = `SELECT %s FROM card_info WHERE MATCH (card_effect) AGAINST ('+"This card is always treated as" +"%s"' IN BOOLEAN MODE)`
 	archetypeExclusionSubQuery = `SELECT %s FROM card_info WHERE MATCH (card_effect) AGAINST ('+"This card is not treated as" +"%s"'  IN BOOLEAN MODE)`
@@ -53,6 +54,7 @@ type CardRepository interface {
 	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
 
 	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
+	SearchForCardRefUsingEffect(context.Context, string, string) (*ygo.CardList, *model.APIError)
 
 	GetArchetypalCardsUsingCardName(context.Context, string) (*ygo.CardList, *model.APIError)
 	GetExplicitArchetypalInclusions(context.Context, string) (*ygo.CardList, *model.APIError)
