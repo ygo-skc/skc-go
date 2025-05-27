@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ygo-skc/skc-go/common/model"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
+	"google.golang.org/grpc/status"
 )
 
 type ProductRepository interface {
-	GetCardsByProduct(context.Context, string) (*ygo.Product, *model.APIError)
+	GetCardsByProduct(context.Context, string) (*ygo.Product, *status.Status)
 }
 type YGOProductRepository struct{}
 
-func (imp YGOProductRepository) GetCardsByProduct(ctx context.Context, productID string) (*ygo.Product, *model.APIError) {
+func (imp YGOProductRepository) GetCardsByProduct(ctx context.Context, productID string) (*ygo.Product, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
 
 	if product, err := queryProductInfo(logger, productID); err != nil {

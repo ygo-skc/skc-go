@@ -3,51 +3,40 @@ package db
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	"github.com/ygo-skc/skc-go/common/model"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type CardRepository interface {
-	GetDBVersion(context.Context) (string, error)
-	GetCardColorIDs(context.Context) (*ygo.CardColors, *model.APIError)
+	GetCardColorIDs(context.Context) (*ygo.CardColors, *status.Status)
 
-	GetCardByID(context.Context, string) (*ygo.Card, *model.APIError)
-	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
+	GetCardByID(context.Context, string) (*ygo.Card, *status.Status)
+	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *status.Status)
 
-	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
-	SearchForCardRefUsingEffect(context.Context, string, string) (*ygo.CardList, *model.APIError)
+	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *status.Status)
+	SearchForCardRefUsingEffect(context.Context, string, string) (*ygo.CardList, *status.Status)
 
-	GetArchetypalCardsUsingCardName(context.Context, string) (*ygo.CardList, *model.APIError)
-	GetExplicitArchetypalInclusions(context.Context, string) (*ygo.CardList, *model.APIError)
-	GetExplicitArchetypalExclusions(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetArchetypalCardsUsingCardName(context.Context, string) (*ygo.CardList, *status.Status)
+	GetExplicitArchetypalInclusions(context.Context, string) (*ygo.CardList, *status.Status)
+	GetExplicitArchetypalExclusions(context.Context, string) (*ygo.CardList, *status.Status)
 
-	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
+	GetRandomCard(context.Context, []string) (*ygo.Card, *status.Status)
 }
 type YGOCardRepository struct{}
 
-// Get version of MYSQL being used by SKC DB.
-func (imp YGOCardRepository) GetDBVersion(ctx context.Context) (string, error) {
-	var version string
-	if err := skcDBConn.QueryRow(dbVersionQuery).Scan(&version); err != nil {
-		cUtil.LoggerFromContext(ctx).Error(fmt.Sprintf("Error getting SKC DB version - %v", err))
-		return version, &model.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
-	}
-
-	return version, nil
-}
-
 // Get IDs for all card colors currently in database.
-func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColors, *model.APIError) {
+func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColors, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
-	logger.Info("Retrieving card color IDs from DB")
-	cardColorIDs := make(map[string]uint32)
+	logger.Info("Retrieving card colors")
 
 	if rows, err := skcDBConn.Query(cardColorIDsQuery); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
+		cardColorIDs := make(map[string]uint32, 18)
 		for rows.Next() {
 			var colorId uint32
 			var cardColor string
@@ -58,30 +47,30 @@ func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColo
 
 			cardColorIDs[cardColor] = colorId
 		}
+
+		logger.Info(fmt.Sprintf("Retrieved %d card colors", len(cardColorIDs)))
 		return &ygo.CardColors{Values: cardColorIDs}, nil
 	}
 }
 
-func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *model.APIError) {
+func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving card data using ID %v", cardID))
 
 	args := make([]interface{}, 1)
 	args[0] = cardID
 	query := fmt.Sprintf(cardByCardIDQuery, cardAttributes)
 
 	c, err := queryCard(logger, query, args)
-	if err != nil && err.StatusCode == http.StatusNotFound {
+	if err != nil && err.Code() == codes.NotFound {
 		logger.Info("Card ID is not valid")
-	} else {
-		logger.Info("Card ID is valid")
 	}
 	return c, err
 }
 
-func (imp YGOCardRepository) GetCardsByIDs(
-	ctx context.Context, cardIDs model.CardIDs,
-) (*ygo.Cards, *model.APIError) {
+func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.CardIDs) (*ygo.Cards, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving card data using ID's: %v", cardIDs))
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
 	query := fmt.Sprintf(cardsByCardIDsQuery, cardAttributes, variablePlaceholders(numCards))
@@ -101,8 +90,9 @@ func (imp YGOCardRepository) GetCardsByIDs(
 }
 
 // Uses card names to find instance of card
-func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames model.CardNames) (*ygo.Cards, *model.APIError) {
+func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames model.CardNames) (*ygo.Cards, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving card data using %d different name(s)", len(cardNames)))
 
 	args, numCards := buildVariableQuerySubjects(cardNames)
 	query := fmt.Sprintf(cardsByCardNamesQuery, cardAttributes, variablePlaceholders(numCards))
@@ -120,7 +110,7 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 		}
 	}
 }
-func (imp YGOCardRepository) SearchForCardRefUsingEffect(ctx context.Context, cardName string, cardID string) (*ygo.CardList, *model.APIError) {
+func (imp YGOCardRepository) SearchForCardRefUsingEffect(ctx context.Context, cardName string, cardID string) (*ygo.CardList, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference card %s in their text", cardName))
 
@@ -136,7 +126,7 @@ func (imp YGOCardRepository) SearchForCardRefUsingEffect(ctx context.Context, ca
 	}
 }
 
-func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
+func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference archetype %s in their name", archetypeName))
 	searchTerm := `%` + archetypeName + `%`
@@ -153,7 +143,7 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	}
 }
 
-func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
+func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly considered part of archetype %s", archetypeName))
 
@@ -169,7 +159,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 		}
 	}
 }
-func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *model.APIError) {
+func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly NOT considered part of archetype %s", archetypeName))
 
@@ -186,11 +176,9 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 	}
 }
 
-func (imp YGOCardRepository) GetRandomCard(
-	ctx context.Context,
-	blacklistedCards []string,
-) (*ygo.Card, *model.APIError) {
+func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards []string) (*ygo.Card, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving random card from DB. Client has provided %d blacklisted IDs", len(blacklistedCards)))
 
 	// pick correct query based on contents of blacklistedCards
 	numBlackListed := len(blacklistedCards)

@@ -9,9 +9,10 @@ import (
 	"github.com/ygo-skc/skc-go/common/model"
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
+	"google.golang.org/grpc/status"
 )
 
-func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *model.APIError) {
+func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *status.Status) {
 	var id, color, name, attribute, effect string
 	var monsterType *string
 	var atk, def *uint32
@@ -32,7 +33,7 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 	}, nil
 }
 
-func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (map[string]*ygo.Card, *model.APIError) {
+func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (map[string]*ygo.Card, *status.Status) {
 	cards := make(map[string]*ygo.Card)
 
 	for rows.Next() {
@@ -51,7 +52,7 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 	return cards, nil
 }
 
-func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *model.APIError) {
+func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *status.Status) {
 	cardList := make([]*ygo.Card, 0)
 
 	for rows.Next() {
@@ -69,7 +70,7 @@ func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *mo
 	return cardList, nil
 }
 
-func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *model.APIError) {
+func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *status.Status) {
 	var id, locale, name, releaseDate, t, subType string
 
 	if err := skcDBConn.QueryRow(productDetailsQuery, productID).Scan(&id, &locale, &name, &releaseDate, &t, &subType); err != nil {
@@ -78,7 +79,7 @@ func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *mod
 	return &ygo.Product{ID: id, Locale: locale, Name: name, ReleaseDate: releaseDate, Type: t, SubType: subType}, nil
 }
 
-func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.ProductItem, map[string]uint32, *model.APIError) {
+func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.ProductItem, map[string]uint32, *status.Status) {
 	items := make([]*ygo.ProductItem, 0)
 	itemByCardIDxPosition := make(map[string]*ygo.ProductItem)
 	rarityDistribution := make(map[string]uint32)
