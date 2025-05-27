@@ -4,9 +4,15 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"regexp"
 	"time"
 
 	"github.com/ygo-skc/skc-go/common/util"
+)
+
+var (
+	skcDBConn  *sql.DB
+	spaceRegex = regexp.MustCompile(`[ ]+`)
 )
 
 const (

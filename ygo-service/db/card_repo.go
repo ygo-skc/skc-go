@@ -10,6 +10,22 @@ import (
 	"github.com/ygo-skc/skc-go/common/ygo"
 )
 
+type CardRepository interface {
+	GetDBVersion(context.Context) (string, error)
+	GetCardColorIDs(context.Context) (*ygo.CardColors, *model.APIError)
+
+	GetCardByID(context.Context, string) (*ygo.Card, *model.APIError)
+	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
+
+	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
+	SearchForCardRefUsingEffect(context.Context, string, string) (*ygo.CardList, *model.APIError)
+
+	GetArchetypalCardsUsingCardName(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetExplicitArchetypalInclusions(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetExplicitArchetypalExclusions(context.Context, string) (*ygo.CardList, *model.APIError)
+
+	GetRandomCard(context.Context, []string) (*ygo.Card, *model.APIError)
+}
 type YGOCardRepository struct{}
 
 // Get version of MYSQL being used by SKC DB.

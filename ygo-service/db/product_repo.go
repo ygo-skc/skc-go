@@ -9,6 +9,9 @@ import (
 	"github.com/ygo-skc/skc-go/common/ygo"
 )
 
+type ProductRepository interface {
+	GetCardsByProduct(context.Context, string) (*ygo.Product, *model.APIError)
+}
 type YGOProductRepository struct{}
 
 func (imp YGOProductRepository) GetCardsByProduct(ctx context.Context, productID string) (*ygo.Product, *model.APIError) {
