@@ -24,8 +24,17 @@ type YGOService interface {
 	GetCardsByNameProto(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
 	GetCardsByName(context.Context, model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError)
 
+	SearchForCardRefUsingEffectProto(context.Context, string, string) (*ygo.CardList, *model.APIError)
+	SearchForCardRefUsingEffect(context.Context, string, string) ([]model.YGOCard, *model.APIError)
+
 	GetArchetypalCardsUsingCardNameProto(context.Context, string) (*ygo.CardList, *model.APIError)
 	GetArchetypalCardsUsingCardName(context.Context, string) ([]model.YGOCard, *model.APIError)
+
+	GetExplicitArchetypalInclusionsProto(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetExplicitArchetypalInclusions(context.Context, string) ([]model.YGOCard, *model.APIError)
+
+	GetExplicitArchetypalExclusionsProto(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetExplicitArchetypalExclusions(context.Context, string) ([]model.YGOCard, *model.APIError)
 
 	GetRandomCardProto(context.Context, []string) (*ygo.Card, *model.APIError)
 	GetRandomCard(context.Context, []string) (*model.YGOCard, *model.APIError)
@@ -49,7 +58,7 @@ func (svc YGOServiceV1) GetCardColorsProto(ctx context.Context) (*ygo.CardColors
 		logger.Error(
 			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
 				"Get Card Colors", status.Code(err), err))
-		return nil, &model.APIError{Message: "There was an error fetching card color data", StatusCode: http.StatusInternalServerError}
+		return nil, &model.APIError{Message: "Error fetching card color data", StatusCode: http.StatusInternalServerError}
 	} else {
 		return cColors, nil
 	}
@@ -76,7 +85,7 @@ func getCardByID(ctx context.Context, cardServiceClient ygo.CardServiceClient, c
 		logger.Error(
 			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
 				"Get Card By ID", status.Code(err), err))
-		return nil, &model.APIError{Message: "There was an error fetching card info", StatusCode: http.StatusInternalServerError}
+		return nil, &model.APIError{Message: "Error fetching card info", StatusCode: http.StatusInternalServerError}
 	} else {
 		return cards, nil
 	}
@@ -102,7 +111,7 @@ func getCardsByID(ctx context.Context, cardServiceClient ygo.CardServiceClient, 
 		logger.Error(
 			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
 				"Get Cards By ID", status.Code(err), err))
-		return nil, &model.APIError{Message: "There was an error fetching batch card info", StatusCode: http.StatusInternalServerError}
+		return nil, &model.APIError{Message: "Error fetching batch card info", StatusCode: http.StatusInternalServerError}
 	} else {
 		if cards.UnknownResources == nil {
 			cards.UnknownResources = make([]string, 0)
@@ -131,7 +140,7 @@ func getCardsByName(ctx context.Context, cardServiceClient ygo.CardServiceClient
 		logger.Error(
 			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
 				"Get Cards By Name", status.Code(err), err))
-		return nil, &model.APIError{Message: "There was an error fetching batch card info", StatusCode: http.StatusInternalServerError}
+		return nil, &model.APIError{Message: "Error fetching batch card info", StatusCode: http.StatusInternalServerError}
 	} else {
 		if cards.UnknownResources == nil {
 			cards.UnknownResources = make([]string, 0)
@@ -140,6 +149,35 @@ func getCardsByName(ctx context.Context, cardServiceClient ygo.CardServiceClient
 	}
 }
 
+func (svc YGOServiceV1) SearchForCardRefUsingEffectProto(ctx context.Context, cardName string, cardID string) (*ygo.CardList, *model.APIError) {
+	return searchForCardRefUsingEffect(ctx, svc.client, cardName, cardID)
+}
+
+func (svc YGOServiceV1) SearchForCardRefUsingEffect(ctx context.Context, cardName string, cardID string) ([]model.YGOCard, *model.APIError) {
+	c, err := searchForCardRefUsingEffect(ctx, svc.client, cardName, cardID)
+	if err == nil {
+		return model.YGOCardListRESTFromProto(c), nil
+	}
+	return nil, err
+}
+
+func searchForCardRefUsingEffect(ctx context.Context, cardServiceClient ygo.CardServiceClient, cardName string, cardID string) (*ygo.CardList, *model.APIError) {
+	logger := util.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Fetching cards that reference %s in their text", cardName))
+
+	if cards, err := cardServiceClient.SearchForCardRefUsingEffect(ctx, &ygo.SearchTerm{Name: cardName, ID: cardID}); err != nil {
+		logger.Error(
+			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
+				"Search Card References Using Text", status.Code(err), err))
+		return nil, &model.APIError{Message: "Error searching card text for references", StatusCode: http.StatusInternalServerError}
+	} else {
+		return cards, nil
+	}
+}
+
+/*
+Archetype functionality
+*/
 func (svc YGOServiceV1) GetArchetypalCardsUsingCardNameProto(ctx context.Context, archetype string) (*ygo.CardList, *model.APIError) {
 	return getArchetypalCardsUsingCardName(ctx, svc.client, archetype)
 }
@@ -161,12 +199,67 @@ func getArchetypalCardsUsingCardName(ctx context.Context, cardServiceClient ygo.
 		logger.Error(
 			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
 				"Get Archetypal Cards Using Name", status.Code(err), err))
-		return nil, &model.APIError{Message: "There was an error archetypal data", StatusCode: http.StatusInternalServerError}
+		return nil, &model.APIError{Message: "Error fetching archetypal data", StatusCode: http.StatusInternalServerError}
 	} else {
 		return cards, nil
 	}
 }
 
+func (svc YGOServiceV1) GetExplicitArchetypalInclusionsProto(ctx context.Context, archetype string) (*ygo.CardList, *model.APIError) {
+	return getArchetypalCardsUsingCardName(ctx, svc.client, archetype)
+}
+
+func (svc YGOServiceV1) GetExplicitArchetypalInclusions(ctx context.Context, archetype string) ([]model.YGOCard, *model.APIError) {
+	c, err := getExplicitArchetypalInclusions(ctx, svc.client, archetype)
+	if err == nil {
+		return model.YGOCardListRESTFromProto(c), nil
+	}
+	return nil, err
+}
+
+func getExplicitArchetypalInclusions(ctx context.Context, cardServiceClient ygo.CardServiceClient, archetype string) (*ygo.CardList, *model.APIError) {
+	logger := util.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Fetching cards that are explicitly included from archetype %s", archetype))
+
+	if cards, err := cardServiceClient.GetExplicitArchetypalInclusions(ctx, &ygo.Archetype{Archetype: archetype}); err != nil {
+		logger.Error(
+			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
+				"Get Explicit Archetype Inclusions", status.Code(err), err))
+		return nil, &model.APIError{Message: "Error fetching explicit archetype inclusions", StatusCode: http.StatusInternalServerError}
+	} else {
+		return cards, nil
+	}
+}
+
+func (svc YGOServiceV1) GetExplicitArchetypalExclusionsProto(ctx context.Context, archetype string) (*ygo.CardList, *model.APIError) {
+	return getExplicitArchetypalExclusions(ctx, svc.client, archetype)
+}
+
+func (svc YGOServiceV1) GetExplicitArchetypalExclusions(ctx context.Context, archetype string) ([]model.YGOCard, *model.APIError) {
+	c, err := getExplicitArchetypalExclusions(ctx, svc.client, archetype)
+	if err == nil {
+		return model.YGOCardListRESTFromProto(c), nil
+	}
+	return nil, err
+}
+
+func getExplicitArchetypalExclusions(ctx context.Context, cardServiceClient ygo.CardServiceClient, archetype string) (*ygo.CardList, *model.APIError) {
+	logger := util.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Fetching cards that are explicitly excluded from archetype %s", archetype))
+
+	if cards, err := cardServiceClient.GetExplicitArchetypalExclusions(ctx, &ygo.Archetype{Archetype: archetype}); err != nil {
+		logger.Error(
+			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
+				"Get Explicit Archetype Exclusions", status.Code(err), err))
+		return nil, &model.APIError{Message: "Error fetching explicit archetype exclusions", StatusCode: http.StatusInternalServerError}
+	} else {
+		return cards, nil
+	}
+}
+
+/*
+Random card functionality
+*/
 func (svc YGOServiceV1) GetRandomCardProto(ctx context.Context, blackListedIDs []string) (*ygo.Card, *model.APIError) {
 	return getRandomCard(ctx, svc.client, blackListedIDs)
 }
@@ -189,7 +282,7 @@ func getRandomCard(ctx context.Context,
 		logger.Error(
 			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
 				"Random Card", status.Code(err), err))
-		return nil, &model.APIError{Message: "There was an error fetching random card", StatusCode: http.StatusInternalServerError}
+		return nil, &model.APIError{Message: "Error fetching random card", StatusCode: http.StatusInternalServerError}
 	} else {
 		return card, nil
 	}
