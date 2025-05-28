@@ -24,7 +24,7 @@ service CardService {
 }
 
 service ProductService {
-	rpc GetCardsByProduct(ResourceID) returns (Product);
+	rpc GetCardsByProductID(ResourceID) returns (Product);
 }
 
 message CardColors {

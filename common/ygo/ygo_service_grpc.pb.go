@@ -426,14 +426,14 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ProductService_GetCardsByProduct_FullMethodName = "/ygo.ProductService/GetCardsByProduct"
+	ProductService_GetCardsByProductID_FullMethodName = "/ygo.ProductService/GetCardsByProductID"
 )
 
 // ProductServiceClient is the client API for ProductService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
-	GetCardsByProduct(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Product, error)
+	GetCardsByProductID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Product, error)
 }
 
 type productServiceClient struct {
@@ -444,10 +444,10 @@ func NewProductServiceClient(cc grpc.ClientConnInterface) ProductServiceClient {
 	return &productServiceClient{cc}
 }
 
-func (c *productServiceClient) GetCardsByProduct(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Product, error) {
+func (c *productServiceClient) GetCardsByProductID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Product, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Product)
-	err := c.cc.Invoke(ctx, ProductService_GetCardsByProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ProductService_GetCardsByProductID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -458,7 +458,7 @@ func (c *productServiceClient) GetCardsByProduct(ctx context.Context, in *Resour
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
 type ProductServiceServer interface {
-	GetCardsByProduct(context.Context, *ResourceID) (*Product, error)
+	GetCardsByProductID(context.Context, *ResourceID) (*Product, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -469,8 +469,8 @@ type ProductServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedProductServiceServer struct{}
 
-func (UnimplementedProductServiceServer) GetCardsByProduct(context.Context, *ResourceID) (*Product, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCardsByProduct not implemented")
+func (UnimplementedProductServiceServer) GetCardsByProductID(context.Context, *ResourceID) (*Product, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCardsByProductID not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -493,20 +493,20 @@ func RegisterProductServiceServer(s grpc.ServiceRegistrar, srv ProductServiceSer
 	s.RegisterService(&ProductService_ServiceDesc, srv)
 }
 
-func _ProductService_GetCardsByProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProductService_GetCardsByProductID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResourceID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductServiceServer).GetCardsByProduct(ctx, in)
+		return srv.(ProductServiceServer).GetCardsByProductID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProductService_GetCardsByProduct_FullMethodName,
+		FullMethod: ProductService_GetCardsByProductID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetCardsByProduct(ctx, req.(*ResourceID))
+		return srv.(ProductServiceServer).GetCardsByProductID(ctx, req.(*ResourceID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -519,8 +519,8 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProductServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetCardsByProduct",
-			Handler:    _ProductService_GetCardsByProduct_Handler,
+			MethodName: "GetCardsByProductID",
+			Handler:    _ProductService_GetCardsByProductID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

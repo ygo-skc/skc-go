@@ -776,9 +776,9 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x1fGetArchetypalCardsUsingCardName\x12\x0e.ygo.Archetype\x1a\r.ygo.CardList\x12@\n" +
 	"\x1fGetExplicitArchetypalInclusions\x12\x0e.ygo.Archetype\x1a\r.ygo.CardList\x12@\n" +
 	"\x1fGetExplicitArchetypalExclusions\x12\x0e.ygo.Archetype\x1a\r.ygo.CardList\x12,\n" +
-	"\rGetRandomCard\x12\x10.ygo.BlackListed\x1a\t.ygo.Card2D\n" +
-	"\x0eProductService\x122\n" +
-	"\x11GetCardsByProduct\x12\x0f.ygo.ResourceID\x1a\f.ygo.ProductB\x06Z\x04/ygob\x06proto3"
+	"\rGetRandomCard\x12\x10.ygo.BlackListed\x1a\t.ygo.Card2F\n" +
+	"\x0eProductService\x124\n" +
+	"\x13GetCardsByProductID\x12\x0f.ygo.ResourceID\x1a\f.ygo.ProductB\x06Z\x04/ygob\x06proto3"
 
 var (
 	file_ygo_service_proto_rawDescOnce sync.Once
@@ -833,7 +833,7 @@ var file_ygo_service_proto_depIdxs = []int32{
 	5,  // 16: ygo.CardService.GetExplicitArchetypalInclusions:input_type -> ygo.Archetype
 	5,  // 17: ygo.CardService.GetExplicitArchetypalExclusions:input_type -> ygo.Archetype
 	6,  // 18: ygo.CardService.GetRandomCard:input_type -> ygo.BlackListed
-	1,  // 19: ygo.ProductService.GetCardsByProduct:input_type -> ygo.ResourceID
+	1,  // 19: ygo.ProductService.GetCardsByProductID:input_type -> ygo.ResourceID
 	0,  // 20: ygo.CardService.GetCardColors:output_type -> ygo.CardColors
 	7,  // 21: ygo.CardService.GetCardByID:output_type -> ygo.Card
 	8,  // 22: ygo.CardService.GetCardsByID:output_type -> ygo.Cards
@@ -843,7 +843,7 @@ var file_ygo_service_proto_depIdxs = []int32{
 	9,  // 26: ygo.CardService.GetExplicitArchetypalInclusions:output_type -> ygo.CardList
 	9,  // 27: ygo.CardService.GetExplicitArchetypalExclusions:output_type -> ygo.CardList
 	7,  // 28: ygo.CardService.GetRandomCard:output_type -> ygo.Card
-	10, // 29: ygo.ProductService.GetCardsByProduct:output_type -> ygo.Product
+	10, // 29: ygo.ProductService.GetCardsByProductID:output_type -> ygo.Product
 	20, // [20:30] is the sub-list for method output_type
 	10, // [10:20] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
