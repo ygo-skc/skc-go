@@ -9,14 +9,22 @@ import "google/protobuf/empty.proto";
 service CardService {
   rpc GetCardColors(google.protobuf.Empty) returns (CardColors);
 
-  rpc GetCardByID (ResourceID) returns (Card);
-  rpc GetCardsByID (ResourceIDs) returns (Cards);
+  rpc GetCardByID(ResourceID) returns (Card);
+  rpc GetCardsByID(ResourceIDs) returns (Cards);
 
-  rpc GetCardsByName (ResourceNames) returns (Cards);
+  rpc GetCardsByName(ResourceNames) returns (Cards);
 
-  rpc GetArchetypalCardsUsingCardName (Archetype) returns (CardList);
+  rpc SearchForCardRefUsingEffect(SearchTerm) returns (CardList);
 
-  rpc GetRandomCard (BlackListed) returns (Card);
+  rpc GetArchetypalCardsUsingCardName(Archetype) returns (CardList);
+  rpc GetExplicitArchetypalInclusions(Archetype) returns (CardList);
+  rpc GetExplicitArchetypalExclusions(Archetype) returns (CardList);
+
+  rpc GetRandomCard(BlackListed) returns (Card);
+}
+
+service ProductService {
+	rpc GetCardsByProduct(ResourceID) returns (Product);
 }
 
 message CardColors {
@@ -33,6 +41,11 @@ message ResourceIDs {
 
 message ResourceNames {
   repeated string names = 1;
+}
+
+message SearchTerm {
+  string ID = 1;
+  string name = 2;
 }
 
 message Archetype {
@@ -61,4 +74,22 @@ message Cards {
 
 message CardList {
 	repeated Card cards = 1;
+}
+
+message Product {
+  string ID = 1;
+  string locale = 2;
+  string name = 3;
+  string type = 4;
+  string subType = 5;
+  string releaseDate = 6;
+  uint32 totalItems = 7;
+  repeated ProductItem items = 8;
+  map<string, uint32> rarityDistribution = 9;
+}
+
+message ProductItem {
+  Card card = 1;
+  string position = 2;
+  repeated string rarities = 3;
 }
