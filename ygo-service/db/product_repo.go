@@ -16,6 +16,7 @@ type YGOProductRepository struct{}
 
 func (imp YGOProductRepository) GetCardsByProduct(ctx context.Context, productID string) (*ygo.Product, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
+	logger.Info(fmt.Sprintf("Retrieving product data using ID %s", productID))
 
 	if product, err := queryProductInfo(logger, productID); err != nil {
 		return nil, err

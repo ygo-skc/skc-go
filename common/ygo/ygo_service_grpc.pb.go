@@ -24,7 +24,10 @@ const (
 	CardService_GetCardByID_FullMethodName                     = "/ygo.CardService/GetCardByID"
 	CardService_GetCardsByID_FullMethodName                    = "/ygo.CardService/GetCardsByID"
 	CardService_GetCardsByName_FullMethodName                  = "/ygo.CardService/GetCardsByName"
+	CardService_SearchForCardRefUsingEffect_FullMethodName     = "/ygo.CardService/SearchForCardRefUsingEffect"
 	CardService_GetArchetypalCardsUsingCardName_FullMethodName = "/ygo.CardService/GetArchetypalCardsUsingCardName"
+	CardService_GetExplicitArchetypalInclusions_FullMethodName = "/ygo.CardService/GetExplicitArchetypalInclusions"
+	CardService_GetExplicitArchetypalExclusions_FullMethodName = "/ygo.CardService/GetExplicitArchetypalExclusions"
 	CardService_GetRandomCard_FullMethodName                   = "/ygo.CardService/GetRandomCard"
 )
 
@@ -36,7 +39,10 @@ type CardServiceClient interface {
 	GetCardByID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Card, error)
 	GetCardsByID(ctx context.Context, in *ResourceIDs, opts ...grpc.CallOption) (*Cards, error)
 	GetCardsByName(ctx context.Context, in *ResourceNames, opts ...grpc.CallOption) (*Cards, error)
+	SearchForCardRefUsingEffect(ctx context.Context, in *SearchTerm, opts ...grpc.CallOption) (*CardList, error)
 	GetArchetypalCardsUsingCardName(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error)
+	GetExplicitArchetypalInclusions(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error)
+	GetExplicitArchetypalExclusions(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error)
 	GetRandomCard(ctx context.Context, in *BlackListed, opts ...grpc.CallOption) (*Card, error)
 }
 
@@ -88,10 +94,40 @@ func (c *cardServiceClient) GetCardsByName(ctx context.Context, in *ResourceName
 	return out, nil
 }
 
+func (c *cardServiceClient) SearchForCardRefUsingEffect(ctx context.Context, in *SearchTerm, opts ...grpc.CallOption) (*CardList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CardList)
+	err := c.cc.Invoke(ctx, CardService_SearchForCardRefUsingEffect_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cardServiceClient) GetArchetypalCardsUsingCardName(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CardList)
 	err := c.cc.Invoke(ctx, CardService_GetArchetypalCardsUsingCardName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cardServiceClient) GetExplicitArchetypalInclusions(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CardList)
+	err := c.cc.Invoke(ctx, CardService_GetExplicitArchetypalInclusions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cardServiceClient) GetExplicitArchetypalExclusions(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CardList)
+	err := c.cc.Invoke(ctx, CardService_GetExplicitArchetypalExclusions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +152,10 @@ type CardServiceServer interface {
 	GetCardByID(context.Context, *ResourceID) (*Card, error)
 	GetCardsByID(context.Context, *ResourceIDs) (*Cards, error)
 	GetCardsByName(context.Context, *ResourceNames) (*Cards, error)
+	SearchForCardRefUsingEffect(context.Context, *SearchTerm) (*CardList, error)
 	GetArchetypalCardsUsingCardName(context.Context, *Archetype) (*CardList, error)
+	GetExplicitArchetypalInclusions(context.Context, *Archetype) (*CardList, error)
+	GetExplicitArchetypalExclusions(context.Context, *Archetype) (*CardList, error)
 	GetRandomCard(context.Context, *BlackListed) (*Card, error)
 	mustEmbedUnimplementedCardServiceServer()
 }
@@ -140,8 +179,17 @@ func (UnimplementedCardServiceServer) GetCardsByID(context.Context, *ResourceIDs
 func (UnimplementedCardServiceServer) GetCardsByName(context.Context, *ResourceNames) (*Cards, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCardsByName not implemented")
 }
+func (UnimplementedCardServiceServer) SearchForCardRefUsingEffect(context.Context, *SearchTerm) (*CardList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchForCardRefUsingEffect not implemented")
+}
 func (UnimplementedCardServiceServer) GetArchetypalCardsUsingCardName(context.Context, *Archetype) (*CardList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArchetypalCardsUsingCardName not implemented")
+}
+func (UnimplementedCardServiceServer) GetExplicitArchetypalInclusions(context.Context, *Archetype) (*CardList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetExplicitArchetypalInclusions not implemented")
+}
+func (UnimplementedCardServiceServer) GetExplicitArchetypalExclusions(context.Context, *Archetype) (*CardList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetExplicitArchetypalExclusions not implemented")
 }
 func (UnimplementedCardServiceServer) GetRandomCard(context.Context, *BlackListed) (*Card, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRandomCard not implemented")
@@ -239,6 +287,24 @@ func _CardService_GetCardsByName_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CardService_SearchForCardRefUsingEffect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchTerm)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CardServiceServer).SearchForCardRefUsingEffect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CardService_SearchForCardRefUsingEffect_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CardServiceServer).SearchForCardRefUsingEffect(ctx, req.(*SearchTerm))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CardService_GetArchetypalCardsUsingCardName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Archetype)
 	if err := dec(in); err != nil {
@@ -253,6 +319,42 @@ func _CardService_GetArchetypalCardsUsingCardName_Handler(srv interface{}, ctx c
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServiceServer).GetArchetypalCardsUsingCardName(ctx, req.(*Archetype))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CardService_GetExplicitArchetypalInclusions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Archetype)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CardServiceServer).GetExplicitArchetypalInclusions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CardService_GetExplicitArchetypalInclusions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CardServiceServer).GetExplicitArchetypalInclusions(ctx, req.(*Archetype))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CardService_GetExplicitArchetypalExclusions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Archetype)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CardServiceServer).GetExplicitArchetypalExclusions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CardService_GetExplicitArchetypalExclusions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CardServiceServer).GetExplicitArchetypalExclusions(ctx, req.(*Archetype))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -299,12 +401,126 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CardService_GetCardsByName_Handler,
 		},
 		{
+			MethodName: "SearchForCardRefUsingEffect",
+			Handler:    _CardService_SearchForCardRefUsingEffect_Handler,
+		},
+		{
 			MethodName: "GetArchetypalCardsUsingCardName",
 			Handler:    _CardService_GetArchetypalCardsUsingCardName_Handler,
 		},
 		{
+			MethodName: "GetExplicitArchetypalInclusions",
+			Handler:    _CardService_GetExplicitArchetypalInclusions_Handler,
+		},
+		{
+			MethodName: "GetExplicitArchetypalExclusions",
+			Handler:    _CardService_GetExplicitArchetypalExclusions_Handler,
+		},
+		{
 			MethodName: "GetRandomCard",
 			Handler:    _CardService_GetRandomCard_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "ygo_service.proto",
+}
+
+const (
+	ProductService_GetCardsByProduct_FullMethodName = "/ygo.ProductService/GetCardsByProduct"
+)
+
+// ProductServiceClient is the client API for ProductService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ProductServiceClient interface {
+	GetCardsByProduct(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Product, error)
+}
+
+type productServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewProductServiceClient(cc grpc.ClientConnInterface) ProductServiceClient {
+	return &productServiceClient{cc}
+}
+
+func (c *productServiceClient) GetCardsByProduct(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Product, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Product)
+	err := c.cc.Invoke(ctx, ProductService_GetCardsByProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ProductServiceServer is the server API for ProductService service.
+// All implementations must embed UnimplementedProductServiceServer
+// for forward compatibility.
+type ProductServiceServer interface {
+	GetCardsByProduct(context.Context, *ResourceID) (*Product, error)
+	mustEmbedUnimplementedProductServiceServer()
+}
+
+// UnimplementedProductServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedProductServiceServer struct{}
+
+func (UnimplementedProductServiceServer) GetCardsByProduct(context.Context, *ResourceID) (*Product, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCardsByProduct not implemented")
+}
+func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
+func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
+
+// UnsafeProductServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ProductServiceServer will
+// result in compilation errors.
+type UnsafeProductServiceServer interface {
+	mustEmbedUnimplementedProductServiceServer()
+}
+
+func RegisterProductServiceServer(s grpc.ServiceRegistrar, srv ProductServiceServer) {
+	// If the following call pancis, it indicates UnimplementedProductServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ProductService_ServiceDesc, srv)
+}
+
+func _ProductService_GetCardsByProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetCardsByProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_GetCardsByProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetCardsByProduct(ctx, req.(*ResourceID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ProductService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "ygo.ProductService",
+	HandlerType: (*ProductServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetCardsByProduct",
+			Handler:    _ProductService_GetCardsByProduct_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
