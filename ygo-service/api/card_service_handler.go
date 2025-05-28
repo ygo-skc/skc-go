@@ -2,82 +2,71 @@ package api
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *ygoServiceServer) GetCardColors(ctx context.Context, req *emptypb.Empty) (*ygo.CardColors, error) {
-	logger, ctx := util.NewRequestSetup(ctx, "Card Colors")
-	logger.Info("Retrieving card colors")
+func (s *ygoCardServiceServer) GetCardColors(ctx context.Context, req *emptypb.Empty) (*ygo.CardColors, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Card Colors")
 
-	if c, err := skcDBInterface.GetCardColorIDs(ctx); err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err.Message)
-	} else {
-		return c, nil
-	}
+	c, err := cardRepo.GetCardColorIDs(newCtx)
+	return c, err.Err()
 }
 
-func (s *ygoServiceServer) GetCardByID(ctx context.Context, req *ygo.ResourceID) (*ygo.Card, error) {
-	logger, ctx := util.NewRequestSetup(ctx, "Query Card By ID")
-	logger.Info(fmt.Sprintf("Getting card details using card ID: %v", req.ID))
+func (s *ygoCardServiceServer) GetCardByID(ctx context.Context, req *ygo.ResourceID) (*ygo.Card, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Query Card By ID")
 
-	if c, err := skcDBInterface.GetCardByID(ctx, req.ID); err != nil && err.StatusCode == http.StatusNotFound {
-		return nil, status.Errorf(codes.NotFound, "%s", err.Message)
-	} else if err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err.Message)
-	} else {
-		return c, nil
-	}
+	c, err := cardRepo.GetCardByID(newCtx, req.ID)
+	return c, err.Err()
 }
 
-func (s *ygoServiceServer) GetCardsByID(ctx context.Context, req *ygo.ResourceIDs) (*ygo.Cards, error) {
-	logger, ctx := util.NewRequestSetup(ctx, "Query Cards By ID")
-	logger.Info(fmt.Sprintf("Getting card details using card ID's: %v", req.IDs))
+func (s *ygoCardServiceServer) GetCardsByID(ctx context.Context, req *ygo.ResourceIDs) (*ygo.Cards, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Query Cards By ID")
 
-	if cards, err := skcDBInterface.GetCardsByIDs(ctx, req.IDs); err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err.Message)
-	} else {
-		logger.Info(fmt.Sprintf("The following Card ID's were invalid: %v", cards.UnknownResources))
-		return cards, nil
-	}
+	c, err := cardRepo.GetCardsByIDs(newCtx, req.IDs)
+	return c, err.Err()
 }
 
-func (s *ygoServiceServer) GetCardsByName(ctx context.Context, req *ygo.ResourceNames) (*ygo.Cards, error) {
-	logger, ctx := util.NewRequestSetup(ctx, "Query Cards By Name")
-	logger.Info(fmt.Sprintf("Getting card details using %d card name(s)", len(req.Names)))
+func (s *ygoCardServiceServer) GetCardsByName(ctx context.Context, req *ygo.ResourceNames) (*ygo.Cards, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Query Cards By Name")
 
-	if cards, err := skcDBInterface.GetCardsByNames(ctx, req.Names); err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err.Message)
-	} else {
-		logger.Info(fmt.Sprintf("The following cards were not found: %v", cards.UnknownResources))
-		return cards, nil
-	}
+	c, err := cardRepo.GetCardsByNames(newCtx, req.Names)
+	return c, err.Err()
 }
 
-func (s *ygoServiceServer) GetArchetypalCardsUsingCardName(ctx context.Context, req *ygo.Archetype) (*ygo.CardList, error) {
-	logger, ctx := util.NewRequestSetup(ctx, "Query Archetypal Cards Using Card Name")
+func (s *ygoCardServiceServer) SearchForCardRefUsingEffect(ctx context.Context, req *ygo.SearchTerm) (*ygo.CardList, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Find Refs Using Card Effect")
 
-	if cards, err := skcDBInterface.GetArchetypalCardsUsingCardName(ctx, req.Archetype); err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err.Message)
-	} else {
-		logger.Info(fmt.Sprintf("Found %d cards in archetype %s", len(cards.Cards), req.Archetype))
-		return cards, nil
-	}
+	c, err := cardRepo.SearchForCardRefUsingEffect(newCtx, req.Name, req.ID)
+	return c, err.Err()
 }
 
-func (s *ygoServiceServer) GetRandomCard(ctx context.Context, req *ygo.BlackListed) (*ygo.Card, error) {
-	logger, ctx := util.NewRequestSetup(ctx, "Random Card")
-	logger.Info(fmt.Sprintf("Getting random card from DB. Client has provided %d blacklisted IDs", len(req.BlackListedRefs)))
+func (s *ygoCardServiceServer) GetArchetypalCardsUsingCardName(ctx context.Context, req *ygo.Archetype) (*ygo.CardList, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Query Archetypal Cards Using Card Name")
 
-	if c, err := skcDBInterface.GetRandomCard(ctx, req.BlackListedRefs); err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err.Message)
-	} else {
-		return c, nil
-	}
+	c, err := cardRepo.GetArchetypalCardsUsingCardName(newCtx, req.Archetype)
+	return c, err.Err()
+}
+
+func (s *ygoCardServiceServer) GetExplicitArchetypalInclusions(ctx context.Context, req *ygo.Archetype) (*ygo.CardList, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Query Archetypal Inclusions")
+
+	c, err := cardRepo.GetExplicitArchetypalInclusions(newCtx, req.Archetype)
+	return c, err.Err()
+}
+
+func (s *ygoCardServiceServer) GetExplicitArchetypalExclusions(ctx context.Context, req *ygo.Archetype) (*ygo.CardList, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Query Archetypal Exclusions")
+
+	c, err := cardRepo.GetExplicitArchetypalExclusions(newCtx, req.Archetype)
+	return c, err.Err()
+}
+
+func (s *ygoCardServiceServer) GetRandomCard(ctx context.Context, req *ygo.BlackListed) (*ygo.Card, error) {
+	_, newCtx := util.NewRequestSetup(ctx, "Random Card")
+
+	c, err := cardRepo.GetRandomCard(newCtx, req.BlackListedRefs)
+	return c, err.Err()
 }

@@ -16,7 +16,8 @@ import (
 )
 
 var (
-	skcDBInterface db.CardRepository = db.YGOCardRepository{}
+	cardRepo    db.CardRepository    = db.YGOCardRepository{}
+	productRepo db.ProductRepository = db.YGOProductRepository{}
 )
 
 const (
@@ -27,8 +28,12 @@ type healthServiceServer struct {
 	health.HealthServiceServer
 }
 
-type ygoServiceServer struct {
+type ygoCardServiceServer struct {
 	ygo.CardServiceServer
+}
+
+type ygoProductServiceServer struct {
+	ygo.ProductServiceServer
 }
 
 func RunService() {
@@ -55,7 +60,8 @@ func RunService() {
 
 		// register services
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
-		ygo.RegisterCardServiceServer(grpcServer, &ygoServiceServer{})
+		ygo.RegisterCardServiceServer(grpcServer, &ygoCardServiceServer{})
+		ygo.RegisterProductServiceServer(grpcServer, &ygoProductServiceServer{})
 
 		log.Printf("Starting gRPC service on port %d...", port)
 		listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
