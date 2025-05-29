@@ -87,7 +87,7 @@ func (c YGOCardGRPC) GetDefense() *uint32 {
 /*
 ygo.Card PB helpers
 */
-func FindMissingKeys[T CardIDs | CardNames](cards map[string]*ygo.Card, cardIDs T) T {
+func FindMissingKeys[T CardIDs | CardNames | ProductIDs | ProductNames, R ygo.Card | ygo.ProductSummary](cards map[string]*R, cardIDs T) T {
 	missingIDs := make(T, 0, 10)
 
 	for _, cardID := range cardIDs {
