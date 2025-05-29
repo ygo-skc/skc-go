@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/ygo-skc/skc-go/common/health"
 	"github.com/ygo-skc/skc-go/common/ygo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -15,15 +16,14 @@ import (
 type YGOClientImpV1 struct {
 	CardService    YGOCardClientImp
 	ProductService YGOProductClientImp
+	HealthService  YGOHealthClientImp
 }
 
-func newYGOClientImpV1(cardServiceClient *ygo.CardServiceClient, productServiceClient *ygo.ProductServiceClient) *YGOClientImpV1 {
-	c := YGOCardClientImpV1{client: cardServiceClient}
-	p := YGOProductClientImpV1{client: productServiceClient}
-
+func newYGOClientImpV1(cardServiceClient *ygo.CardServiceClient, productServiceClient *ygo.ProductServiceClient, healthServiceClient *health.HealthServiceClient) *YGOClientImpV1 {
 	return &YGOClientImpV1{
-		CardService:    &c,
-		ProductService: &p,
+		CardService:    &YGOCardClientImpV1{client: cardServiceClient},
+		ProductService: &YGOProductClientImpV1{client: productServiceClient},
+		HealthService:  &YGOHealthClientImpV1{client: healthServiceClient},
 	}
 }
 
@@ -67,5 +67,6 @@ func NewYGOServiceClients(sslServerName string, serviceHost string) (*YGOClientI
 
 	cardServiceClient := ygo.NewCardServiceClient(conn)
 	productServiceClient := ygo.NewProductServiceClient(conn)
-	return newYGOClientImpV1(&cardServiceClient, &productServiceClient), nil
+	healthServiceClient := health.NewHealthServiceClient(conn)
+	return newYGOClientImpV1(&cardServiceClient, &productServiceClient, &healthServiceClient), nil
 }
