@@ -1,14 +1,17 @@
+.PHONY: deps clean help
+
 # vars
 YGO_GRPC_DIR := ./ygo
+API_HEALTH_GRPC_DIR := ./health
 
 # default
 all: deps clean generate-grpc
 
 generate-grpc:
-	protoc --go_out=./ --go-grpc_out=./ ygo_service.proto
+	protoc --go_out=./ --go-grpc_out=./ ygo_service.proto health.proto
 
 clean:
-	rm -rf $(YGO_GRPC_DIR)/*.pb.go
+	rm -rf $(YGO_GRPC_DIR)/*.pb.go $(API_HEALTH_GRPC_DIR)/*.pb.go
 
 deps:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
