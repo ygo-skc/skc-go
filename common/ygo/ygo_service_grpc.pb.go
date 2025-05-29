@@ -426,7 +426,9 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ProductService_GetCardsByProductID_FullMethodName = "/ygo.ProductService/GetCardsByProductID"
+	ProductService_GetCardsByProductID_FullMethodName    = "/ygo.ProductService/GetCardsByProductID"
+	ProductService_GetProductSummaryByID_FullMethodName  = "/ygo.ProductService/GetProductSummaryByID"
+	ProductService_GetProductsSummaryByID_FullMethodName = "/ygo.ProductService/GetProductsSummaryByID"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -434,6 +436,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
 	GetCardsByProductID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Product, error)
+	GetProductSummaryByID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*ProductSummary, error)
+	GetProductsSummaryByID(ctx context.Context, in *ResourceIDs, opts ...grpc.CallOption) (*Products, error)
 }
 
 type productServiceClient struct {
@@ -454,11 +458,33 @@ func (c *productServiceClient) GetCardsByProductID(ctx context.Context, in *Reso
 	return out, nil
 }
 
+func (c *productServiceClient) GetProductSummaryByID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*ProductSummary, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProductSummary)
+	err := c.cc.Invoke(ctx, ProductService_GetProductSummaryByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) GetProductsSummaryByID(ctx context.Context, in *ResourceIDs, opts ...grpc.CallOption) (*Products, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Products)
+	err := c.cc.Invoke(ctx, ProductService_GetProductsSummaryByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
 type ProductServiceServer interface {
 	GetCardsByProductID(context.Context, *ResourceID) (*Product, error)
+	GetProductSummaryByID(context.Context, *ResourceID) (*ProductSummary, error)
+	GetProductsSummaryByID(context.Context, *ResourceIDs) (*Products, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -471,6 +497,12 @@ type UnimplementedProductServiceServer struct{}
 
 func (UnimplementedProductServiceServer) GetCardsByProductID(context.Context, *ResourceID) (*Product, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCardsByProductID not implemented")
+}
+func (UnimplementedProductServiceServer) GetProductSummaryByID(context.Context, *ResourceID) (*ProductSummary, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProductSummaryByID not implemented")
+}
+func (UnimplementedProductServiceServer) GetProductsSummaryByID(context.Context, *ResourceIDs) (*Products, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProductsSummaryByID not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -511,6 +543,42 @@ func _ProductService_GetCardsByProductID_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_GetProductSummaryByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetProductSummaryByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_GetProductSummaryByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetProductSummaryByID(ctx, req.(*ResourceID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_GetProductsSummaryByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceIDs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetProductsSummaryByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_GetProductsSummaryByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetProductsSummaryByID(ctx, req.(*ResourceIDs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -521,6 +589,14 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCardsByProductID",
 			Handler:    _ProductService_GetCardsByProductID_Handler,
+		},
+		{
+			MethodName: "GetProductSummaryByID",
+			Handler:    _ProductService_GetProductSummaryByID_Handler,
+		},
+		{
+			MethodName: "GetProductsSummaryByID",
+			Handler:    _ProductService_GetProductsSummaryByID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
