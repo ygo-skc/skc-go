@@ -19,11 +19,11 @@ type YGOClientImpV1 struct {
 	HealthService  YGOHealthClientImp
 }
 
-func newYGOClientImpV1(cardServiceClient *ygo.CardServiceClient, productServiceClient *ygo.ProductServiceClient, healthServiceClient *health.HealthServiceClient) *YGOClientImpV1 {
+func newYGOClientImpV1(conn *grpc.ClientConn) *YGOClientImpV1 {
 	return &YGOClientImpV1{
-		CardService:    &YGOCardClientImpV1{client: cardServiceClient},
-		ProductService: &YGOProductClientImpV1{client: productServiceClient},
-		HealthService:  &YGOHealthClientImpV1{client: healthServiceClient},
+		CardService:    &YGOCardClientImpV1{client: ygo.NewCardServiceClient(conn)},
+		ProductService: &YGOProductClientImpV1{client: ygo.NewProductServiceClient(conn)},
+		HealthService:  &YGOHealthClientImpV1{client: health.NewHealthServiceClient(conn)},
 	}
 }
 
@@ -65,8 +65,5 @@ func NewYGOServiceClients(sslServerName string, serviceHost string) (*YGOClientI
 		return nil, err
 	}
 
-	cardServiceClient := ygo.NewCardServiceClient(conn)
-	productServiceClient := ygo.NewProductServiceClient(conn)
-	healthServiceClient := health.NewHealthServiceClient(conn)
-	return newYGOClientImpV1(&cardServiceClient, &productServiceClient, &healthServiceClient), nil
+	return newYGOClientImpV1(conn), nil
 }
