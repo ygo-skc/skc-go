@@ -7,6 +7,7 @@ type APIHealth struct {
 
 type DownstreamItem struct {
 	ServiceName string `json:"serviceName"`
+	Version     string `json:"version,omitempty"`
 	Status      Status `json:"status"`
 }
 
