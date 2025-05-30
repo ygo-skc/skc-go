@@ -58,3 +58,12 @@ func BatchCardDataFromProto[T CardIDs | CardNames](c *ygo.Cards) *BatchCardData[
 	}
 	return &BatchCardData[T]{CardInfo: batchCardData, UnknownResources: c.UnknownResources}
 }
+
+func BatchCardDataFromProductProto[T CardIDs | CardNames](p *ygo.Product) *BatchCardData[T] {
+	batchCardData := make(CardDataMap, len(p.Items))
+	for _, item := range p.Items {
+		id := item.Card.ID
+		batchCardData[id] = YGOCardRESTFromProto(item.Card)
+	}
+	return &BatchCardData[T]{CardInfo: batchCardData, UnknownResources: make([]string, 0)}
+}

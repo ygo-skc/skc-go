@@ -24,7 +24,10 @@ service CardService {
 }
 
 service ProductService {
-	rpc GetCardsByProduct(ResourceID) returns (Product);
+	rpc GetCardsByProductID(ResourceID) returns (Product);
+
+	rpc GetProductSummaryByID(ResourceID) returns (ProductSummary);
+	rpc GetProductsSummaryByID(ResourceIDs) returns (Products);
 }
 
 message CardColors {
@@ -92,4 +95,19 @@ message ProductItem {
   Card card = 1;
   string position = 2;
   repeated string rarities = 3;
+}
+
+message ProductSummary {
+  string ID = 1;
+  string locale = 2;
+  string name = 3;
+  string type = 4;
+  string subType = 5;
+  string releaseDate = 6;
+  uint32 totalItems = 7;
+}
+
+message Products {
+	map<string, ProductSummary> products = 1;
+	repeated string unknown_resources = 2;
 }

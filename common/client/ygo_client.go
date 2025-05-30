@@ -6,19 +6,34 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/ygo-skc/skc-go/common/health"
 	"github.com/ygo-skc/skc-go/common/ygo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
-func CreateCardServiceClient(sslServerName string, serviceHost string) (*ygo.CardServiceClient, error) {
+type YGOClientImpV1 struct {
+	CardService    YGOCardClientImp
+	ProductService YGOProductClientImp
+	HealthService  YGOHealthClientImp
+}
+
+func newYGOClientImpV1(conn *grpc.ClientConn) *YGOClientImpV1 {
+	return &YGOClientImpV1{
+		CardService:    &YGOCardClientImpV1{client: ygo.NewCardServiceClient(conn)},
+		ProductService: &YGOProductClientImpV1{client: ygo.NewProductServiceClient(conn)},
+		HealthService:  &YGOHealthClientImpV1{client: health.NewHealthServiceClient(conn)},
+	}
+}
+
+func NewYGOServiceClients(sslServerName string, serviceHost string) (*YGOClientImpV1, error) {
 	slog.Info(fmt.Sprintf("Creating Card Service gRPC Client using SSL Server Name %s and Host %s",
 		sslServerName,
-		serviceHost))
+		serviceHost,
+	))
 
 	creds := credentials.NewTLS(&tls.Config{
-
 		InsecureSkipVerify: false,
 		ServerName:         sslServerName,
 	})
@@ -30,7 +45,7 @@ func CreateCardServiceClient(sslServerName string, serviceHost string) (*ygo.Car
 		),
 		grpc.WithDefaultServiceConfig(`{
 			"methodConfig": [{
-				"name": [{"service": "ygo.CardService"}],
+				"name": [{"service": "ygo.CardService"}, {"service": "ygo.ProductService"}],
 				"retryPolicy": {
 					"MaxAttempts": 3,
 					"InitialBackoff": "0.1s",
@@ -50,6 +65,5 @@ func CreateCardServiceClient(sslServerName string, serviceHost string) (*ygo.Car
 		return nil, err
 	}
 
-	CardServiceClient := ygo.NewCardServiceClient(conn)
-	return &CardServiceClient, nil
+	return newYGOClientImpV1(conn), nil
 }

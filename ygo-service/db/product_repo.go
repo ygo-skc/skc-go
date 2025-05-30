@@ -10,11 +10,11 @@ import (
 )
 
 type ProductRepository interface {
-	GetCardsByProduct(context.Context, string) (*ygo.Product, *status.Status)
+	GetCardsByProductID(context.Context, string) (*ygo.Product, *status.Status)
 }
 type YGOProductRepository struct{}
 
-func (imp YGOProductRepository) GetCardsByProduct(ctx context.Context, productID string) (*ygo.Product, *status.Status) {
+func (imp YGOProductRepository) GetCardsByProductID(ctx context.Context, productID string) (*ygo.Product, *status.Status) {
 	logger := cUtil.LoggerFromContext(ctx)
 	logger.Info(fmt.Sprintf("Retrieving product data using ID %s", productID))
 
