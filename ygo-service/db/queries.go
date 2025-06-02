@@ -31,6 +31,7 @@ const (
 const (
 	productDetailsQuery   = "SELECT product_id, product_locale, product_name, product_type, product_sub_type, product_release_date FROM products where product_id = ?"
 	cardsByProductIDQuery = "SELECT %s, product_position, card_rarity FROM product_contents WHERE product_id= ? ORDER BY product_position"
+	productInfoByIDs      = "SELECT product_id, product_locale, product_name, product_type, product_sub_type, product_release_date, product_content_total FROM product_info WHERE product_id IN (%s)"
 )
 
 func convertToFullText(subject string) string {

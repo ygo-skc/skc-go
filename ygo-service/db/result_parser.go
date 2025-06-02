@@ -71,9 +71,9 @@ func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *st
 }
 
 func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *status.Status) {
-	var id, locale, name, releaseDate, t, subType string
+	var id, locale, name, t, subType, releaseDate string
 
-	if err := skcDBConn.QueryRow(productDetailsQuery, productID).Scan(&id, &locale, &name, &releaseDate, &t, &subType); err != nil {
+	if err := skcDBConn.QueryRow(productDetailsQuery, productID).Scan(&id, &locale, &name, &t, &subType, &releaseDate); err != nil {
 		return nil, handleQueryError(logger, err)
 	}
 	return &ygo.Product{ID: id, Locale: locale, Name: name, ReleaseDate: releaseDate, Type: t, SubType: subType}, nil
