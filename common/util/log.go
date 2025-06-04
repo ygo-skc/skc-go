@@ -28,7 +28,7 @@ const (
 	clientIDKey        = "client.id"
 )
 
-func LoggerFromContext(ctx context.Context) *slog.Logger {
+func RetrieveLogger(ctx context.Context) *slog.Logger {
 	if l := ctx.Value(loggerKey); l == nil {
 		slog.Warn("Using default slog as context does not have logger info")
 		return slog.Default()
@@ -37,7 +37,7 @@ func LoggerFromContext(ctx context.Context) *slog.Logger {
 	}
 }
 
-func NewRequestSetup(ctx context.Context, flow string, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
+func NewLogger(ctx context.Context, flow string, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
 	defaults := []any{
 		slog.String(traceIDKey, traceFromContext(ctx)),
 		slog.String(spanIDKey, uuid.New().String()),
@@ -64,14 +64,14 @@ func NewRequestSetup(ctx context.Context, flow string, customAttributes ...slog.
 	return l, context.WithValue(ctx, loggerKey, l)
 }
 
-func AddAttribute(ctx context.Context, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
+func AddLoggerAttribute(ctx context.Context, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
 	newAttributes := []any{}
 
 	for _, customAttribute := range customAttributes {
 		newAttributes = append(newAttributes, customAttribute)
 	}
 
-	l := LoggerFromContext(ctx)
+	l := RetrieveLogger(ctx)
 	l = l.With(newAttributes...)
 	return l, context.WithValue(ctx, loggerKey, l)
 }
