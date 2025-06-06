@@ -20,6 +20,7 @@ services:
     environment:
       - YGO_SERVICE_DOT_ENV_FILE=.env_prod
     labels:
+      com.datadoghq.tags.runtime: "golang"
       com.datadoghq.ad.init_configs: "[{}]"
       com.datadoghq.ad.instances: '[{"host":"%%host%%", "port": "%%port%%"}]'
       com.datadoghq.ad.logs: >-

@@ -20,7 +20,7 @@ type ProductRepository interface {
 type YGOProductRepository struct{}
 
 func (imp YGOProductRepository) GetCardsByProductID(ctx context.Context, productID string) (*ygo.Product, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving product data using ID %s", productID))
 
 	if product, err := queryProductInfo(logger, productID); err != nil {
@@ -28,7 +28,7 @@ func (imp YGOProductRepository) GetCardsByProductID(ctx context.Context, product
 	} else {
 		query := fmt.Sprintf(cardsByProductIDQuery, cardAttributes)
 		if rows, err := skcDBConn.Query(query, productID); err != nil {
-			return nil, handleQueryError(cUtil.LoggerFromContext(ctx), err)
+			return nil, handleQueryError(logger, err)
 		} else {
 			if items, rarityDistribution, err := parseRowsForProductItems(ctx, rows); err != nil {
 				return nil, err
@@ -55,7 +55,7 @@ func (imp YGOProductRepository) GetProductSummaryByID(ctx context.Context, produ
 }
 
 func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, products model.ProductIDs) (*ygo.Products, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving summary of the following products: %v", products))
 
 	args, numProducts := buildVariableQuerySubjects(products)

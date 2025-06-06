@@ -30,7 +30,7 @@ type YGOCardRepository struct{}
 
 // Get IDs for all card colors currently in database.
 func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColors, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info("Retrieving card colors")
 
 	if rows, err := skcDBConn.Query(cardColorIDsQuery); err != nil {
@@ -54,7 +54,7 @@ func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColo
 }
 
 func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data using ID %v", cardID))
 
 	args := make([]interface{}, 1)
@@ -69,7 +69,7 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 }
 
 func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.CardIDs) (*ygo.Cards, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data using ID's: %v", cardIDs))
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
@@ -91,7 +91,7 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 
 // Uses card names to find instance of card
 func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames model.CardNames) (*ygo.Cards, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data using %d different name(s)", len(cardNames)))
 
 	args, numCards := buildVariableQuerySubjects(cardNames)
@@ -111,7 +111,7 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	}
 }
 func (imp YGOCardRepository) SearchForCardRefUsingEffect(ctx context.Context, cardName string, cardID string) (*ygo.CardList, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference card %s in their text", cardName))
 
 	query := fmt.Sprintf(searchCardUsingEffectQuery, cardAttributes)
@@ -127,7 +127,7 @@ func (imp YGOCardRepository) SearchForCardRefUsingEffect(ctx context.Context, ca
 }
 
 func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference archetype %s in their name", archetypeName))
 	searchTerm := `%` + archetypeName + `%`
 
@@ -144,7 +144,7 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 }
 
 func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly considered part of archetype %s", archetypeName))
 
 	subQuery := fmt.Sprintf(archetypeInclusionSubQuery, cardAttributes, archetypeName)
@@ -160,7 +160,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 	}
 }
 func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly NOT considered part of archetype %s", archetypeName))
 
 	subQuery := fmt.Sprintf(archetypeExclusionSubQuery, cardAttributes, archetypeName)
@@ -177,7 +177,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 }
 
 func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards []string) (*ygo.Card, *status.Status) {
-	logger := cUtil.LoggerFromContext(ctx)
+	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving random card from DB. Client has provided %d blacklisted IDs", len(blacklistedCards)))
 
 	// pick correct query based on contents of blacklistedCards
