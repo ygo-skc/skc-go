@@ -26,7 +26,7 @@ func (imp YGOProductClientImpV1) GetCardsByProductIDProto(ctx context.Context, p
 }
 
 func getCardsByProductID(ctx context.Context, productServiceClient ygo.ProductServiceClient, productID string) (*ygo.Product, *model.APIError) {
-	logger := util.LoggerFromContext(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards for product w/ ID %s", productID))
 
 	if p, err := productServiceClient.GetCardsByProductID(ctx, &ygo.ResourceID{ID: productID}); err != nil {
@@ -44,7 +44,7 @@ func (imp YGOProductClientImpV1) GetProductSummaryByIDProto(ctx context.Context,
 }
 
 func getProductSummaryByID(ctx context.Context, productServiceClient ygo.ProductServiceClient, productID string) (*ygo.ProductSummary, *model.APIError) {
-	logger := util.LoggerFromContext(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving summary of product w/ ID %s", productID))
 
 	if ps, err := productServiceClient.GetProductSummaryByID(ctx, &ygo.ResourceID{ID: productID}); err != nil {
@@ -62,7 +62,7 @@ func (imp YGOProductClientImpV1) GetProductsSummaryByIDProto(ctx context.Context
 }
 
 func getProductsSummaryByID(ctx context.Context, productServiceClient ygo.ProductServiceClient, productIDs model.ProductIDs) (*ygo.Products, *model.APIError) {
-	logger := util.LoggerFromContext(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving summary of product w/ ID %s", productIDs))
 
 	if ps, err := productServiceClient.GetProductsSummaryByID(ctx, &ygo.ResourceIDs{IDs: productIDs}); err != nil {

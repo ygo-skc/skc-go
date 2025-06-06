@@ -19,7 +19,7 @@ type YGOHealthClientImpV1 struct {
 }
 
 func (imp YGOHealthClientImpV1) GetAPIStatus(ctx context.Context) (*health.APIStatusDetails, *model.APIError) {
-	logger := util.LoggerFromContext(ctx)
+	logger := util.RetrieveLogger(ctx)
 
 	if h, err := imp.client.APIStatus(ctx, &emptypb.Empty{}); err != nil {
 		logger.Error("There was an issue retrieving YGO Service status")

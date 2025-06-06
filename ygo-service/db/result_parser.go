@@ -42,7 +42,7 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 		var atk, def *uint32
 
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
-			return nil, handleRowParsingError(util.LoggerFromContext(ctx), err)
+			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
 			card := model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def)
 			cards[keyFn(card)] = card
@@ -61,7 +61,7 @@ func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *st
 		var atk, def *uint32
 
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
-			return nil, handleRowParsingError(util.LoggerFromContext(ctx), err)
+			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
 			cardList = append(cardList, model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def))
 		}
@@ -91,7 +91,7 @@ func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.Produ
 		var productPosition, rarity string
 
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &productPosition, &rarity); err != nil {
-			return nil, nil, handleRowParsingError(util.LoggerFromContext(ctx), err)
+			return nil, nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
 			// either create a new ProductItem or use reference to existing Item and update the rarities
 			key := fmt.Sprintf("%s-%s", id, productPosition)
