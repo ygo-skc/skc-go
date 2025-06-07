@@ -1,23 +1,8 @@
 package model
 
 import (
-	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 )
-
-func NewYgoCardProto(id string, color string, name string, attribute string, effect string, monsterType *string,
-	atk *uint32, def *uint32) *ygo.Card {
-	return &ygo.Card{
-		ID:          id,
-		Color:       color,
-		Name:        name,
-		Attribute:   attribute,
-		Effect:      effect,
-		MonsterType: util.ProtoStringValue(monsterType),
-		Attack:      util.ProtoUInt32Value(atk),
-		Defense:     util.ProtoUInt32Value(def),
-	}
-}
 
 func YGOCardRESTFromProto(c *ygo.Card) YGOCard {
 	ygoCardGRPC := YGOCardGRPC{Card: c}
@@ -51,19 +36,33 @@ func YGOCardListRESTFromProto(c *ygo.CardList) []YGOCard {
 	return cards
 }
 
-func BatchCardDataFromProto[T CardIDs | CardNames](c *ygo.Cards) *BatchCardData[T] {
+func BatchCardDataFromProto[T CardIDs | CardNames](c *ygo.Cards, keyFn func(*ygo.Card) string) *BatchCardData[T] {
 	batchCardData := make(CardDataMap, len(c.CardInfo))
-	for k, v := range c.CardInfo {
-		batchCardData[k] = YGOCardRESTFromProto(v)
+	for _, v := range c.CardInfo {
+		batchCardData[keyFn(v)] = YGOCardRESTFromProto(v)
 	}
 	return &BatchCardData[T]{CardInfo: batchCardData, UnknownResources: c.UnknownResources}
 }
 
-func BatchCardDataFromProductProto[T CardIDs | CardNames](p *ygo.Product) *BatchCardData[T] {
+func BatchCardDataFromProductProto[T CardIDs | CardNames](p *ygo.Product, keyFn func(*ygo.Card) string) *BatchCardData[T] {
 	batchCardData := make(CardDataMap, len(p.Items))
 	for _, item := range p.Items {
-		id := item.Card.ID
-		batchCardData[id] = YGOCardRESTFromProto(item.Card)
+		batchCardData[keyFn(item.Card)] = YGOCardRESTFromProto(item.Card)
 	}
 	return &BatchCardData[T]{CardInfo: batchCardData, UnknownResources: make([]string, 0)}
+}
+
+func BatchProductSummaryFromProductsProto[T ProductIDs](p *ygo.Products, keyFn func(*ygo.ProductSummary) string) *BatchProductSummaryData[T] {
+	batchProductInfo := make(ProductSummaryDataMap, len(p.Products))
+	for _, product := range p.Products {
+		batchProductInfo[keyFn(product)] = YGOProductSummaryREST{
+			ID:          product.ID,
+			Locale:      product.Locale,
+			Name:        product.Name,
+			Type:        product.Type,
+			SubType:     product.SubType,
+			ReleaseDate: product.ReleaseDate,
+		}
+	}
+	return &BatchProductSummaryData[T]{ProductInfo: batchProductInfo, UnknownResources: p.UnknownResources}
 }

@@ -15,7 +15,9 @@ type YGOProductClientImp interface {
 	GetCardsByProductIDProto(context.Context, string) (*ygo.Product, *model.APIError)
 
 	GetProductSummaryByIDProto(context.Context, string) (*ygo.ProductSummary, *model.APIError)
+
 	GetProductsSummaryByIDProto(context.Context, model.ProductIDs) (*ygo.Products, *model.APIError)
+	GetProductsSummaryByID(context.Context, model.ProductIDs) (*model.BatchProductSummaryData[model.ProductIDs], *model.APIError)
 }
 type YGOProductClientImpV1 struct {
 	client ygo.ProductServiceClient
@@ -59,6 +61,15 @@ func getProductSummaryByID(ctx context.Context, productServiceClient ygo.Product
 
 func (imp YGOProductClientImpV1) GetProductsSummaryByIDProto(ctx context.Context, productID model.ProductIDs) (*ygo.Products, *model.APIError) {
 	return getProductsSummaryByID(ctx, imp.client, productID)
+}
+
+func (imp YGOProductClientImpV1) GetProductsSummaryByID(ctx context.Context,
+	productID model.ProductIDs) (*model.BatchProductSummaryData[model.ProductIDs], *model.APIError) {
+	p, err := getProductsSummaryByID(ctx, imp.client, productID)
+	if err == nil {
+		return model.BatchProductSummaryFromProductsProto(p, model.ProductIDAsKey), nil
+	}
+	return nil, err
 }
 
 func getProductsSummaryByID(ctx context.Context, productServiceClient ygo.ProductServiceClient, productIDs model.ProductIDs) (*ygo.Products, *model.APIError) {
