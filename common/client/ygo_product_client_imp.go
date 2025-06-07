@@ -21,6 +21,10 @@ type YGOProductClientImpV1 struct {
 	client ygo.ProductServiceClient
 }
 
+const (
+	ygoProductClientErr = "There was an issue calling YGO Product Service. Operation: %s. Code %s. Error: %s"
+)
+
 func (imp YGOProductClientImpV1) GetCardsByProductIDProto(ctx context.Context, productID string) (*ygo.Product, *model.APIError) {
 	return getCardsByProductID(ctx, imp.client, productID)
 }
@@ -30,9 +34,7 @@ func getCardsByProductID(ctx context.Context, productServiceClient ygo.ProductSe
 	logger.Info(fmt.Sprintf("Retrieving cards for product w/ ID %s", productID))
 
 	if p, err := productServiceClient.GetCardsByProductID(ctx, &ygo.ResourceID{ID: productID}); err != nil {
-		logger.Error(
-			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
-				"Get Cards By Product", status.Code(err), err))
+		logger.Error(fmt.Sprintf(ygoProductClientErr, "Get Cards By Product", status.Code(err), err))
 		return nil, &model.APIError{Message: fmt.Sprintf("Error fetching cards for product %s", productID), StatusCode: http.StatusInternalServerError}
 	} else {
 		return p, nil
@@ -48,9 +50,7 @@ func getProductSummaryByID(ctx context.Context, productServiceClient ygo.Product
 	logger.Info(fmt.Sprintf("Retrieving summary of product w/ ID %s", productID))
 
 	if ps, err := productServiceClient.GetProductSummaryByID(ctx, &ygo.ResourceID{ID: productID}); err != nil {
-		logger.Error(
-			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
-				"Get Product Summary", status.Code(err), err))
+		logger.Error(fmt.Sprintf(ygoProductClientErr, "Get Product Summary", status.Code(err), err))
 		return nil, &model.APIError{Message: fmt.Sprintf("Error fetching product summary for product %s", productID), StatusCode: http.StatusInternalServerError}
 	} else {
 		return ps, nil
@@ -66,9 +66,7 @@ func getProductsSummaryByID(ctx context.Context, productServiceClient ygo.Produc
 	logger.Info(fmt.Sprintf("Retrieving summary of product w/ ID %s", productIDs))
 
 	if ps, err := productServiceClient.GetProductsSummaryByID(ctx, &ygo.ResourceIDs{IDs: productIDs}); err != nil {
-		logger.Error(
-			fmt.Sprintf("There was an issue calling YGO Service. Operation: %s. Code %s. Error: %s",
-				"Get Products Summary", status.Code(err), err))
+		logger.Error(fmt.Sprintf(ygoProductClientErr, "Get Products Summary", status.Code(err), err))
 		return nil, &model.APIError{Message: fmt.Sprintf("Error fetching product summary for product(s) %v", productIDs), StatusCode: http.StatusInternalServerError}
 	} else {
 		return ps, nil
