@@ -8,6 +8,14 @@ import (
 	"github.com/ygo-skc/skc-go/common/ygo"
 )
 
+type YGOResource interface {
+	GetID() string
+	GetName() string
+}
+
+// =======================
+// YGO Card
+// =======================
 type YGOCard interface {
 	YGOResource
 	GetColor() string
@@ -19,9 +27,12 @@ type YGOCard interface {
 }
 type YGOCards []YGOCard
 
-/*
-YGOCardREST Struct and CardDescriptor conformance
-*/
+func (c YGOCards) SortCardsByName() {
+	sort.SliceStable(c, func(i, j int) bool {
+		return (c)[i].GetName() < (c)[j].GetName()
+	})
+}
+
 type YGOCardREST struct {
 	ID          string  `db:"card_number" json:"cardID"`
 	Color       string  `db:"card_color" json:"cardColor"`
@@ -55,9 +66,6 @@ func (c YGOCardREST) ToProto() *ygo.Card {
 	}
 }
 
-/*
-YGOCardGRPC Struct and CardDescriptor conformance
-*/
 type YGOCardGRPC struct{ *ygo.Card }
 
 func (c YGOCardGRPC) GetID() string        { return c.ID }
@@ -84,25 +92,7 @@ func (c YGOCardGRPC) GetDefense() *uint32 {
 	return &c.Defense.Value
 }
 
-/*
-ygo.Card PB helpers
-*/
-func FindMissingKeys[T CardIDs | CardNames | ProductIDs | ProductNames, R ygo.Card | ygo.ProductSummary](cards map[string]*R, cardIDs T) T {
-	missingIDs := make(T, 0, 10)
-
-	for _, cardID := range cardIDs {
-		if _, containsKey := cards[cardID]; !containsKey {
-			missingIDs = append(missingIDs, cardID)
-		}
-	}
-	return missingIDs
-}
-func CardIDAsKey(c *ygo.Card) string   { return c.ID }
-func CardNameAsKey(c *ygo.Card) string { return c.Name }
-
-/*
-CardDescriptor helper functions
-*/
+// returns true if c is an extra deck monster
 func IsExtraDeckMonster(c YGOCard) bool {
 	color := strings.ToUpper(c.GetColor())
 	return strings.Contains(color, "FUSION") || strings.Contains(color, "SYNCHRO") || strings.Contains(color, "XYZ") || strings.Contains(color, "PENDULUM") || strings.Contains(color, "LINK")
@@ -141,11 +131,10 @@ func IsCardNameInTokens(c YGOCard, tokens []QuotedToken) bool {
 	return false
 }
 
-func (c YGOCards) SortCardsByName() {
-	sort.SliceStable(c, func(i, j int) bool {
-		return (c)[i].GetName() < (c)[j].GetName()
-	})
-}
+// =======================
+// Text Parsing
+// =======================
+type QuotedToken = string
 
 // cleans up a quoted string found in card text so its easier to parse
 func CleanupToken(t *QuotedToken) {
