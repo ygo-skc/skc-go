@@ -1,6 +1,6 @@
 module github.com/ygo-skc/skc-go/ygo-service
 
-go 1.24.2
+go 1.24.4
 
 require (
 	github.com/go-sql-driver/mysql v1.9.2
