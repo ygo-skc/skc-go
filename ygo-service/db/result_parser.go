@@ -21,16 +21,9 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 		return nil, handleQueryError(logger, err)
 	}
 
-	return &ygo.Card{
-		ID:          id,
-		Color:       color,
-		Name:        name,
-		Attribute:   attribute,
-		Effect:      effect,
-		MonsterType: util.ProtoStringValue(monsterType),
-		Attack:      util.ProtoUInt32Value(atk),
-		Defense:     util.ProtoUInt32Value(def),
-	}, nil
+	card := model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+		WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build()
+	return card, nil
 }
 
 func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (map[string]*ygo.Card, *status.Status) {
@@ -44,7 +37,8 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
-			card := model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def)
+			card := model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+				WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build()
 			cards[keyFn(card)] = card
 		}
 	}
@@ -63,7 +57,9 @@ func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *st
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
-			cardList = append(cardList, model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def))
+			cardList = append(cardList,
+				model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+					WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build())
 		}
 	}
 
@@ -99,7 +95,8 @@ func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.Produ
 				itemByCardIDxPosition[key].Rarities = append(itemByCardIDxPosition[key].Rarities, rarity)
 			} else {
 				item := &ygo.ProductItem{
-					Card:     model.NewYgoCardProto(id, color, name, attribute, effect, monsterType, atk, def),
+					Card: model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+						WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build(),
 					Position: productPosition,
 					Rarities: []string{rarity},
 				}
