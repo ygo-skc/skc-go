@@ -3,7 +3,7 @@ module github.com/ygo-skc/skc-go/ygo-service
 go 1.24.4
 
 require (
-	github.com/go-sql-driver/mysql v1.9.2
+	github.com/go-sql-driver/mysql v1.9.3
 	github.com/ygo-skc/skc-go/common v1.4.2
 	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
