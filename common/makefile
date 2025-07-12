@@ -9,6 +9,7 @@ all: deps clean generate-grpc
 
 generate-grpc:
 	protoc --go_out=./ --go-grpc_out=./ ygo_service.proto health.proto
+	go vet ./...
 
 clean:
 	rm -rf $(YGO_GRPC_DIR)/*.pb.go $(API_HEALTH_GRPC_DIR)/*.pb.go

@@ -1,6 +1,6 @@
 module github.com/ygo-skc/skc-go/common
 
-go 1.24.2
+go 1.24.4
 
 require (
 	github.com/google/uuid v1.6.0
