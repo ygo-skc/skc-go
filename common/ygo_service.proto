@@ -14,7 +14,7 @@ service CardService {
 
   rpc GetCardsByName(ResourceNames) returns (Cards);
 
-  rpc SearchForCardRefUsingEffect(SearchTerm) returns (CardList);
+  rpc GetCardsReferencingNameInEffect(ResourceNames) returns (CardList);
 
   rpc GetArchetypalCardsUsingCardName(Archetype) returns (CardList);
   rpc GetExplicitArchetypalInclusions(Archetype) returns (CardList);
