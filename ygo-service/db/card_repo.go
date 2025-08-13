@@ -129,7 +129,7 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 		fullTextNames[ind] = convertToFullText(name)
 	}
 
-	allArgs := make([]interface{}, 0)
+	allArgs := make([]interface{}, 0, numCards+1)
 	allArgs = append(allArgs, strings.Join(fullTextNames, " "))
 	allArgs = append(allArgs, args...)
 
