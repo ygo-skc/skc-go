@@ -36,10 +36,10 @@ func (s *ygoCardServiceServer) GetCardsByName(ctx context.Context, req *ygo.Reso
 	return c, err.Err()
 }
 
-func (s *ygoCardServiceServer) SearchForCardRefUsingEffect(ctx context.Context, req *ygo.SearchTerm) (*ygo.CardList, error) {
+func (s *ygoCardServiceServer) GetCardsReferencingNameInEffect(ctx context.Context, req *ygo.ResourceNames) (*ygo.CardList, error) {
 	_, newCtx := util.NewLogger(ctx, "Find Refs Using Card Effect")
 
-	c, err := cardRepo.SearchForCardRefUsingEffect(newCtx, req.Name, req.ID)
+	c, err := cardRepo.GetCardsReferencingNameInEffect(newCtx, req.Names)
 	return c, err.Err()
 }
 
