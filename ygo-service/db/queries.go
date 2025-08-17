@@ -15,7 +15,7 @@ const (
 	cardsByCardIDsQuery = "SELECT %s FROM card_info WHERE card_number IN (%s)"
 
 	cardsByCardNamesQuery      = "SELECT %s FROM card_info WHERE card_name IN (%s)"
-	searchCardUsingEffectQuery = "SELECT %s FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) AND card_name NOT IN (%s) ORDER BY color_id, card_name"
+	searchCardUsingEffectQuery = "SELECT %s FROM card_info WHERE MATCH(card_effect) AGAINST(? IN BOOLEAN MODE) ORDER BY color_id, card_name"
 
 	archetypeInclusionSubQuery = `SELECT %s FROM card_info WHERE MATCH (card_effect) AGAINST ('+"This card is always treated as" +"%s"' IN BOOLEAN MODE)`
 	archetypeExclusionSubQuery = `SELECT %s FROM card_info WHERE MATCH (card_effect) AGAINST ('+"This card is not treated as" +"%s"'  IN BOOLEAN MODE)`

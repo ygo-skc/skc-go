@@ -113,7 +113,7 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 }
 
 func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context, namesOfCards []string) (*ygo.CardList, *status.Status) {
-	args, numCards := buildVariableQuerySubjects(namesOfCards)
+	numCards := len(namesOfCards)
 	logger := cUtil.RetrieveLogger(ctx)
 	if numCards == 0 {
 		logger.Info("User did not provide any card names, responding w/ empty list of references")
@@ -122,18 +122,13 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 		logger.Info(fmt.Sprintf("Retrieving cards that reference one or more of the following cards by name in their text: %v", namesOfCards))
 	}
 
-	query := fmt.Sprintf(searchCardUsingEffectQuery, cardAttributes, variablePlaceholders(numCards))
-
 	fullTextNames := make([]string, numCards)
 	for ind, name := range namesOfCards {
 		fullTextNames[ind] = convertToFullText(name)
 	}
 
-	allArgs := make([]interface{}, 0, numCards+1)
-	allArgs = append(allArgs, strings.Join(fullTextNames, " "))
-	allArgs = append(allArgs, args...)
-
-	if rows, err := skcDBConn.Query(query, allArgs...); err != nil {
+	query := fmt.Sprintf(searchCardUsingEffectQuery, cardAttributes)
+	if rows, err := skcDBConn.Query(query, strings.Join(fullTextNames, " ")); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
