@@ -24,8 +24,8 @@ type YGOCardClientImp interface {
 	GetCardsByNameProto(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
 	GetCardsByName(context.Context, model.CardNames) (*model.BatchCardData[model.CardNames], *model.APIError)
 
-	SearchForCardRefUsingEffectProto(context.Context, string, string) (*ygo.CardList, *model.APIError)
-	SearchForCardRefUsingEffect(context.Context, string, string) ([]model.YGOCard, *model.APIError)
+	GetCardsReferencingNameInEffectProto(context.Context, []string) (*ygo.CardList, *model.APIError)
+	GetCardsReferencingNameInEffect(context.Context, []string) ([]model.YGOCard, *model.APIError)
 
 	GetArchetypalCardsUsingCardNameProto(context.Context, string) (*ygo.CardList, *model.APIError)
 	GetArchetypalCardsUsingCardName(context.Context, string) ([]model.YGOCard, *model.APIError)
@@ -138,23 +138,23 @@ func getCardsByName(ctx context.Context, client ygo.CardServiceClient, cardNames
 	}
 }
 
-func (imp YGOCardClientImpV1) SearchForCardRefUsingEffectProto(ctx context.Context, cardName string, cardID string) (*ygo.CardList, *model.APIError) {
-	return searchForCardRefUsingEffect(ctx, imp.client, cardName, cardID)
+func (imp YGOCardClientImpV1) GetCardsReferencingNameInEffectProto(ctx context.Context, namesOfCards []string) (*ygo.CardList, *model.APIError) {
+	return getCardsReferencingNameInEffect(ctx, imp.client, namesOfCards)
 }
 
-func (imp YGOCardClientImpV1) SearchForCardRefUsingEffect(ctx context.Context, cardName string, cardID string) ([]model.YGOCard, *model.APIError) {
-	c, err := searchForCardRefUsingEffect(ctx, imp.client, cardName, cardID)
+func (imp YGOCardClientImpV1) GetCardsReferencingNameInEffect(ctx context.Context, namesOfCards []string) ([]model.YGOCard, *model.APIError) {
+	c, err := getCardsReferencingNameInEffect(ctx, imp.client, namesOfCards)
 	if err == nil {
 		return model.YGOCardListRESTFromProto(c), nil
 	}
 	return nil, err
 }
 
-func searchForCardRefUsingEffect(ctx context.Context, client ygo.CardServiceClient, cardName string, cardID string) (*ygo.CardList, *model.APIError) {
+func getCardsReferencingNameInEffect(ctx context.Context, client ygo.CardServiceClient, namesOfCards []string) (*ygo.CardList, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Fetching cards that reference %s in their text", cardName))
+	logger.Info(fmt.Sprintf("Fetching cards that reference the following names in their text %v", namesOfCards))
 
-	if cards, err := client.SearchForCardRefUsingEffect(ctx, &ygo.SearchTerm{Name: cardName, ID: cardID}); err != nil {
+	if cards, err := client.GetCardsReferencingNameInEffect(ctx, &ygo.ResourceNames{Names: namesOfCards}); err != nil {
 		logger.Error(fmt.Sprintf(ygoCardClientErr, "Search Card References Using Text", status.Code(err), err))
 		return nil, &model.APIError{Message: "Error searching card text for references", StatusCode: http.StatusInternalServerError}
 	} else {

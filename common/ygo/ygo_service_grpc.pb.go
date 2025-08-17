@@ -24,7 +24,7 @@ const (
 	CardService_GetCardByID_FullMethodName                     = "/ygo.CardService/GetCardByID"
 	CardService_GetCardsByID_FullMethodName                    = "/ygo.CardService/GetCardsByID"
 	CardService_GetCardsByName_FullMethodName                  = "/ygo.CardService/GetCardsByName"
-	CardService_SearchForCardRefUsingEffect_FullMethodName     = "/ygo.CardService/SearchForCardRefUsingEffect"
+	CardService_GetCardsReferencingNameInEffect_FullMethodName = "/ygo.CardService/GetCardsReferencingNameInEffect"
 	CardService_GetArchetypalCardsUsingCardName_FullMethodName = "/ygo.CardService/GetArchetypalCardsUsingCardName"
 	CardService_GetExplicitArchetypalInclusions_FullMethodName = "/ygo.CardService/GetExplicitArchetypalInclusions"
 	CardService_GetExplicitArchetypalExclusions_FullMethodName = "/ygo.CardService/GetExplicitArchetypalExclusions"
@@ -39,7 +39,7 @@ type CardServiceClient interface {
 	GetCardByID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*Card, error)
 	GetCardsByID(ctx context.Context, in *ResourceIDs, opts ...grpc.CallOption) (*Cards, error)
 	GetCardsByName(ctx context.Context, in *ResourceNames, opts ...grpc.CallOption) (*Cards, error)
-	SearchForCardRefUsingEffect(ctx context.Context, in *SearchTerm, opts ...grpc.CallOption) (*CardList, error)
+	GetCardsReferencingNameInEffect(ctx context.Context, in *ResourceNames, opts ...grpc.CallOption) (*CardList, error)
 	GetArchetypalCardsUsingCardName(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error)
 	GetExplicitArchetypalInclusions(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error)
 	GetExplicitArchetypalExclusions(ctx context.Context, in *Archetype, opts ...grpc.CallOption) (*CardList, error)
@@ -94,10 +94,10 @@ func (c *cardServiceClient) GetCardsByName(ctx context.Context, in *ResourceName
 	return out, nil
 }
 
-func (c *cardServiceClient) SearchForCardRefUsingEffect(ctx context.Context, in *SearchTerm, opts ...grpc.CallOption) (*CardList, error) {
+func (c *cardServiceClient) GetCardsReferencingNameInEffect(ctx context.Context, in *ResourceNames, opts ...grpc.CallOption) (*CardList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CardList)
-	err := c.cc.Invoke(ctx, CardService_SearchForCardRefUsingEffect_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CardService_GetCardsReferencingNameInEffect_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,7 @@ type CardServiceServer interface {
 	GetCardByID(context.Context, *ResourceID) (*Card, error)
 	GetCardsByID(context.Context, *ResourceIDs) (*Cards, error)
 	GetCardsByName(context.Context, *ResourceNames) (*Cards, error)
-	SearchForCardRefUsingEffect(context.Context, *SearchTerm) (*CardList, error)
+	GetCardsReferencingNameInEffect(context.Context, *ResourceNames) (*CardList, error)
 	GetArchetypalCardsUsingCardName(context.Context, *Archetype) (*CardList, error)
 	GetExplicitArchetypalInclusions(context.Context, *Archetype) (*CardList, error)
 	GetExplicitArchetypalExclusions(context.Context, *Archetype) (*CardList, error)
@@ -179,8 +179,8 @@ func (UnimplementedCardServiceServer) GetCardsByID(context.Context, *ResourceIDs
 func (UnimplementedCardServiceServer) GetCardsByName(context.Context, *ResourceNames) (*Cards, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCardsByName not implemented")
 }
-func (UnimplementedCardServiceServer) SearchForCardRefUsingEffect(context.Context, *SearchTerm) (*CardList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchForCardRefUsingEffect not implemented")
+func (UnimplementedCardServiceServer) GetCardsReferencingNameInEffect(context.Context, *ResourceNames) (*CardList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCardsReferencingNameInEffect not implemented")
 }
 func (UnimplementedCardServiceServer) GetArchetypalCardsUsingCardName(context.Context, *Archetype) (*CardList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArchetypalCardsUsingCardName not implemented")
@@ -287,20 +287,20 @@ func _CardService_GetCardsByName_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CardService_SearchForCardRefUsingEffect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchTerm)
+func _CardService_GetCardsReferencingNameInEffect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceNames)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CardServiceServer).SearchForCardRefUsingEffect(ctx, in)
+		return srv.(CardServiceServer).GetCardsReferencingNameInEffect(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CardService_SearchForCardRefUsingEffect_FullMethodName,
+		FullMethod: CardService_GetCardsReferencingNameInEffect_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CardServiceServer).SearchForCardRefUsingEffect(ctx, req.(*SearchTerm))
+		return srv.(CardServiceServer).GetCardsReferencingNameInEffect(ctx, req.(*ResourceNames))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -401,8 +401,8 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CardService_GetCardsByName_Handler,
 		},
 		{
-			MethodName: "SearchForCardRefUsingEffect",
-			Handler:    _CardService_SearchForCardRefUsingEffect_Handler,
+			MethodName: "GetCardsReferencingNameInEffect",
+			Handler:    _CardService_GetCardsReferencingNameInEffect_Handler,
 		},
 		{
 			MethodName: "GetArchetypalCardsUsingCardName",

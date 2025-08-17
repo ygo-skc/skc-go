@@ -36,13 +36,14 @@ func NewWorkerPool(tasks []Task, options ...WPOption) *WorkerPool {
 		tasks:   tasks,
 		workers: 5,
 		ctx:     context.TODO(),
-		tChan:   make(chan Task, len(tasks)),
 	}
 
 	// override with custom values from caller
 	for _, option := range options {
 		option(wp)
 	}
+
+	wp.tChan = make(chan Task, wp.workers)
 
 	return wp
 }
@@ -65,9 +66,9 @@ func (wp *WorkerPool) worker(wg *sync.WaitGroup) {
 
 func (wp *WorkerPool) Run() {
 	wg := sync.WaitGroup{}
+	wg.Add(wp.workers)
 
 	for range wp.workers {
-		wg.Add(1)
 		go wp.worker(&wg)
 	}
 

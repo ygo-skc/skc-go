@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/ygo-skc/skc-go/common/model"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
@@ -18,7 +19,7 @@ type CardRepository interface {
 	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *status.Status)
 
 	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *status.Status)
-	SearchForCardRefUsingEffect(context.Context, string, string) (*ygo.CardList, *status.Status)
+	GetCardsReferencingNameInEffect(context.Context, []string) (*ygo.CardList, *status.Status)
 
 	GetArchetypalCardsUsingCardName(context.Context, string) (*ygo.CardList, *status.Status)
 	GetExplicitArchetypalInclusions(context.Context, string) (*ygo.CardList, *status.Status)
@@ -110,12 +111,24 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 		}
 	}
 }
-func (imp YGOCardRepository) SearchForCardRefUsingEffect(ctx context.Context, cardName string, cardID string) (*ygo.CardList, *status.Status) {
+
+func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context, namesOfCards []string) (*ygo.CardList, *status.Status) {
+	numCards := len(namesOfCards)
 	logger := cUtil.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference card %s in their text", cardName))
+	if numCards == 0 {
+		logger.Info("User did not provide any card names, responding w/ empty list of references")
+		return &ygo.CardList{Cards: []*ygo.Card{}}, nil
+	} else {
+		logger.Info(fmt.Sprintf("Retrieving cards that reference one or more of the following cards by name in their text: %v", namesOfCards))
+	}
+
+	fullTextNames := make([]string, numCards)
+	for ind, name := range namesOfCards {
+		fullTextNames[ind] = convertToFullText(name)
+	}
 
 	query := fmt.Sprintf(searchCardUsingEffectQuery, cardAttributes)
-	if rows, err := skcDBConn.Query(query, convertToFullText(cardName), cardID); err != nil {
+	if rows, err := skcDBConn.Query(query, strings.Join(fullTextNames, " ")); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
