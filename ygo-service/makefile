@@ -6,7 +6,7 @@ all: build
 build:
 	go mod tidy
 	go vet ./...
-	env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -trimpath .
+	env GOOS=linux GOARCH=arm64 GOEXPERIMENT=greenteagc go build -ldflags="-s -w" -trimpath .
 
 help:
 	@echo "Makefile Commands:"
