@@ -10,14 +10,17 @@ type AtomicWaitGroup[T any] struct {
 	wg   *sync.WaitGroup
 }
 
+func NewAtomicWaitGroup[T any](wg *sync.WaitGroup) *AtomicWaitGroup[T] {
+	wg.Add(1)
+	return &AtomicWaitGroup[T]{
+		data: &atomic.Pointer[T]{},
+		wg:   wg,
+	}
+}
+
 func (t AtomicWaitGroup[T]) Store(d *T) {
 	t.data.Store(d)
 	t.wg.Done()
-}
-
-func NewAtomicWaitGroup[T any](wg *sync.WaitGroup) *AtomicWaitGroup[T] {
-	wg.Add(1)
-	return &AtomicWaitGroup[T]{data: &atomic.Pointer[T]{}, wg: wg}
 }
 
 func (a *AtomicWaitGroup[T]) Load() *T {
