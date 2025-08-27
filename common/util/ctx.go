@@ -11,9 +11,11 @@ const (
 	clientIDMetaName = "client-id"
 	flowMetaName     = "flow"
 	traceMetaName    = "trace-id"
-
-	traceCtxKey = "traceKey"
 )
+
+type traceKeyType struct{}
+
+var traceCtxKey = traceKeyType{}
 
 func traceFromContext(ctx context.Context) string {
 	if t := ctx.Value(traceCtxKey); t == nil {
@@ -23,7 +25,7 @@ func traceFromContext(ctx context.Context) string {
 	}
 }
 
-func ContextWithMetadata(ctx context.Context, clientID string, flow string) context.Context {
+func ContextWithMetadata(ctx context.Context, clientID, flow string) context.Context {
 	traceID := traceFromContext(ctx)
 
 	md := metadata.New(map[string]string{
