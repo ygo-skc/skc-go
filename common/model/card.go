@@ -118,32 +118,3 @@ func GetPotentialMaterialsAsString(c YGOCard) string {
 	}
 	return effectTokens[0]
 }
-
-func IsCardNameInTokens(c YGOCard, tokens []QuotedToken) bool {
-	for _, token := range tokens {
-		CleanupToken(&token)
-
-		if strings.EqualFold(c.GetName(), token) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// =======================
-// Text Parsing
-// =======================
-type QuotedToken = string
-
-// cleans up a quoted string found in card text so its easier to parse
-func CleanupToken(t *QuotedToken) {
-	*t = strings.TrimSpace(*t)
-	*t = strings.ReplaceAll(*t, `".`, "")
-	*t = strings.ReplaceAll(*t, `",`, "")
-	*t = strings.ReplaceAll(*t, "'.", "")
-	*t = strings.ReplaceAll(*t, "',", "")
-
-	*t = strings.Trim(*t, "'")
-	*t = strings.Trim(*t, `"`)
-}
