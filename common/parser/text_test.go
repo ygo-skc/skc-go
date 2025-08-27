@@ -11,27 +11,27 @@ func TestCardTextContainsName(t *testing.T) {
 
 	tests := []struct {
 		testName              string
-		cardText              string
-		cardName              string
+		text                  string
+		substring             string
 		textShouldContainName bool
 	}{
 		{
-			testName:              "Card name found in card text",
-			cardText:              `"Neos" is a powerful monster from and his name is "Neos"`,
-			cardName:              "Neos",
+			testName:              "Substring found in text",
+			text:                  `"Neos" is a powerful monster from and his name is "Neos"`,
+			substring:             "Neos",
 			textShouldContainName: true,
 		},
 		{
-			testName:              "Card name NOT found in card text",
-			cardText:              `"Neos2" is a powerful monster from and his name is "Neos3"`,
-			cardName:              "Neos",
+			testName:              "Substring NOT found in text",
+			text:                  `"Neos2" is a powerful monster from and his name is "Neos3"`,
+			substring:             "Neos",
 			textShouldContainName: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
-			assert.Equal(tt.textShouldContainName, CardTextContainsName(tt.cardText, tt.cardName))
+			assert.Equal(tt.textShouldContainName, TextContainsSubStr(tt.text, tt.substring))
 		})
 	}
 }
@@ -41,33 +41,33 @@ func TestOccurrenceOfNameInText(t *testing.T) {
 
 	tests := []struct {
 		testName            string
-		cardText            string
-		cardName            string
+		text                string
+		substring           string
 		expectedOccurrences int
 	}{
 		{
 			testName:            "Two complete quotes",
-			cardText:            `"Neos" is a powerful monster from and his name is "Neos"`,
-			cardName:            "Neos",
+			text:                `"Neos" is a powerful monster from and his name is "Neos"`,
+			substring:           "Neos",
 			expectedOccurrences: 2,
 		},
 		{
-			testName:            "Unfinished quote at end of card text",
-			cardText:            `"Neos" is a powerful monster from and his name is "Neos`,
-			cardName:            "Neos",
+			testName:            "Unfinished quote at end of text",
+			text:                `"Neos" is a powerful monster from and his name is "Neos`,
+			substring:           "Neos",
 			expectedOccurrences: 1,
 		},
 		{
-			testName:            "Quoted strings in text does not match card name",
-			cardText:            `"Neos2" is a powerful monster from and his name is "Neos3"`,
-			cardName:            "Neos",
+			testName:            "Quoted strings in text does not match name",
+			text:                `"Neos2" is a powerful monster from and his name is "Neos3"`,
+			substring:           "Neos",
 			expectedOccurrences: 0,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
-			assert.Equal(tt.expectedOccurrences, OccurrenceOfNameInText(tt.cardText, tt.cardName, false))
+			assert.Equal(tt.expectedOccurrences, OccurrencesOfQuotedSubStr(tt.text, tt.substring, false))
 		})
 	}
 }

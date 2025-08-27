@@ -2,16 +2,16 @@ package parser
 
 import "strings"
 
-func CardTextContainsName(cardText, cardName string) bool {
-	if occurrences := OccurrenceOfNameInText(cardText, cardName, true); occurrences == 1 {
+func TextContainsSubStr(text, substring string) bool {
+	if occurrences := OccurrencesOfQuotedSubStr(text, substring, true); occurrences == 1 {
 		return true
 	}
 	return false
 }
 
-func OccurrenceOfNameInText(cardText, cardName string, exitOnFirstOccurrence bool) int {
-	runes := []rune(cardText)
-	nameRunes := []rune(cardName)
+func OccurrencesOfQuotedSubStr(text, substring string, exitOnFirstOccurrence bool) int {
+	runes := []rune(text)
+	nameRunes := []rune(substring)
 	textLen := len(runes)
 	nameLen := len(nameRunes)
 
@@ -30,7 +30,7 @@ func OccurrenceOfNameInText(cardText, cardName string, exitOnFirstOccurrence boo
 				continue
 			}
 
-			if string(runes[start:end]) == cardName {
+			if string(runes[start:end]) == substring {
 				if exitOnFirstOccurrence {
 					return 1
 				}
@@ -45,7 +45,7 @@ func OccurrenceOfNameInText(cardText, cardName string, exitOnFirstOccurrence boo
 
 type QuotedToken = string
 
-// cleans up a quoted string found in card text so its easier to parse
+// cleans up a quoted strings
 func CleanupToken(t *QuotedToken) {
 	*t = strings.TrimSpace(*t)
 	*t = strings.ReplaceAll(*t, `".`, "")
