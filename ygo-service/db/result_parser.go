@@ -13,9 +13,11 @@ import (
 )
 
 func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *status.Status) {
-	var id, color, name, attribute, effect string
-	var monsterType *string
-	var atk, def *uint32
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+	)
 
 	if err := skcDBConn.QueryRow(query, args...).Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 		return nil, handleQueryError(logger, err)
@@ -29,11 +31,12 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (map[string]*ygo.Card, *status.Status) {
 	cards := make(map[string]*ygo.Card)
 
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+	)
 	for rows.Next() {
-		var id, color, name, attribute, effect string
-		var monsterType *string
-		var atk, def *uint32
-
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
@@ -49,11 +52,12 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *status.Status) {
 	cardList := make([]*ygo.Card, 0)
 
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+	)
 	for rows.Next() {
-		var id, color, name, attribute, effect string
-		var monsterType *string
-		var atk, def *uint32
-
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
@@ -79,13 +83,13 @@ func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.Produ
 	items := make([]*ygo.ProductItem, 0)
 	itemByCardIDxPosition := make(map[string]*ygo.ProductItem)
 	rarityDistribution := make(map[string]uint32)
-
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+		productPosition, rarity            string
+	)
 	for rows.Next() {
-		var id, color, name, attribute, effect string
-		var monsterType *string
-		var atk, def *uint32
-		var productPosition, rarity string
-
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &productPosition, &rarity); err != nil {
 			return nil, nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
