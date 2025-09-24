@@ -121,7 +121,7 @@ message CardScore {
   map<string, uint32> currentScoreByFormat = 1;
   repeated string uniqueFormats = 2;
   repeated ScoreInstance scoreHistory = 3;
-  repeated string formatsWithUpcomingChange = 4;
+  repeated string scheduledChanges = 4;
 }
 
 message CardScores {

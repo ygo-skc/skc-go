@@ -16,6 +16,18 @@ import (
 )
 
 var (
+	chicagoLocation *time.Location
+)
+
+func init() {
+	if location, err := time.LoadLocation("America/Chicago"); err != nil {
+		log.Fatalf("Could not load Chicago location - err %v", err)
+	} else {
+		chicagoLocation = location
+	}
+}
+
+var (
 	cardRepo    db.CardRepository    = db.YGOCardRepository{}
 	productRepo db.ProductRepository = db.YGOProductRepository{}
 	scoreRepo   db.ScoreRepository   = db.YGOScoreRepository{}

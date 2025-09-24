@@ -848,13 +848,13 @@ func (x *Products) GetUnknownResources() []string {
 }
 
 type CardScore struct {
-	state                     protoimpl.MessageState `protogen:"open.v1"`
-	CurrentScoreByFormat      map[string]uint32      `protobuf:"bytes,1,rep,name=currentScoreByFormat,proto3" json:"currentScoreByFormat,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	UniqueFormats             []string               `protobuf:"bytes,2,rep,name=uniqueFormats,proto3" json:"uniqueFormats,omitempty"`
-	ScoreHistory              []*ScoreInstance       `protobuf:"bytes,3,rep,name=scoreHistory,proto3" json:"scoreHistory,omitempty"`
-	FormatsWithUpcomingChange []string               `protobuf:"bytes,4,rep,name=formatsWithUpcomingChange,proto3" json:"formatsWithUpcomingChange,omitempty"`
-	unknownFields             protoimpl.UnknownFields
-	sizeCache                 protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	CurrentScoreByFormat map[string]uint32      `protobuf:"bytes,1,rep,name=currentScoreByFormat,proto3" json:"currentScoreByFormat,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	UniqueFormats        []string               `protobuf:"bytes,2,rep,name=uniqueFormats,proto3" json:"uniqueFormats,omitempty"`
+	ScoreHistory         []*ScoreInstance       `protobuf:"bytes,3,rep,name=scoreHistory,proto3" json:"scoreHistory,omitempty"`
+	ScheduledChanges     []string               `protobuf:"bytes,4,rep,name=scheduledChanges,proto3" json:"scheduledChanges,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *CardScore) Reset() {
@@ -908,9 +908,9 @@ func (x *CardScore) GetScoreHistory() []*ScoreInstance {
 	return nil
 }
 
-func (x *CardScore) GetFormatsWithUpcomingChange() []string {
+func (x *CardScore) GetScheduledChanges() []string {
 	if x != nil {
-		return x.FormatsWithUpcomingChange
+		return x.ScheduledChanges
 	}
 	return nil
 }
@@ -1104,12 +1104,12 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x11unknown_resources\x18\x02 \x03(\tR\x10unknownResources\x1aP\n" +
 	"\rProductsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12)\n" +
-	"\x05value\x18\x02 \x01(\v2\x13.ygo.ProductSummaryR\x05value:\x028\x01\"\xce\x02\n" +
+	"\x05value\x18\x02 \x01(\v2\x13.ygo.ProductSummaryR\x05value:\x028\x01\"\xbc\x02\n" +
 	"\tCardScore\x12\\\n" +
 	"\x14currentScoreByFormat\x18\x01 \x03(\v2(.ygo.CardScore.CurrentScoreByFormatEntryR\x14currentScoreByFormat\x12$\n" +
 	"\runiqueFormats\x18\x02 \x03(\tR\runiqueFormats\x126\n" +
-	"\fscoreHistory\x18\x03 \x03(\v2\x12.ygo.ScoreInstanceR\fscoreHistory\x12<\n" +
-	"\x19formatsWithUpcomingChange\x18\x04 \x03(\tR\x19formatsWithUpcomingChange\x1aG\n" +
+	"\fscoreHistory\x18\x03 \x03(\v2\x12.ygo.ScoreInstanceR\fscoreHistory\x12*\n" +
+	"\x10scheduledChanges\x18\x04 \x03(\tR\x10scheduledChanges\x1aG\n" +
 	"\x19CurrentScoreByFormatEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"\xc2\x01\n" +

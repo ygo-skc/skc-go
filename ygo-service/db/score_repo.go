@@ -31,7 +31,7 @@ FROM
 WHERE
 	cards.card_number = ?
 ORDER BY
-	score_versions.effective_date;`
+	score_versions.effective_date DESC;`
 )
 
 type ScoreRepository interface {
