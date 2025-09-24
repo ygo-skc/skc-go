@@ -30,6 +30,11 @@ service ProductService {
 	rpc GetProductsSummaryByID(ResourceIDs) returns (Products);
 }
 
+service ScoreService {
+	rpc GetCardScoreByID(ResourceID) returns (CardScore);
+  	rpc GetCardScoresByIDs(ResourceIDs) returns (CardScores);
+}
+
 message CardColors {
   map<string, uint32> values = 1;
 }
@@ -110,4 +115,22 @@ message ProductSummary {
 message Products {
 	map<string, ProductSummary> products = 1;
 	repeated string unknown_resources = 2;
+}
+
+message CardScore {
+  map<string, uint32> currentScoreByFormat = 1;
+  repeated string uniqueFormats = 2;
+  repeated ScoreInstance scoreHistory = 3;
+  repeated string formatsWithUpcomingChange = 4;
+}
+
+message CardScores {
+	map<string, CardScore> card_info = 1;
+	repeated string unknown_resources = 2;
+}
+
+message ScoreInstance {
+	string format = 1;
+	string effectiveDate = 2;
+	uint32 score = 3;
 }

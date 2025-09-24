@@ -18,6 +18,7 @@ import (
 var (
 	cardRepo    db.CardRepository    = db.YGOCardRepository{}
 	productRepo db.ProductRepository = db.YGOProductRepository{}
+	scoreRepo   db.ScoreRepository   = db.YGOScoreRepository{}
 )
 
 const (
@@ -34,6 +35,10 @@ type ygoCardServiceServer struct {
 
 type ygoProductServiceServer struct {
 	ygo.ProductServiceServer
+}
+
+type ygoScoreServiceServer struct {
+	ygo.ScoreServiceServer
 }
 
 func RunService() {
@@ -67,6 +72,7 @@ func RunService() {
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
 		ygo.RegisterCardServiceServer(grpcServer, &ygoCardServiceServer{})
 		ygo.RegisterProductServiceServer(grpcServer, &ygoProductServiceServer{})
+		ygo.RegisterScoreServiceServer(grpcServer, &ygoScoreServiceServer{})
 
 		log.Printf("Starting gRPC service on port %d...", port)
 		listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
