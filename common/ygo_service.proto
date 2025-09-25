@@ -3,65 +3,43 @@ syntax = "proto3";
 option go_package = "/ygo";
 package ygo;
 
+import "common.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
 service CardService {
   rpc GetCardColors(google.protobuf.Empty) returns (CardColors);
 
-  rpc GetCardByID(ResourceID) returns (Card);
-  rpc GetCardsByID(ResourceIDs) returns (Cards);
+  rpc GetCardByID(ygo.common.ResourceID) returns (Card);
+  rpc GetCardsByID(ygo.common.ResourceIDs) returns (Cards);
 
-  rpc GetCardsByName(ResourceNames) returns (Cards);
+  rpc GetCardsByName(ygo.common.ResourceNames) returns (Cards);
 
-  rpc GetCardsReferencingNameInEffect(ResourceNames) returns (CardList);
+  rpc GetCardsReferencingNameInEffect(ygo.common.ResourceNames) returns (CardList);
 
-  rpc GetArchetypalCardsUsingCardName(Archetype) returns (CardList);
-  rpc GetExplicitArchetypalInclusions(Archetype) returns (CardList);
-  rpc GetExplicitArchetypalExclusions(Archetype) returns (CardList);
+  rpc GetArchetypalCardsUsingCardName(ygo.common.Archetype) returns (CardList);
+  rpc GetExplicitArchetypalInclusions(ygo.common.Archetype) returns (CardList);
+  rpc GetExplicitArchetypalExclusions(ygo.common.Archetype) returns (CardList);
 
-  rpc GetRandomCard(BlackListed) returns (Card);
+  rpc GetRandomCard(ygo.common.BlackListed) returns (Card);
 }
 
 service ProductService {
-	rpc GetCardsByProductID(ResourceID) returns (Product);
+	rpc GetCardsByProductID(ygo.common.ResourceID) returns (Product);
 
-	rpc GetProductSummaryByID(ResourceID) returns (ProductSummary);
-	rpc GetProductsSummaryByID(ResourceIDs) returns (Products);
+	rpc GetProductSummaryByID(ygo.common.ResourceID) returns (ProductSummary);
+	rpc GetProductsSummaryByID(ygo.common.ResourceIDs) returns (Products);
 }
 
 service ScoreService {
-	rpc GetCardScoreByID(ResourceID) returns (CardScore);
-  	rpc GetCardScoresByIDs(ResourceIDs) returns (CardScores);
+	rpc GetFormatDates(ygo.common.ResourceName) returns (CardScore);
+
+	rpc GetCardScoreByID(ygo.common.ResourceID) returns (CardScore);
+  	rpc GetCardScoresByIDs(ygo.common.ResourceIDs) returns (CardScores);
 }
 
 message CardColors {
   map<string, uint32> values = 1;
-}
-
-message ResourceID {
-  string ID = 1;
-}
-
-message ResourceIDs {
-  repeated string IDs = 1;
-}
-
-message ResourceNames {
-  repeated string names = 1;
-}
-
-message SearchTerm {
-  string ID = 1;
-  string name = 2;
-}
-
-message Archetype {
-	string archetype = 1;
-}
-
-message BlackListed {
-  repeated string black_listed_refs = 1;
 }
 
 message Card {

@@ -67,278 +67,6 @@ func (x *CardColors) GetValues() map[string]uint32 {
 	return nil
 }
 
-type ResourceID struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ID            string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ResourceID) Reset() {
-	*x = ResourceID{}
-	mi := &file_ygo_service_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ResourceID) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ResourceID) ProtoMessage() {}
-
-func (x *ResourceID) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ResourceID.ProtoReflect.Descriptor instead.
-func (*ResourceID) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *ResourceID) GetID() string {
-	if x != nil {
-		return x.ID
-	}
-	return ""
-}
-
-type ResourceIDs struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	IDs           []string               `protobuf:"bytes,1,rep,name=IDs,proto3" json:"IDs,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ResourceIDs) Reset() {
-	*x = ResourceIDs{}
-	mi := &file_ygo_service_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ResourceIDs) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ResourceIDs) ProtoMessage() {}
-
-func (x *ResourceIDs) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ResourceIDs.ProtoReflect.Descriptor instead.
-func (*ResourceIDs) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *ResourceIDs) GetIDs() []string {
-	if x != nil {
-		return x.IDs
-	}
-	return nil
-}
-
-type ResourceNames struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Names         []string               `protobuf:"bytes,1,rep,name=names,proto3" json:"names,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ResourceNames) Reset() {
-	*x = ResourceNames{}
-	mi := &file_ygo_service_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ResourceNames) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ResourceNames) ProtoMessage() {}
-
-func (x *ResourceNames) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ResourceNames.ProtoReflect.Descriptor instead.
-func (*ResourceNames) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *ResourceNames) GetNames() []string {
-	if x != nil {
-		return x.Names
-	}
-	return nil
-}
-
-type SearchTerm struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ID            string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SearchTerm) Reset() {
-	*x = SearchTerm{}
-	mi := &file_ygo_service_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SearchTerm) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SearchTerm) ProtoMessage() {}
-
-func (x *SearchTerm) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SearchTerm.ProtoReflect.Descriptor instead.
-func (*SearchTerm) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *SearchTerm) GetID() string {
-	if x != nil {
-		return x.ID
-	}
-	return ""
-}
-
-func (x *SearchTerm) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type Archetype struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Archetype     string                 `protobuf:"bytes,1,opt,name=archetype,proto3" json:"archetype,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Archetype) Reset() {
-	*x = Archetype{}
-	mi := &file_ygo_service_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Archetype) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Archetype) ProtoMessage() {}
-
-func (x *Archetype) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Archetype.ProtoReflect.Descriptor instead.
-func (*Archetype) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *Archetype) GetArchetype() string {
-	if x != nil {
-		return x.Archetype
-	}
-	return ""
-}
-
-type BlackListed struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	BlackListedRefs []string               `protobuf:"bytes,1,rep,name=black_listed_refs,json=blackListedRefs,proto3" json:"black_listed_refs,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *BlackListed) Reset() {
-	*x = BlackListed{}
-	mi := &file_ygo_service_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BlackListed) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BlackListed) ProtoMessage() {}
-
-func (x *BlackListed) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BlackListed.ProtoReflect.Descriptor instead.
-func (*BlackListed) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *BlackListed) GetBlackListedRefs() []string {
-	if x != nil {
-		return x.BlackListedRefs
-	}
-	return nil
-}
-
 type Card struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	ID            string                  `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
@@ -355,7 +83,7 @@ type Card struct {
 
 func (x *Card) Reset() {
 	*x = Card{}
-	mi := &file_ygo_service_proto_msgTypes[7]
+	mi := &file_ygo_service_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -367,7 +95,7 @@ func (x *Card) String() string {
 func (*Card) ProtoMessage() {}
 
 func (x *Card) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[7]
+	mi := &file_ygo_service_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -380,7 +108,7 @@ func (x *Card) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Card.ProtoReflect.Descriptor instead.
 func (*Card) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{7}
+	return file_ygo_service_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Card) GetID() string {
@@ -449,7 +177,7 @@ type Cards struct {
 
 func (x *Cards) Reset() {
 	*x = Cards{}
-	mi := &file_ygo_service_proto_msgTypes[8]
+	mi := &file_ygo_service_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -461,7 +189,7 @@ func (x *Cards) String() string {
 func (*Cards) ProtoMessage() {}
 
 func (x *Cards) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[8]
+	mi := &file_ygo_service_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -474,7 +202,7 @@ func (x *Cards) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Cards.ProtoReflect.Descriptor instead.
 func (*Cards) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{8}
+	return file_ygo_service_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Cards) GetCardInfo() map[string]*Card {
@@ -500,7 +228,7 @@ type CardList struct {
 
 func (x *CardList) Reset() {
 	*x = CardList{}
-	mi := &file_ygo_service_proto_msgTypes[9]
+	mi := &file_ygo_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -512,7 +240,7 @@ func (x *CardList) String() string {
 func (*CardList) ProtoMessage() {}
 
 func (x *CardList) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[9]
+	mi := &file_ygo_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -525,7 +253,7 @@ func (x *CardList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CardList.ProtoReflect.Descriptor instead.
 func (*CardList) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{9}
+	return file_ygo_service_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CardList) GetCards() []*Card {
@@ -552,7 +280,7 @@ type Product struct {
 
 func (x *Product) Reset() {
 	*x = Product{}
-	mi := &file_ygo_service_proto_msgTypes[10]
+	mi := &file_ygo_service_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -564,7 +292,7 @@ func (x *Product) String() string {
 func (*Product) ProtoMessage() {}
 
 func (x *Product) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[10]
+	mi := &file_ygo_service_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -577,7 +305,7 @@ func (x *Product) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Product.ProtoReflect.Descriptor instead.
 func (*Product) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{10}
+	return file_ygo_service_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Product) GetID() string {
@@ -654,7 +382,7 @@ type ProductItem struct {
 
 func (x *ProductItem) Reset() {
 	*x = ProductItem{}
-	mi := &file_ygo_service_proto_msgTypes[11]
+	mi := &file_ygo_service_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -666,7 +394,7 @@ func (x *ProductItem) String() string {
 func (*ProductItem) ProtoMessage() {}
 
 func (x *ProductItem) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[11]
+	mi := &file_ygo_service_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -679,7 +407,7 @@ func (x *ProductItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProductItem.ProtoReflect.Descriptor instead.
 func (*ProductItem) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{11}
+	return file_ygo_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ProductItem) GetCard() *Card {
@@ -718,7 +446,7 @@ type ProductSummary struct {
 
 func (x *ProductSummary) Reset() {
 	*x = ProductSummary{}
-	mi := &file_ygo_service_proto_msgTypes[12]
+	mi := &file_ygo_service_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -730,7 +458,7 @@ func (x *ProductSummary) String() string {
 func (*ProductSummary) ProtoMessage() {}
 
 func (x *ProductSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[12]
+	mi := &file_ygo_service_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -743,7 +471,7 @@ func (x *ProductSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProductSummary.ProtoReflect.Descriptor instead.
 func (*ProductSummary) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{12}
+	return file_ygo_service_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ProductSummary) GetID() string {
@@ -805,7 +533,7 @@ type Products struct {
 
 func (x *Products) Reset() {
 	*x = Products{}
-	mi := &file_ygo_service_proto_msgTypes[13]
+	mi := &file_ygo_service_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -817,7 +545,7 @@ func (x *Products) String() string {
 func (*Products) ProtoMessage() {}
 
 func (x *Products) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[13]
+	mi := &file_ygo_service_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -830,7 +558,7 @@ func (x *Products) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Products.ProtoReflect.Descriptor instead.
 func (*Products) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{13}
+	return file_ygo_service_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Products) GetProducts() map[string]*ProductSummary {
@@ -859,7 +587,7 @@ type CardScore struct {
 
 func (x *CardScore) Reset() {
 	*x = CardScore{}
-	mi := &file_ygo_service_proto_msgTypes[14]
+	mi := &file_ygo_service_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -871,7 +599,7 @@ func (x *CardScore) String() string {
 func (*CardScore) ProtoMessage() {}
 
 func (x *CardScore) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[14]
+	mi := &file_ygo_service_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -884,7 +612,7 @@ func (x *CardScore) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CardScore.ProtoReflect.Descriptor instead.
 func (*CardScore) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{14}
+	return file_ygo_service_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CardScore) GetCurrentScoreByFormat() map[string]uint32 {
@@ -925,7 +653,7 @@ type CardScores struct {
 
 func (x *CardScores) Reset() {
 	*x = CardScores{}
-	mi := &file_ygo_service_proto_msgTypes[15]
+	mi := &file_ygo_service_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -937,7 +665,7 @@ func (x *CardScores) String() string {
 func (*CardScores) ProtoMessage() {}
 
 func (x *CardScores) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[15]
+	mi := &file_ygo_service_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -950,7 +678,7 @@ func (x *CardScores) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CardScores.ProtoReflect.Descriptor instead.
 func (*CardScores) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{15}
+	return file_ygo_service_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CardScores) GetCardInfo() map[string]*CardScore {
@@ -978,7 +706,7 @@ type ScoreInstance struct {
 
 func (x *ScoreInstance) Reset() {
 	*x = ScoreInstance{}
-	mi := &file_ygo_service_proto_msgTypes[16]
+	mi := &file_ygo_service_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -990,7 +718,7 @@ func (x *ScoreInstance) String() string {
 func (*ScoreInstance) ProtoMessage() {}
 
 func (x *ScoreInstance) ProtoReflect() protoreflect.Message {
-	mi := &file_ygo_service_proto_msgTypes[16]
+	mi := &file_ygo_service_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1003,7 +731,7 @@ func (x *ScoreInstance) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScoreInstance.ProtoReflect.Descriptor instead.
 func (*ScoreInstance) Descriptor() ([]byte, []int) {
-	return file_ygo_service_proto_rawDescGZIP(), []int{16}
+	return file_ygo_service_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ScoreInstance) GetFormat() string {
@@ -1031,28 +759,13 @@ var File_ygo_service_proto protoreflect.FileDescriptor
 
 const file_ygo_service_proto_rawDesc = "" +
 	"\n" +
-	"\x11ygo_service.proto\x12\x03ygo\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1bgoogle/protobuf/empty.proto\"|\n" +
+	"\x11ygo_service.proto\x12\x03ygo\x1a\fcommon.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1bgoogle/protobuf/empty.proto\"|\n" +
 	"\n" +
 	"CardColors\x123\n" +
 	"\x06values\x18\x01 \x03(\v2\x1b.ygo.CardColors.ValuesEntryR\x06values\x1a9\n" +
 	"\vValuesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"\x1c\n" +
-	"\n" +
-	"ResourceID\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\"\x1f\n" +
-	"\vResourceIDs\x12\x10\n" +
-	"\x03IDs\x18\x01 \x03(\tR\x03IDs\"%\n" +
-	"\rResourceNames\x12\x14\n" +
-	"\x05names\x18\x01 \x03(\tR\x05names\"0\n" +
-	"\n" +
-	"SearchTerm\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\")\n" +
-	"\tArchetype\x12\x1c\n" +
-	"\tarchetype\x18\x01 \x01(\tR\tarchetype\"9\n" +
-	"\vBlackListed\x12*\n" +
-	"\x11black_listed_refs\x18\x01 \x03(\tR\x0fblackListedRefs\"\xa5\x02\n" +
+	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"\xa5\x02\n" +
 	"\x04Card\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x14\n" +
 	"\x05color\x18\x02 \x01(\tR\x05color\x12\x12\n" +
@@ -1123,26 +836,27 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\rScoreInstance\x12\x16\n" +
 	"\x06format\x18\x01 \x01(\tR\x06format\x12$\n" +
 	"\reffectiveDate\x18\x02 \x01(\tR\reffectiveDate\x12\x14\n" +
-	"\x05score\x18\x03 \x01(\rR\x05score2\x8c\x04\n" +
+	"\x05score\x18\x03 \x01(\rR\x05score2\xc4\x04\n" +
 	"\vCardService\x128\n" +
-	"\rGetCardColors\x12\x16.google.protobuf.Empty\x1a\x0f.ygo.CardColors\x12)\n" +
-	"\vGetCardByID\x12\x0f.ygo.ResourceID\x1a\t.ygo.Card\x12,\n" +
-	"\fGetCardsByID\x12\x10.ygo.ResourceIDs\x1a\n" +
-	".ygo.Cards\x120\n" +
-	"\x0eGetCardsByName\x12\x12.ygo.ResourceNames\x1a\n" +
-	".ygo.Cards\x12D\n" +
-	"\x1fGetCardsReferencingNameInEffect\x12\x12.ygo.ResourceNames\x1a\r.ygo.CardList\x12@\n" +
-	"\x1fGetArchetypalCardsUsingCardName\x12\x0e.ygo.Archetype\x1a\r.ygo.CardList\x12@\n" +
-	"\x1fGetExplicitArchetypalInclusions\x12\x0e.ygo.Archetype\x1a\r.ygo.CardList\x12@\n" +
-	"\x1fGetExplicitArchetypalExclusions\x12\x0e.ygo.Archetype\x1a\r.ygo.CardList\x12,\n" +
-	"\rGetRandomCard\x12\x10.ygo.BlackListed\x1a\t.ygo.Card2\xc0\x01\n" +
-	"\x0eProductService\x124\n" +
-	"\x13GetCardsByProductID\x12\x0f.ygo.ResourceID\x1a\f.ygo.Product\x12=\n" +
-	"\x15GetProductSummaryByID\x12\x0f.ygo.ResourceID\x1a\x13.ygo.ProductSummary\x129\n" +
-	"\x16GetProductsSummaryByID\x12\x10.ygo.ResourceIDs\x1a\r.ygo.Products2|\n" +
-	"\fScoreService\x123\n" +
-	"\x10GetCardScoreByID\x12\x0f.ygo.ResourceID\x1a\x0e.ygo.CardScore\x127\n" +
-	"\x12GetCardScoresByIDs\x12\x10.ygo.ResourceIDs\x1a\x0f.ygo.CardScoresB\x06Z\x04/ygob\x06proto3"
+	"\rGetCardColors\x12\x16.google.protobuf.Empty\x1a\x0f.ygo.CardColors\x120\n" +
+	"\vGetCardByID\x12\x16.ygo.common.ResourceID\x1a\t.ygo.Card\x123\n" +
+	"\fGetCardsByID\x12\x17.ygo.common.ResourceIDs\x1a\n" +
+	".ygo.Cards\x127\n" +
+	"\x0eGetCardsByName\x12\x19.ygo.common.ResourceNames\x1a\n" +
+	".ygo.Cards\x12K\n" +
+	"\x1fGetCardsReferencingNameInEffect\x12\x19.ygo.common.ResourceNames\x1a\r.ygo.CardList\x12G\n" +
+	"\x1fGetArchetypalCardsUsingCardName\x12\x15.ygo.common.Archetype\x1a\r.ygo.CardList\x12G\n" +
+	"\x1fGetExplicitArchetypalInclusions\x12\x15.ygo.common.Archetype\x1a\r.ygo.CardList\x12G\n" +
+	"\x1fGetExplicitArchetypalExclusions\x12\x15.ygo.common.Archetype\x1a\r.ygo.CardList\x123\n" +
+	"\rGetRandomCard\x12\x17.ygo.common.BlackListed\x1a\t.ygo.Card2\xd5\x01\n" +
+	"\x0eProductService\x12;\n" +
+	"\x13GetCardsByProductID\x12\x16.ygo.common.ResourceID\x1a\f.ygo.Product\x12D\n" +
+	"\x15GetProductSummaryByID\x12\x16.ygo.common.ResourceID\x1a\x13.ygo.ProductSummary\x12@\n" +
+	"\x16GetProductsSummaryByID\x12\x17.ygo.common.ResourceIDs\x1a\r.ygo.Products2\xc6\x01\n" +
+	"\fScoreService\x12:\n" +
+	"\x0eGetFormatDates\x12\x18.ygo.common.ResourceName\x1a\x0e.ygo.CardScore\x12:\n" +
+	"\x10GetCardScoreByID\x12\x16.ygo.common.ResourceID\x1a\x0e.ygo.CardScore\x12>\n" +
+	"\x12GetCardScoresByIDs\x12\x17.ygo.common.ResourceIDs\x1a\x0f.ygo.CardScoresB\x06Z\x04/ygob\x06proto3"
 
 var (
 	file_ygo_service_proto_rawDescOnce sync.Once
@@ -1156,82 +870,84 @@ func file_ygo_service_proto_rawDescGZIP() []byte {
 	return file_ygo_service_proto_rawDescData
 }
 
-var file_ygo_service_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_ygo_service_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_ygo_service_proto_goTypes = []any{
 	(*CardColors)(nil),             // 0: ygo.CardColors
-	(*ResourceID)(nil),             // 1: ygo.ResourceID
-	(*ResourceIDs)(nil),            // 2: ygo.ResourceIDs
-	(*ResourceNames)(nil),          // 3: ygo.ResourceNames
-	(*SearchTerm)(nil),             // 4: ygo.SearchTerm
-	(*Archetype)(nil),              // 5: ygo.Archetype
-	(*BlackListed)(nil),            // 6: ygo.BlackListed
-	(*Card)(nil),                   // 7: ygo.Card
-	(*Cards)(nil),                  // 8: ygo.Cards
-	(*CardList)(nil),               // 9: ygo.CardList
-	(*Product)(nil),                // 10: ygo.Product
-	(*ProductItem)(nil),            // 11: ygo.ProductItem
-	(*ProductSummary)(nil),         // 12: ygo.ProductSummary
-	(*Products)(nil),               // 13: ygo.Products
-	(*CardScore)(nil),              // 14: ygo.CardScore
-	(*CardScores)(nil),             // 15: ygo.CardScores
-	(*ScoreInstance)(nil),          // 16: ygo.ScoreInstance
-	nil,                            // 17: ygo.CardColors.ValuesEntry
-	nil,                            // 18: ygo.Cards.CardInfoEntry
-	nil,                            // 19: ygo.Product.RarityDistributionEntry
-	nil,                            // 20: ygo.Products.ProductsEntry
-	nil,                            // 21: ygo.CardScore.CurrentScoreByFormatEntry
-	nil,                            // 22: ygo.CardScores.CardInfoEntry
-	(*wrapperspb.StringValue)(nil), // 23: google.protobuf.StringValue
-	(*wrapperspb.UInt32Value)(nil), // 24: google.protobuf.UInt32Value
-	(*emptypb.Empty)(nil),          // 25: google.protobuf.Empty
+	(*Card)(nil),                   // 1: ygo.Card
+	(*Cards)(nil),                  // 2: ygo.Cards
+	(*CardList)(nil),               // 3: ygo.CardList
+	(*Product)(nil),                // 4: ygo.Product
+	(*ProductItem)(nil),            // 5: ygo.ProductItem
+	(*ProductSummary)(nil),         // 6: ygo.ProductSummary
+	(*Products)(nil),               // 7: ygo.Products
+	(*CardScore)(nil),              // 8: ygo.CardScore
+	(*CardScores)(nil),             // 9: ygo.CardScores
+	(*ScoreInstance)(nil),          // 10: ygo.ScoreInstance
+	nil,                            // 11: ygo.CardColors.ValuesEntry
+	nil,                            // 12: ygo.Cards.CardInfoEntry
+	nil,                            // 13: ygo.Product.RarityDistributionEntry
+	nil,                            // 14: ygo.Products.ProductsEntry
+	nil,                            // 15: ygo.CardScore.CurrentScoreByFormatEntry
+	nil,                            // 16: ygo.CardScores.CardInfoEntry
+	(*wrapperspb.StringValue)(nil), // 17: google.protobuf.StringValue
+	(*wrapperspb.UInt32Value)(nil), // 18: google.protobuf.UInt32Value
+	(*emptypb.Empty)(nil),          // 19: google.protobuf.Empty
+	(*ResourceID)(nil),             // 20: ygo.common.ResourceID
+	(*ResourceIDs)(nil),            // 21: ygo.common.ResourceIDs
+	(*ResourceNames)(nil),          // 22: ygo.common.ResourceNames
+	(*Archetype)(nil),              // 23: ygo.common.Archetype
+	(*BlackListed)(nil),            // 24: ygo.common.BlackListed
+	(*ResourceName)(nil),           // 25: ygo.common.ResourceName
 }
 var file_ygo_service_proto_depIdxs = []int32{
-	17, // 0: ygo.CardColors.values:type_name -> ygo.CardColors.ValuesEntry
-	23, // 1: ygo.Card.monster_type:type_name -> google.protobuf.StringValue
-	24, // 2: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
-	24, // 3: ygo.Card.defense:type_name -> google.protobuf.UInt32Value
-	18, // 4: ygo.Cards.card_info:type_name -> ygo.Cards.CardInfoEntry
-	7,  // 5: ygo.CardList.cards:type_name -> ygo.Card
-	11, // 6: ygo.Product.items:type_name -> ygo.ProductItem
-	19, // 7: ygo.Product.rarityDistribution:type_name -> ygo.Product.RarityDistributionEntry
-	7,  // 8: ygo.ProductItem.card:type_name -> ygo.Card
-	20, // 9: ygo.Products.products:type_name -> ygo.Products.ProductsEntry
-	21, // 10: ygo.CardScore.currentScoreByFormat:type_name -> ygo.CardScore.CurrentScoreByFormatEntry
-	16, // 11: ygo.CardScore.scoreHistory:type_name -> ygo.ScoreInstance
-	22, // 12: ygo.CardScores.card_info:type_name -> ygo.CardScores.CardInfoEntry
-	7,  // 13: ygo.Cards.CardInfoEntry.value:type_name -> ygo.Card
-	12, // 14: ygo.Products.ProductsEntry.value:type_name -> ygo.ProductSummary
-	14, // 15: ygo.CardScores.CardInfoEntry.value:type_name -> ygo.CardScore
-	25, // 16: ygo.CardService.GetCardColors:input_type -> google.protobuf.Empty
-	1,  // 17: ygo.CardService.GetCardByID:input_type -> ygo.ResourceID
-	2,  // 18: ygo.CardService.GetCardsByID:input_type -> ygo.ResourceIDs
-	3,  // 19: ygo.CardService.GetCardsByName:input_type -> ygo.ResourceNames
-	3,  // 20: ygo.CardService.GetCardsReferencingNameInEffect:input_type -> ygo.ResourceNames
-	5,  // 21: ygo.CardService.GetArchetypalCardsUsingCardName:input_type -> ygo.Archetype
-	5,  // 22: ygo.CardService.GetExplicitArchetypalInclusions:input_type -> ygo.Archetype
-	5,  // 23: ygo.CardService.GetExplicitArchetypalExclusions:input_type -> ygo.Archetype
-	6,  // 24: ygo.CardService.GetRandomCard:input_type -> ygo.BlackListed
-	1,  // 25: ygo.ProductService.GetCardsByProductID:input_type -> ygo.ResourceID
-	1,  // 26: ygo.ProductService.GetProductSummaryByID:input_type -> ygo.ResourceID
-	2,  // 27: ygo.ProductService.GetProductsSummaryByID:input_type -> ygo.ResourceIDs
-	1,  // 28: ygo.ScoreService.GetCardScoreByID:input_type -> ygo.ResourceID
-	2,  // 29: ygo.ScoreService.GetCardScoresByIDs:input_type -> ygo.ResourceIDs
-	0,  // 30: ygo.CardService.GetCardColors:output_type -> ygo.CardColors
-	7,  // 31: ygo.CardService.GetCardByID:output_type -> ygo.Card
-	8,  // 32: ygo.CardService.GetCardsByID:output_type -> ygo.Cards
-	8,  // 33: ygo.CardService.GetCardsByName:output_type -> ygo.Cards
-	9,  // 34: ygo.CardService.GetCardsReferencingNameInEffect:output_type -> ygo.CardList
-	9,  // 35: ygo.CardService.GetArchetypalCardsUsingCardName:output_type -> ygo.CardList
-	9,  // 36: ygo.CardService.GetExplicitArchetypalInclusions:output_type -> ygo.CardList
-	9,  // 37: ygo.CardService.GetExplicitArchetypalExclusions:output_type -> ygo.CardList
-	7,  // 38: ygo.CardService.GetRandomCard:output_type -> ygo.Card
-	10, // 39: ygo.ProductService.GetCardsByProductID:output_type -> ygo.Product
-	12, // 40: ygo.ProductService.GetProductSummaryByID:output_type -> ygo.ProductSummary
-	13, // 41: ygo.ProductService.GetProductsSummaryByID:output_type -> ygo.Products
-	14, // 42: ygo.ScoreService.GetCardScoreByID:output_type -> ygo.CardScore
-	15, // 43: ygo.ScoreService.GetCardScoresByIDs:output_type -> ygo.CardScores
-	30, // [30:44] is the sub-list for method output_type
-	16, // [16:30] is the sub-list for method input_type
+	11, // 0: ygo.CardColors.values:type_name -> ygo.CardColors.ValuesEntry
+	17, // 1: ygo.Card.monster_type:type_name -> google.protobuf.StringValue
+	18, // 2: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
+	18, // 3: ygo.Card.defense:type_name -> google.protobuf.UInt32Value
+	12, // 4: ygo.Cards.card_info:type_name -> ygo.Cards.CardInfoEntry
+	1,  // 5: ygo.CardList.cards:type_name -> ygo.Card
+	5,  // 6: ygo.Product.items:type_name -> ygo.ProductItem
+	13, // 7: ygo.Product.rarityDistribution:type_name -> ygo.Product.RarityDistributionEntry
+	1,  // 8: ygo.ProductItem.card:type_name -> ygo.Card
+	14, // 9: ygo.Products.products:type_name -> ygo.Products.ProductsEntry
+	15, // 10: ygo.CardScore.currentScoreByFormat:type_name -> ygo.CardScore.CurrentScoreByFormatEntry
+	10, // 11: ygo.CardScore.scoreHistory:type_name -> ygo.ScoreInstance
+	16, // 12: ygo.CardScores.card_info:type_name -> ygo.CardScores.CardInfoEntry
+	1,  // 13: ygo.Cards.CardInfoEntry.value:type_name -> ygo.Card
+	6,  // 14: ygo.Products.ProductsEntry.value:type_name -> ygo.ProductSummary
+	8,  // 15: ygo.CardScores.CardInfoEntry.value:type_name -> ygo.CardScore
+	19, // 16: ygo.CardService.GetCardColors:input_type -> google.protobuf.Empty
+	20, // 17: ygo.CardService.GetCardByID:input_type -> ygo.common.ResourceID
+	21, // 18: ygo.CardService.GetCardsByID:input_type -> ygo.common.ResourceIDs
+	22, // 19: ygo.CardService.GetCardsByName:input_type -> ygo.common.ResourceNames
+	22, // 20: ygo.CardService.GetCardsReferencingNameInEffect:input_type -> ygo.common.ResourceNames
+	23, // 21: ygo.CardService.GetArchetypalCardsUsingCardName:input_type -> ygo.common.Archetype
+	23, // 22: ygo.CardService.GetExplicitArchetypalInclusions:input_type -> ygo.common.Archetype
+	23, // 23: ygo.CardService.GetExplicitArchetypalExclusions:input_type -> ygo.common.Archetype
+	24, // 24: ygo.CardService.GetRandomCard:input_type -> ygo.common.BlackListed
+	20, // 25: ygo.ProductService.GetCardsByProductID:input_type -> ygo.common.ResourceID
+	20, // 26: ygo.ProductService.GetProductSummaryByID:input_type -> ygo.common.ResourceID
+	21, // 27: ygo.ProductService.GetProductsSummaryByID:input_type -> ygo.common.ResourceIDs
+	25, // 28: ygo.ScoreService.GetFormatDates:input_type -> ygo.common.ResourceName
+	20, // 29: ygo.ScoreService.GetCardScoreByID:input_type -> ygo.common.ResourceID
+	21, // 30: ygo.ScoreService.GetCardScoresByIDs:input_type -> ygo.common.ResourceIDs
+	0,  // 31: ygo.CardService.GetCardColors:output_type -> ygo.CardColors
+	1,  // 32: ygo.CardService.GetCardByID:output_type -> ygo.Card
+	2,  // 33: ygo.CardService.GetCardsByID:output_type -> ygo.Cards
+	2,  // 34: ygo.CardService.GetCardsByName:output_type -> ygo.Cards
+	3,  // 35: ygo.CardService.GetCardsReferencingNameInEffect:output_type -> ygo.CardList
+	3,  // 36: ygo.CardService.GetArchetypalCardsUsingCardName:output_type -> ygo.CardList
+	3,  // 37: ygo.CardService.GetExplicitArchetypalInclusions:output_type -> ygo.CardList
+	3,  // 38: ygo.CardService.GetExplicitArchetypalExclusions:output_type -> ygo.CardList
+	1,  // 39: ygo.CardService.GetRandomCard:output_type -> ygo.Card
+	4,  // 40: ygo.ProductService.GetCardsByProductID:output_type -> ygo.Product
+	6,  // 41: ygo.ProductService.GetProductSummaryByID:output_type -> ygo.ProductSummary
+	7,  // 42: ygo.ProductService.GetProductsSummaryByID:output_type -> ygo.Products
+	8,  // 43: ygo.ScoreService.GetFormatDates:output_type -> ygo.CardScore
+	8,  // 44: ygo.ScoreService.GetCardScoreByID:output_type -> ygo.CardScore
+	9,  // 45: ygo.ScoreService.GetCardScoresByIDs:output_type -> ygo.CardScores
+	31, // [31:46] is the sub-list for method output_type
+	16, // [16:31] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name
 	16, // [16:16] is the sub-list for extension extendee
 	0,  // [0:16] is the sub-list for field type_name
@@ -1242,13 +958,14 @@ func file_ygo_service_proto_init() {
 	if File_ygo_service_proto != nil {
 		return
 	}
+	file_common_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ygo_service_proto_rawDesc), len(file_ygo_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   23,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

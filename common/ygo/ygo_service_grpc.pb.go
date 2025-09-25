@@ -604,6 +604,7 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	ScoreService_GetFormatDates_FullMethodName     = "/ygo.ScoreService/GetFormatDates"
 	ScoreService_GetCardScoreByID_FullMethodName   = "/ygo.ScoreService/GetCardScoreByID"
 	ScoreService_GetCardScoresByIDs_FullMethodName = "/ygo.ScoreService/GetCardScoresByIDs"
 )
@@ -612,6 +613,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ScoreServiceClient interface {
+	GetFormatDates(ctx context.Context, in *ResourceName, opts ...grpc.CallOption) (*CardScore, error)
 	GetCardScoreByID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*CardScore, error)
 	GetCardScoresByIDs(ctx context.Context, in *ResourceIDs, opts ...grpc.CallOption) (*CardScores, error)
 }
@@ -622,6 +624,16 @@ type scoreServiceClient struct {
 
 func NewScoreServiceClient(cc grpc.ClientConnInterface) ScoreServiceClient {
 	return &scoreServiceClient{cc}
+}
+
+func (c *scoreServiceClient) GetFormatDates(ctx context.Context, in *ResourceName, opts ...grpc.CallOption) (*CardScore, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CardScore)
+	err := c.cc.Invoke(ctx, ScoreService_GetFormatDates_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *scoreServiceClient) GetCardScoreByID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*CardScore, error) {
@@ -648,6 +660,7 @@ func (c *scoreServiceClient) GetCardScoresByIDs(ctx context.Context, in *Resourc
 // All implementations must embed UnimplementedScoreServiceServer
 // for forward compatibility.
 type ScoreServiceServer interface {
+	GetFormatDates(context.Context, *ResourceName) (*CardScore, error)
 	GetCardScoreByID(context.Context, *ResourceID) (*CardScore, error)
 	GetCardScoresByIDs(context.Context, *ResourceIDs) (*CardScores, error)
 	mustEmbedUnimplementedScoreServiceServer()
@@ -660,6 +673,9 @@ type ScoreServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedScoreServiceServer struct{}
 
+func (UnimplementedScoreServiceServer) GetFormatDates(context.Context, *ResourceName) (*CardScore, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFormatDates not implemented")
+}
 func (UnimplementedScoreServiceServer) GetCardScoreByID(context.Context, *ResourceID) (*CardScore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCardScoreByID not implemented")
 }
@@ -685,6 +701,24 @@ func RegisterScoreServiceServer(s grpc.ServiceRegistrar, srv ScoreServiceServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&ScoreService_ServiceDesc, srv)
+}
+
+func _ScoreService_GetFormatDates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceName)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScoreServiceServer).GetFormatDates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScoreService_GetFormatDates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScoreServiceServer).GetFormatDates(ctx, req.(*ResourceName))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ScoreService_GetCardScoreByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -730,6 +764,10 @@ var ScoreService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "ygo.ScoreService",
 	HandlerType: (*ScoreServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetFormatDates",
+			Handler:    _ScoreService_GetFormatDates_Handler,
+		},
 		{
 			MethodName: "GetCardScoreByID",
 			Handler:    _ScoreService_GetCardScoreByID_Handler,

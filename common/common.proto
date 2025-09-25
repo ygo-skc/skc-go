@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "/ygo";
+package ygo.common;
+
+message ResourceID {
+  string ID = 1;
+}
+
+message ResourceIDs {
+  repeated string IDs = 1;
+}
+
+message ResourceName{
+  repeated string names = 1;
+}
+
+message ResourceNames {
+  repeated string names = 1;
+}
+
+message SearchTerm {
+  string ID = 1;
+  string name = 2;
+}
+
+message Archetype {
+	string archetype = 1;
+}
+
+message BlackListed {
+  repeated string black_listed_refs = 1;
+}
