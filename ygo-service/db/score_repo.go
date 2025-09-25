@@ -11,6 +11,16 @@ import (
 )
 
 const (
+	datesForFormatQuery = `
+SELECT
+	UNIQUE effective_date
+FROM
+	card_scores
+WHERE
+	format = ?
+ORDER BY
+	effective_date DESC;`
+
 	cardScoreQuery = `
 SELECT
 	score_versions.format,
@@ -35,10 +45,33 @@ ORDER BY
 )
 
 type ScoreRepository interface {
+	GetDatesForFormat(context.Context, string) ([]string, *status.Status)
+
 	GetCardScoreByID(context.Context, string) ([]*ygo.ScoreInstance, *status.Status)
 	GetCardScoresByIDs(context.Context, string) (*ygo.Product, *status.Status)
 }
 type YGOScoreRepository struct{}
+
+func (imp YGOScoreRepository) GetDatesForFormat(ctx context.Context, format string) ([]string, *status.Status) {
+	logger := cUtil.RetrieveLogger(ctx)
+	logger.Info(fmt.Sprintf("Retrieving dates for ygo format %s", format))
+
+	if rows, err := skcDBConn.Query(datesForFormatQuery, format); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		scores := make([]string, 0, 5)
+		var date string
+
+		for rows.Next() {
+			if err := rows.Scan(&date); err != nil {
+				return nil, handleRowParsingError(logger, err)
+			} else {
+				scores = append(scores, date)
+			}
+		}
+		return scores, nil
+	}
+}
 
 func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID string) ([]*ygo.ScoreInstance, *status.Status) {
 	logger := cUtil.RetrieveLogger(ctx)

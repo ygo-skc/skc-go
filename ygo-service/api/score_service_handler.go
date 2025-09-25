@@ -4,11 +4,29 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
+
+func (s *ygoScoreServiceServer) GetDatesForFormat(ctx context.Context, req *ygo.ResourceName) (*ygo.Dates, error) {
+	_, newCtx := util.NewLogger(ctx, "Dates for Format")
+
+	format := req.Value
+	if !strings.EqualFold(format, "Genesys") {
+		return nil, status.New(codes.InvalidArgument, "Format not supported").Err()
+	}
+
+	if dates, err := scoreRepo.GetDatesForFormat(newCtx, format); err != nil {
+		return nil, err.Err()
+	} else {
+		return &ygo.Dates{Dates: dates}, nil
+	}
+}
 
 func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.ResourceID) (*ygo.CardScore, error) {
 	_, newCtx := util.NewLogger(ctx, "Card Score")

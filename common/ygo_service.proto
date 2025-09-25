@@ -32,7 +32,7 @@ service ProductService {
 }
 
 service ScoreService {
-	rpc GetFormatDates(ygo.common.ResourceName) returns (CardScore);
+	rpc GetDatesForFormat(ygo.common.ResourceName) returns (ygo.common.Dates);
 
 	rpc GetCardScoreByID(ygo.common.ResourceID) returns (CardScore);
   	rpc GetCardScoresByIDs(ygo.common.ResourceIDs) returns (CardScores);

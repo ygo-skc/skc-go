@@ -12,7 +12,7 @@ message ResourceIDs {
 }
 
 message ResourceName{
-  repeated string names = 1;
+  string value = 1;
 }
 
 message ResourceNames {
@@ -30,4 +30,8 @@ message Archetype {
 
 message BlackListed {
   repeated string black_listed_refs = 1;
+}
+
+message Dates {
+  repeated string dates = 1;
 }

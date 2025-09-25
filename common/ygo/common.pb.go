@@ -111,7 +111,7 @@ func (x *ResourceIDs) GetIDs() []string {
 
 type ResourceName struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Names         []string               `protobuf:"bytes,1,rep,name=names,proto3" json:"names,omitempty"`
+	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -146,11 +146,11 @@ func (*ResourceName) Descriptor() ([]byte, []int) {
 	return file_common_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ResourceName) GetNames() []string {
+func (x *ResourceName) GetValue() string {
 	if x != nil {
-		return x.Names
+		return x.Value
 	}
-	return nil
+	return ""
 }
 
 type ResourceNames struct {
@@ -337,6 +337,50 @@ func (x *BlackListed) GetBlackListedRefs() []string {
 	return nil
 }
 
+type Dates struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Dates         []string               `protobuf:"bytes,1,rep,name=dates,proto3" json:"dates,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Dates) Reset() {
+	*x = Dates{}
+	mi := &file_common_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Dates) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Dates) ProtoMessage() {}
+
+func (x *Dates) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Dates.ProtoReflect.Descriptor instead.
+func (*Dates) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *Dates) GetDates() []string {
+	if x != nil {
+		return x.Dates
+	}
+	return nil
+}
+
 var File_common_proto protoreflect.FileDescriptor
 
 const file_common_proto_rawDesc = "" +
@@ -349,7 +393,7 @@ const file_common_proto_rawDesc = "" +
 	"\vResourceIDs\x12\x10\n" +
 	"\x03IDs\x18\x01 \x03(\tR\x03IDs\"$\n" +
 	"\fResourceName\x12\x14\n" +
-	"\x05names\x18\x01 \x03(\tR\x05names\"%\n" +
+	"\x05value\x18\x01 \x01(\tR\x05value\"%\n" +
 	"\rResourceNames\x12\x14\n" +
 	"\x05names\x18\x01 \x03(\tR\x05names\"0\n" +
 	"\n" +
@@ -359,7 +403,9 @@ const file_common_proto_rawDesc = "" +
 	"\tArchetype\x12\x1c\n" +
 	"\tarchetype\x18\x01 \x01(\tR\tarchetype\"9\n" +
 	"\vBlackListed\x12*\n" +
-	"\x11black_listed_refs\x18\x01 \x03(\tR\x0fblackListedRefsB\x06Z\x04/ygob\x06proto3"
+	"\x11black_listed_refs\x18\x01 \x03(\tR\x0fblackListedRefs\"\x1d\n" +
+	"\x05Dates\x12\x14\n" +
+	"\x05dates\x18\x01 \x03(\tR\x05datesB\x06Z\x04/ygob\x06proto3"
 
 var (
 	file_common_proto_rawDescOnce sync.Once
@@ -373,7 +419,7 @@ func file_common_proto_rawDescGZIP() []byte {
 	return file_common_proto_rawDescData
 }
 
-var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_common_proto_goTypes = []any{
 	(*ResourceID)(nil),    // 0: ygo.common.ResourceID
 	(*ResourceIDs)(nil),   // 1: ygo.common.ResourceIDs
@@ -382,6 +428,7 @@ var file_common_proto_goTypes = []any{
 	(*SearchTerm)(nil),    // 4: ygo.common.SearchTerm
 	(*Archetype)(nil),     // 5: ygo.common.Archetype
 	(*BlackListed)(nil),   // 6: ygo.common.BlackListed
+	(*Dates)(nil),         // 7: ygo.common.Dates
 }
 var file_common_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -402,7 +449,7 @@ func file_common_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_proto_rawDesc), len(file_common_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -852,9 +852,9 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x0eProductService\x12;\n" +
 	"\x13GetCardsByProductID\x12\x16.ygo.common.ResourceID\x1a\f.ygo.Product\x12D\n" +
 	"\x15GetProductSummaryByID\x12\x16.ygo.common.ResourceID\x1a\x13.ygo.ProductSummary\x12@\n" +
-	"\x16GetProductsSummaryByID\x12\x17.ygo.common.ResourceIDs\x1a\r.ygo.Products2\xc6\x01\n" +
-	"\fScoreService\x12:\n" +
-	"\x0eGetFormatDates\x12\x18.ygo.common.ResourceName\x1a\x0e.ygo.CardScore\x12:\n" +
+	"\x16GetProductsSummaryByID\x12\x17.ygo.common.ResourceIDs\x1a\r.ygo.Products2\xcc\x01\n" +
+	"\fScoreService\x12@\n" +
+	"\x11GetDatesForFormat\x12\x18.ygo.common.ResourceName\x1a\x11.ygo.common.Dates\x12:\n" +
 	"\x10GetCardScoreByID\x12\x16.ygo.common.ResourceID\x1a\x0e.ygo.CardScore\x12>\n" +
 	"\x12GetCardScoresByIDs\x12\x17.ygo.common.ResourceIDs\x1a\x0f.ygo.CardScoresB\x06Z\x04/ygob\x06proto3"
 
@@ -898,6 +898,7 @@ var file_ygo_service_proto_goTypes = []any{
 	(*Archetype)(nil),              // 23: ygo.common.Archetype
 	(*BlackListed)(nil),            // 24: ygo.common.BlackListed
 	(*ResourceName)(nil),           // 25: ygo.common.ResourceName
+	(*Dates)(nil),                  // 26: ygo.common.Dates
 }
 var file_ygo_service_proto_depIdxs = []int32{
 	11, // 0: ygo.CardColors.values:type_name -> ygo.CardColors.ValuesEntry
@@ -928,7 +929,7 @@ var file_ygo_service_proto_depIdxs = []int32{
 	20, // 25: ygo.ProductService.GetCardsByProductID:input_type -> ygo.common.ResourceID
 	20, // 26: ygo.ProductService.GetProductSummaryByID:input_type -> ygo.common.ResourceID
 	21, // 27: ygo.ProductService.GetProductsSummaryByID:input_type -> ygo.common.ResourceIDs
-	25, // 28: ygo.ScoreService.GetFormatDates:input_type -> ygo.common.ResourceName
+	25, // 28: ygo.ScoreService.GetDatesForFormat:input_type -> ygo.common.ResourceName
 	20, // 29: ygo.ScoreService.GetCardScoreByID:input_type -> ygo.common.ResourceID
 	21, // 30: ygo.ScoreService.GetCardScoresByIDs:input_type -> ygo.common.ResourceIDs
 	0,  // 31: ygo.CardService.GetCardColors:output_type -> ygo.CardColors
@@ -943,7 +944,7 @@ var file_ygo_service_proto_depIdxs = []int32{
 	4,  // 40: ygo.ProductService.GetCardsByProductID:output_type -> ygo.Product
 	6,  // 41: ygo.ProductService.GetProductSummaryByID:output_type -> ygo.ProductSummary
 	7,  // 42: ygo.ProductService.GetProductsSummaryByID:output_type -> ygo.Products
-	8,  // 43: ygo.ScoreService.GetFormatDates:output_type -> ygo.CardScore
+	26, // 43: ygo.ScoreService.GetDatesForFormat:output_type -> ygo.common.Dates
 	8,  // 44: ygo.ScoreService.GetCardScoreByID:output_type -> ygo.CardScore
 	9,  // 45: ygo.ScoreService.GetCardScoresByIDs:output_type -> ygo.CardScores
 	31, // [31:46] is the sub-list for method output_type
