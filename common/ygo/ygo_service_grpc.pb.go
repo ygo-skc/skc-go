@@ -605,6 +605,7 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	ScoreService_GetDatesForFormat_FullMethodName  = "/ygo.ScoreService/GetDatesForFormat"
+	ScoreService_GetScoresForFormat_FullMethodName = "/ygo.ScoreService/GetScoresForFormat"
 	ScoreService_GetCardScoreByID_FullMethodName   = "/ygo.ScoreService/GetCardScoreByID"
 	ScoreService_GetCardScoresByIDs_FullMethodName = "/ygo.ScoreService/GetCardScoresByIDs"
 )
@@ -613,7 +614,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ScoreServiceClient interface {
-	GetDatesForFormat(ctx context.Context, in *ResourceName, opts ...grpc.CallOption) (*Dates, error)
+	GetDatesForFormat(ctx context.Context, in *Format, opts ...grpc.CallOption) (*Dates, error)
+	GetScoresForFormat(ctx context.Context, in *Format, opts ...grpc.CallOption) (*Dates, error)
 	GetCardScoreByID(ctx context.Context, in *ResourceID, opts ...grpc.CallOption) (*CardScore, error)
 	GetCardScoresByIDs(ctx context.Context, in *ResourceIDs, opts ...grpc.CallOption) (*CardScores, error)
 }
@@ -626,10 +628,20 @@ func NewScoreServiceClient(cc grpc.ClientConnInterface) ScoreServiceClient {
 	return &scoreServiceClient{cc}
 }
 
-func (c *scoreServiceClient) GetDatesForFormat(ctx context.Context, in *ResourceName, opts ...grpc.CallOption) (*Dates, error) {
+func (c *scoreServiceClient) GetDatesForFormat(ctx context.Context, in *Format, opts ...grpc.CallOption) (*Dates, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Dates)
 	err := c.cc.Invoke(ctx, ScoreService_GetDatesForFormat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scoreServiceClient) GetScoresForFormat(ctx context.Context, in *Format, opts ...grpc.CallOption) (*Dates, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Dates)
+	err := c.cc.Invoke(ctx, ScoreService_GetScoresForFormat_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -660,7 +672,8 @@ func (c *scoreServiceClient) GetCardScoresByIDs(ctx context.Context, in *Resourc
 // All implementations must embed UnimplementedScoreServiceServer
 // for forward compatibility.
 type ScoreServiceServer interface {
-	GetDatesForFormat(context.Context, *ResourceName) (*Dates, error)
+	GetDatesForFormat(context.Context, *Format) (*Dates, error)
+	GetScoresForFormat(context.Context, *Format) (*Dates, error)
 	GetCardScoreByID(context.Context, *ResourceID) (*CardScore, error)
 	GetCardScoresByIDs(context.Context, *ResourceIDs) (*CardScores, error)
 	mustEmbedUnimplementedScoreServiceServer()
@@ -673,8 +686,11 @@ type ScoreServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedScoreServiceServer struct{}
 
-func (UnimplementedScoreServiceServer) GetDatesForFormat(context.Context, *ResourceName) (*Dates, error) {
+func (UnimplementedScoreServiceServer) GetDatesForFormat(context.Context, *Format) (*Dates, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDatesForFormat not implemented")
+}
+func (UnimplementedScoreServiceServer) GetScoresForFormat(context.Context, *Format) (*Dates, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetScoresForFormat not implemented")
 }
 func (UnimplementedScoreServiceServer) GetCardScoreByID(context.Context, *ResourceID) (*CardScore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCardScoreByID not implemented")
@@ -704,7 +720,7 @@ func RegisterScoreServiceServer(s grpc.ServiceRegistrar, srv ScoreServiceServer)
 }
 
 func _ScoreService_GetDatesForFormat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ResourceName)
+	in := new(Format)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -716,7 +732,25 @@ func _ScoreService_GetDatesForFormat_Handler(srv interface{}, ctx context.Contex
 		FullMethod: ScoreService_GetDatesForFormat_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ScoreServiceServer).GetDatesForFormat(ctx, req.(*ResourceName))
+		return srv.(ScoreServiceServer).GetDatesForFormat(ctx, req.(*Format))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScoreService_GetScoresForFormat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Format)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScoreServiceServer).GetScoresForFormat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScoreService_GetScoresForFormat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScoreServiceServer).GetScoresForFormat(ctx, req.(*Format))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -767,6 +801,10 @@ var ScoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDatesForFormat",
 			Handler:    _ScoreService_GetDatesForFormat_Handler,
+		},
+		{
+			MethodName: "GetScoresForFormat",
+			Handler:    _ScoreService_GetScoresForFormat_Handler,
 		},
 		{
 			MethodName: "GetCardScoreByID",

@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *ygoScoreServiceServer) GetDatesForFormat(ctx context.Context, req *ygo.ResourceName) (*ygo.Dates, error) {
+func (s *ygoScoreServiceServer) GetDatesForFormat(ctx context.Context, req *ygo.Format) (*ygo.Dates, error) {
 	_, newCtx := util.NewLogger(ctx, "Dates for Format")
 
 	format := req.Value
@@ -50,7 +50,7 @@ func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo
 	return nil, nil
 }
 
-func parseScoreHistory(scoresHistory []*ygo.ScoreInstance) (map[string]uint32, []string, []string) {
+func parseScoreHistory(scoresHistory []*ygo.ScoreEntry) (map[string]uint32, []string, []string) {
 	today := time.Now().In(chicagoLocation)
 	todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
 

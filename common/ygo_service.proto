@@ -32,7 +32,8 @@ service ProductService {
 }
 
 service ScoreService {
-	rpc GetDatesForFormat(ygo.common.ResourceName) returns (ygo.common.Dates);
+	rpc GetDatesForFormat(Format) returns (ygo.common.Dates);
+	rpc GetScoresForFormat(Format) returns (ygo.common.Dates);
 
 	rpc GetCardScoreByID(ygo.common.ResourceID) returns (CardScore);
   	rpc GetCardScoresByIDs(ygo.common.ResourceIDs) returns (CardScores);
@@ -95,11 +96,28 @@ message Products {
 	repeated string unknown_resources = 2;
 }
 
+message Format {
+	string value = 1;
+	google.protobuf.StringValue effective_date = 2;
+}
+
+message ScoreFormatEntry {
+	string effective_date = 1;
+	google.protobuf.StringValue next_format_date = 2;
+	google.protobuf.StringValue previous_format_date = 3;
+	repeated CardScoreEntry entries = 4;
+}
+
+message CardScoreEntry {
+	Card card = 1;
+	uint32 score = 2;
+}
+
 message CardScore {
-  map<string, uint32> currentScoreByFormat = 1;
-  repeated string uniqueFormats = 2;
-  repeated ScoreInstance scoreHistory = 3;
-  repeated string scheduledChanges = 4;
+  map<string, uint32> current_score_by_format = 1;
+  repeated string unique_formats = 2;
+  repeated ScoreEntry score_history = 3;
+  repeated string scheduled_changes = 4;
 }
 
 message CardScores {
@@ -107,8 +125,8 @@ message CardScores {
 	repeated string unknown_resources = 2;
 }
 
-message ScoreInstance {
+message ScoreEntry {
 	string format = 1;
-	string effectiveDate = 2;
+	string effective_date = 2;
 	uint32 score = 3;
 }
