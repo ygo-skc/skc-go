@@ -45,7 +45,13 @@ func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.R
 }
 
 func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo.ResourceIDs) (*ygo.CardScores, error) {
-	// _, newCtx := util.NewLogger(ctx, "Card Score")
+	logger, newCtx := util.NewLogger(ctx, "Multi-card Score")
+
+	if scoreHistory, err := scoreRepo.GetCardScoresByIDs(newCtx, req.IDs); err != nil {
+		return nil, err.Err()
+	} else {
+		logger.Info(fmt.Sprintf("%v", scoreHistory))
+	}
 
 	return nil, nil
 }

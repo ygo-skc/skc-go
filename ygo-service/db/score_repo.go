@@ -27,7 +27,8 @@ ORDER BY
 SELECT
 	score_versions.format,
 	score_versions.effective_date,
-	COALESCE(scores.score, 0) AS score
+	COALESCE(scores.score, 0) AS score,
+	cards.card_number
 FROM
 	(
 		SELECT DISTINCT
@@ -49,7 +50,8 @@ ORDER BY
 SELECT
 	score_versions.format,
 	score_versions.effective_date,
-	COALESCE(scores.score, 0) AS score
+	COALESCE(scores.score, 0) AS score,
+	cards.card_number
 FROM
 	(
 		SELECT DISTINCT
@@ -72,7 +74,7 @@ type ScoreRepository interface {
 	GetDatesForFormat(context.Context, string) ([]string, *status.Status)
 
 	GetCardScoreByID(context.Context, string) ([]*ygo.ScoreEntry, *status.Status)
-	GetCardScoresByIDs(context.Context, []string) (map[string]*ygo.ScoreEntry, *status.Status)
+	GetCardScoresByIDs(context.Context, []string) (map[string][]*ygo.ScoreEntry, *status.Status)
 }
 type YGOScoreRepository struct{}
 
@@ -107,7 +109,7 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 		scores := make([]*ygo.ScoreEntry, 0, 5)
 
 		for rows.Next() {
-			if score, err := parseRowsForScoreEntry(ctx, rows); err != nil {
+			if score, _, err := parseRowsForScoreEntry(ctx, rows); err != nil {
 				return nil, err
 			} else {
 				scores = append(scores, score)
@@ -122,34 +124,43 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 	}
 }
 
-func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []string) (map[string]*ygo.ScoreEntry, *status.Status) {
+func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []string) (map[string][]*ygo.ScoreEntry, *status.Status) {
 	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data using ID's: %v", cardIDs))
 
-	// args, numCards := buildVariableQuerySubjects(cardIDs)
-	// query := fmt.Sprintf(multiCardScoreQuery, variablePlaceholders(numCards))
+	args, numCards := buildVariableQuerySubjects(cardIDs)
+	query := fmt.Sprintf(multiCardScoreQuery, variablePlaceholders(numCards))
 
-	// if rows, err := skcDBConn.Query(query, args...); err != nil {
-	// 	return nil, handleQueryError(logger, err)
-	// } else {
-	// 	if c, err := parseRowsForCards(ctx, rows, model.CardIDAsKey); err != nil {
-	// 		return nil, err
-	// 	} else {
-	// 	}
-	// }
-	return nil, nil
+	if rows, err := skcDBConn.Query(query, args...); err != nil {
+		return nil, handleQueryError(logger, err)
+	} else {
+		scoresByID := make(map[string][]*ygo.ScoreEntry)
+
+		for rows.Next() {
+			if score, cardID, err := parseRowsForScoreEntry(ctx, rows); err != nil {
+				return nil, err
+			} else {
+				if _, exists := scoresByID[cardID]; !exists {
+					scoresByID[cardID] = make([]*ygo.ScoreEntry, 0, 5)
+				}
+				scoresByID[cardID] = append(scoresByID[cardID], score)
+			}
+		}
+		return scoresByID, nil
+	}
 }
 
-func parseRowsForScoreEntry(ctx context.Context, rows *sql.Rows) (*ygo.ScoreEntry, *status.Status) {
+func parseRowsForScoreEntry(ctx context.Context, rows *sql.Rows) (*ygo.ScoreEntry, string, *status.Status) {
 	var (
 		format        string
 		effectiveDate string
 		score         uint32
+		cardID        string
 	)
 
-	if err := rows.Scan(&format, &effectiveDate, &score); err != nil {
-		return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
+	if err := rows.Scan(&format, &effectiveDate, &score, &cardID); err != nil {
+		return nil, "", handleRowParsingError(util.RetrieveLogger(ctx), err)
 	} else {
-		return &ygo.ScoreEntry{Format: format, EffectiveDate: effectiveDate, Score: score}, nil
+		return &ygo.ScoreEntry{Format: format, EffectiveDate: effectiveDate, Score: score}, cardID, nil
 	}
 }
