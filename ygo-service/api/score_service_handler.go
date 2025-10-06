@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"slices"
 	"strings"
 	"time"
@@ -14,10 +15,11 @@ import (
 )
 
 func (s *ygoScoreServiceServer) GetDatesForFormat(ctx context.Context, req *ygo.Format) (*ygo.Dates, error) {
-	_, newCtx := util.NewLogger(ctx, "Dates for Format")
-
 	format := req.Value
+	logger, newCtx := util.NewLogger(ctx, "Dates for Format", slog.String("format", format))
+
 	if !strings.EqualFold(format, "Genesys") {
+		logger.Error("Format not supported")
 		return nil, status.New(codes.InvalidArgument, "Format not supported").Err()
 	}
 
@@ -29,37 +31,42 @@ func (s *ygoScoreServiceServer) GetDatesForFormat(ctx context.Context, req *ygo.
 }
 
 func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.ResourceID) (*ygo.CardScore, error) {
-	_, newCtx := util.NewLogger(ctx, "Card Score")
+	_, newCtx := util.NewLogger(ctx, "Card Score", slog.String("card_id", req.ID))
 
 	if scoreHistory, err := scoreRepo.GetCardScoreByID(newCtx, req.ID); err != nil {
 		return nil, err.Err()
 	} else {
-		currentScoreByFormat, uniqueFormats, scheduledChanges := parseScoreHistory(scoreHistory)
-		return &ygo.CardScore{
-			CurrentScoreByFormat: currentScoreByFormat,
-			UniqueFormats:        uniqueFormats,
-			ScoreHistory:         scoreHistory,
-			ScheduledChanges:     scheduledChanges,
-		}, nil
+		today := time.Now().In(chicagoLocation)
+		todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
+
+		score := parseScoreHistory(scoreHistory, todaysDate)
+		score.ScoreHistory = scoreHistory
+		return &score, nil
 	}
 }
 
 func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo.ResourceIDs) (*ygo.CardScores, error) {
-	logger, newCtx := util.NewLogger(ctx, "Multi-card Score")
+	_, newCtx := util.NewLogger(ctx, "Multi-card Score")
 
 	if scoreHistory, err := scoreRepo.GetCardScoresByIDs(newCtx, req.IDs); err != nil {
 		return nil, err.Err()
 	} else {
-		logger.Info(fmt.Sprintf("%v", scoreHistory))
-	}
+		today := time.Now().In(chicagoLocation)
+		todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
+		scores := make(map[string]*ygo.CardScore, len(scoreHistory))
 
-	return nil, nil
+		for cardID, s := range scoreHistory {
+			score := parseScoreHistory(s, todaysDate)
+			score.ScoreHistory = s
+			scores[cardID] = &score
+		}
+		return &ygo.CardScores{
+			CardInfo: scores,
+		}, nil
+	}
 }
 
-func parseScoreHistory(scoresHistory []*ygo.ScoreEntry) (map[string]uint32, []string, []string) {
-	today := time.Now().In(chicagoLocation)
-	todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
-
+func parseScoreHistory(scoresHistory []*ygo.ScoreEntry, todaysDate time.Time) ygo.CardScore {
 	scoreByFormat := make(map[string]uint32, 3)
 	uniqueFormats := make([]string, 0, 3)
 	scheduledChanges := make([]string, 0, 3)
@@ -80,5 +87,9 @@ func parseScoreHistory(scoresHistory []*ygo.ScoreEntry) (map[string]uint32, []st
 		}
 	}
 
-	return scoreByFormat, uniqueFormats, scheduledChanges
+	return ygo.CardScore{
+		CurrentScoreByFormat: scoreByFormat,
+		UniqueFormats:        uniqueFormats,
+		ScheduledChanges:     scheduledChanges,
+	}
 }
