@@ -80,7 +80,7 @@ type YGOScoreRepository struct{}
 
 func (imp YGOScoreRepository) GetDatesForFormat(ctx context.Context, format string) ([]string, *status.Status) {
 	logger := cUtil.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving dates for ygo format %s", format))
+	logger.Info("Retrieving effective dates")
 
 	if rows, err := skcDBConn.Query(datesForFormatQuery, format); err != nil {
 		return nil, handleQueryError(logger, err)
@@ -101,7 +101,7 @@ func (imp YGOScoreRepository) GetDatesForFormat(ctx context.Context, format stri
 
 func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID string) ([]*ygo.ScoreEntry, *status.Status) {
 	logger := cUtil.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving card score data using ID %s", cardID))
+	logger.Info("Retrieving card score data")
 
 	if rows, err := skcDBConn.Query(cardScoreQuery, cardID); err != nil {
 		return nil, handleQueryError(logger, err)
@@ -117,7 +117,7 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 		}
 
 		if len(scores) == 0 {
-			logger.Error(fmt.Sprintf("Scores not retrieved since card ID %s DNE", cardID))
+			logger.Error("Scores not retrieved since card ID DNE")
 			return nil, status.New(codes.NotFound, "Resource not found")
 		}
 		return scores, nil
@@ -126,7 +126,7 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 
 func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []string) (map[string][]*ygo.ScoreEntry, *status.Status) {
 	logger := cUtil.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving card data using ID's: %v", cardIDs))
+	logger.Info(fmt.Sprintf("Retrieving card score data using ID's: %v", cardIDs))
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
 	query := fmt.Sprintf(multiCardScoreQuery, variablePlaceholders(numCards))
