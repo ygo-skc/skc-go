@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ygo-skc/skc-go/common/model"
 	"github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
 	"google.golang.org/grpc/codes"
@@ -60,8 +61,10 @@ func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo
 			score.ScoreHistory = s
 			scores[cardID] = &score
 		}
+
 		return &ygo.CardScores{
-			CardInfo: scores,
+			CardInfo:         scores,
+			UnknownResources: model.FindMissingKeys(scoreHistory, model.CardIDs(req.IDs)),
 		}, nil
 	}
 }
