@@ -32,18 +32,37 @@ func (s *ygoScoreServiceServer) GetDatesForFormat(ctx context.Context, req *ygo.
 }
 
 func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.ResourceID) (*ygo.CardScore, error) {
-	_, newCtx := util.NewLogger(ctx, "Card Score", slog.String("card_id", req.ID))
+	logger, newCtx := util.NewLogger(ctx, "Card Score", slog.String("card_id", req.ID))
 
-	if scoreHistory, err := scoreRepo.GetCardScoreByID(newCtx, req.ID); err != nil {
+	today := time.Now().In(chicagoLocation)
+	todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
+	if score, err := scoreRepo.GetCardScoreByID(newCtx, req.ID, todaysDate, parser); err != nil {
 		return nil, err.Err()
 	} else {
-		today := time.Now().In(chicagoLocation)
-		todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
-
-		score := parseScoreHistory(scoreHistory, todaysDate)
-		score.ScoreHistory = scoreHistory
-		return &score, nil
+		if len(score.ScoreHistory) == 0 {
+			logger.Error("Scores not retrieved since card ID DNE")
+			return nil, status.New(codes.NotFound, "Resource not found").Err()
+		}
+		return score, nil
 	}
+}
+
+func parser(score *ygo.CardScore, entry *ygo.ScoreEntry, todaysDate time.Time) {
+	effectiveDate, _ := time.Parse("2006-01-02", entry.EffectiveDate)
+
+	if _, exists := score.CurrentScoreByFormat[entry.Format]; !exists && effectiveDate.Before(todaysDate) {
+		score.CurrentScoreByFormat[entry.Format] = entry.Score
+	}
+
+	if !slices.Contains(score.UniqueFormats, entry.Format) {
+		score.UniqueFormats = append(score.UniqueFormats, entry.Format)
+	}
+
+	if effectiveDate.After(todaysDate) && !slices.Contains(score.ScheduledChanges, entry.Format) {
+		score.ScheduledChanges = append(score.ScheduledChanges, fmt.Sprintf("%s|%s", entry.Format, entry.EffectiveDate))
+	}
+
+	score.ScoreHistory = append(score.ScoreHistory, entry)
 }
 
 func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo.ResourceIDs) (*ygo.CardScores, error) {

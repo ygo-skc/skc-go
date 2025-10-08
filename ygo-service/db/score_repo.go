@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/ygo-skc/skc-go/common/util"
 	cUtil "github.com/ygo-skc/skc-go/common/util"
 	"github.com/ygo-skc/skc-go/common/ygo"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -73,7 +73,7 @@ ORDER BY
 type ScoreRepository interface {
 	GetDatesForFormat(context.Context, string) ([]string, *status.Status)
 
-	GetCardScoreByID(context.Context, string) ([]*ygo.ScoreEntry, *status.Status)
+	GetCardScoreByID(context.Context, string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status)
 	GetCardScoresByIDs(context.Context, []string) (map[string][]*ygo.ScoreEntry, *status.Status)
 }
 type YGOScoreRepository struct{}
@@ -99,28 +99,30 @@ func (imp YGOScoreRepository) GetDatesForFormat(ctx context.Context, format stri
 	}
 }
 
-func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID string) ([]*ygo.ScoreEntry, *status.Status) {
+func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID string, todaysDate time.Time,
+	parser func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status) {
+
 	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info("Retrieving card score data")
 
 	if rows, err := skcDBConn.Query(cardScoreQuery, cardID); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		scores := make([]*ygo.ScoreEntry, 0, 5)
+		score := &ygo.CardScore{
+			CurrentScoreByFormat: make(map[string]uint32, 3),
+			UniqueFormats:        make([]string, 0, 3),
+			ScheduledChanges:     make([]string, 0, 3),
+			ScoreHistory:         make([]*ygo.ScoreEntry, 0, 5),
+		}
 
 		for rows.Next() {
-			if score, _, err := parseRowsForScoreEntry(ctx, rows); err != nil {
+			if entry, _, err := parseRowsForScoreEntry(ctx, rows); err != nil {
 				return nil, err
 			} else {
-				scores = append(scores, score)
+				parser(score, entry, todaysDate)
 			}
 		}
-
-		if len(scores) == 0 {
-			logger.Error("Scores not retrieved since card ID DNE")
-			return nil, status.New(codes.NotFound, "Resource not found")
-		}
-		return scores, nil
+		return score, nil
 	}
 }
 
