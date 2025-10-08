@@ -47,6 +47,21 @@ func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.R
 	}
 }
 
+func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo.ResourceIDs) (*ygo.CardScores, error) {
+	_, newCtx := util.NewLogger(ctx, "Multi-card Score")
+
+	today := time.Now().In(chicagoLocation)
+	todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
+	if scores, err := scoreRepo.GetCardScoresByIDs(newCtx, req.IDs, todaysDate, parser); err != nil {
+		return nil, err.Err()
+	} else {
+		return &ygo.CardScores{
+			CardInfo:         scores,
+			UnknownResources: model.FindMissingKeys(scores, model.CardIDs(req.IDs)),
+		}, nil
+	}
+}
+
 func parser(score *ygo.CardScore, entry *ygo.ScoreEntry, todaysDate time.Time) {
 	effectiveDate, _ := time.Parse("2006-01-02", entry.EffectiveDate)
 
@@ -63,55 +78,4 @@ func parser(score *ygo.CardScore, entry *ygo.ScoreEntry, todaysDate time.Time) {
 	}
 
 	score.ScoreHistory = append(score.ScoreHistory, entry)
-}
-
-func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo.ResourceIDs) (*ygo.CardScores, error) {
-	_, newCtx := util.NewLogger(ctx, "Multi-card Score")
-
-	if scoreHistory, err := scoreRepo.GetCardScoresByIDs(newCtx, req.IDs); err != nil {
-		return nil, err.Err()
-	} else {
-		today := time.Now().In(chicagoLocation)
-		todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
-		scores := make(map[string]*ygo.CardScore, len(scoreHistory))
-
-		for cardID, s := range scoreHistory {
-			score := parseScoreHistory(s, todaysDate)
-			score.ScoreHistory = s
-			scores[cardID] = &score
-		}
-
-		return &ygo.CardScores{
-			CardInfo:         scores,
-			UnknownResources: model.FindMissingKeys(scoreHistory, model.CardIDs(req.IDs)),
-		}, nil
-	}
-}
-
-func parseScoreHistory(scoresHistory []*ygo.ScoreEntry, todaysDate time.Time) ygo.CardScore {
-	scoreByFormat := make(map[string]uint32, 3)
-	uniqueFormats := make([]string, 0, 3)
-	scheduledChanges := make([]string, 0, 3)
-
-	for _, instance := range scoresHistory {
-		effectiveDate, _ := time.Parse("2006-01-02", instance.EffectiveDate)
-
-		if _, exists := scoreByFormat[instance.Format]; !exists && effectiveDate.Before(todaysDate) {
-			scoreByFormat[instance.Format] = instance.Score
-		}
-
-		if !slices.Contains(uniqueFormats, instance.Format) {
-			uniqueFormats = append(uniqueFormats, instance.Format)
-		}
-
-		if effectiveDate.After(todaysDate) && !slices.Contains(scheduledChanges, instance.Format) {
-			scheduledChanges = append(scheduledChanges, fmt.Sprintf("%s|%s", instance.Format, instance.EffectiveDate))
-		}
-	}
-
-	return ygo.CardScore{
-		CurrentScoreByFormat: scoreByFormat,
-		UniqueFormats:        uniqueFormats,
-		ScheduledChanges:     scheduledChanges,
-	}
 }

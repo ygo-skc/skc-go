@@ -74,7 +74,7 @@ type ScoreRepository interface {
 	GetDatesForFormat(context.Context, string) ([]string, *status.Status)
 
 	GetCardScoreByID(context.Context, string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status)
-	GetCardScoresByIDs(context.Context, []string) (map[string][]*ygo.ScoreEntry, *status.Status)
+	GetCardScoresByIDs(context.Context, []string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status)
 }
 type YGOScoreRepository struct{}
 
@@ -126,7 +126,9 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 	}
 }
 
-func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []string) (map[string][]*ygo.ScoreEntry, *status.Status) {
+func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []string, todaysDate time.Time,
+	parser func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status) {
+
 	logger := cUtil.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card score data using ID's: %v", cardIDs))
 
@@ -136,16 +138,21 @@ func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		scoresByID := make(map[string][]*ygo.ScoreEntry)
+		scoresByID := make(map[string]*ygo.CardScore)
 
 		for rows.Next() {
 			if score, cardID, err := parseRowsForScoreEntry(ctx, rows); err != nil {
 				return nil, err
 			} else {
 				if _, exists := scoresByID[cardID]; !exists {
-					scoresByID[cardID] = make([]*ygo.ScoreEntry, 0, 5)
+					scoresByID[cardID] = &ygo.CardScore{
+						CurrentScoreByFormat: make(map[string]uint32, 3),
+						UniqueFormats:        make([]string, 0, 3),
+						ScheduledChanges:     make([]string, 0, 3),
+						ScoreHistory:         make([]*ygo.ScoreEntry, 0, 5),
+					}
 				}
-				scoresByID[cardID] = append(scoresByID[cardID], score)
+				parser(scoresByID[cardID], score, todaysDate)
 			}
 		}
 		return scoresByID, nil
