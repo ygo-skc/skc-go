@@ -8,7 +8,7 @@ API_HEALTH_GRPC_DIR := ./health
 all: deps clean generate-grpc
 
 generate-grpc:
-	protoc --go_out=./ --go-grpc_out=./ ygo_service.proto health.proto
+	protoc --go_out=./ --go-grpc_out=./ common.proto ygo_service.proto health.proto
 	go vet ./...
 
 clean:

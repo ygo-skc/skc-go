@@ -3,60 +3,44 @@ syntax = "proto3";
 option go_package = "/ygo";
 package ygo;
 
+import "common.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
 service CardService {
   rpc GetCardColors(google.protobuf.Empty) returns (CardColors);
 
-  rpc GetCardByID(ResourceID) returns (Card);
-  rpc GetCardsByID(ResourceIDs) returns (Cards);
+  rpc GetCardByID(ygo.common.ResourceID) returns (Card);
+  rpc GetCardsByID(ygo.common.ResourceIDs) returns (Cards);
 
-  rpc GetCardsByName(ResourceNames) returns (Cards);
+  rpc GetCardsByName(ygo.common.ResourceNames) returns (Cards);
 
-  rpc GetCardsReferencingNameInEffect(ResourceNames) returns (CardList);
+  rpc GetCardsReferencingNameInEffect(ygo.common.ResourceNames) returns (CardList);
 
-  rpc GetArchetypalCardsUsingCardName(Archetype) returns (CardList);
-  rpc GetExplicitArchetypalInclusions(Archetype) returns (CardList);
-  rpc GetExplicitArchetypalExclusions(Archetype) returns (CardList);
+  rpc GetArchetypalCardsUsingCardName(ygo.common.Archetype) returns (CardList);
+  rpc GetExplicitArchetypalInclusions(ygo.common.Archetype) returns (CardList);
+  rpc GetExplicitArchetypalExclusions(ygo.common.Archetype) returns (CardList);
 
-  rpc GetRandomCard(BlackListed) returns (Card);
+  rpc GetRandomCard(ygo.common.BlackListed) returns (Card);
 }
 
 service ProductService {
-	rpc GetCardsByProductID(ResourceID) returns (Product);
+	rpc GetCardsByProductID(ygo.common.ResourceID) returns (Product);
 
-	rpc GetProductSummaryByID(ResourceID) returns (ProductSummary);
-	rpc GetProductsSummaryByID(ResourceIDs) returns (Products);
+	rpc GetProductSummaryByID(ygo.common.ResourceID) returns (ProductSummary);
+	rpc GetProductsSummaryByID(ygo.common.ResourceIDs) returns (Products);
+}
+
+service ScoreService {
+	rpc GetDatesForFormat(Format) returns (ygo.common.Dates);
+	rpc GetScoresForFormat(Format) returns (ygo.common.Dates);
+
+	rpc GetCardScoreByID(ygo.common.ResourceID) returns (CardScore);
+  	rpc GetCardScoresByIDs(ygo.common.ResourceIDs) returns (CardScores);
 }
 
 message CardColors {
   map<string, uint32> values = 1;
-}
-
-message ResourceID {
-  string ID = 1;
-}
-
-message ResourceIDs {
-  repeated string IDs = 1;
-}
-
-message ResourceNames {
-  repeated string names = 1;
-}
-
-message SearchTerm {
-  string ID = 1;
-  string name = 2;
-}
-
-message Archetype {
-	string archetype = 1;
-}
-
-message BlackListed {
-  repeated string black_listed_refs = 1;
 }
 
 message Card {
@@ -110,4 +94,39 @@ message ProductSummary {
 message Products {
 	map<string, ProductSummary> products = 1;
 	repeated string unknown_resources = 2;
+}
+
+message Format {
+	string value = 1;
+	google.protobuf.StringValue effective_date = 2;
+}
+
+message ScoreFormatEntry {
+	string effective_date = 1;
+	google.protobuf.StringValue next_format_date = 2;
+	google.protobuf.StringValue previous_format_date = 3;
+	repeated CardScoreEntry entries = 4;
+}
+
+message CardScoreEntry {
+	Card card = 1;
+	uint32 score = 2;
+}
+
+message CardScore {
+  map<string, uint32> current_score_by_format = 1;
+  repeated string unique_formats = 2;
+  repeated ScoreEntry score_history = 3;
+  repeated string scheduled_changes = 4;
+}
+
+message CardScores {
+	map<string, CardScore> card_info = 1;
+	repeated string unknown_resources = 2;
+}
+
+message ScoreEntry {
+	string format = 1;
+	string effective_date = 2;
+	uint32 score = 3;
 }
