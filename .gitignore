@@ -34,3 +34,5 @@ coverage.*
 /**__debug
 ygo-service/ygo-service
 ygo-service/health
+
+common/swift-gen
