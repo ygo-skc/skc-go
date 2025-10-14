@@ -4,9 +4,9 @@ import (
 	context "context"
 	"net/http"
 
-	"github.com/ygo-skc/skc-go/common/health"
-	"github.com/ygo-skc/skc-go/common/model"
-	"github.com/ygo-skc/skc-go/common/util"
+	"github.com/ygo-skc/skc-go/common/v2/health"
+	"github.com/ygo-skc/skc-go/common/v2/model"
+	"github.com/ygo-skc/skc-go/common/v2/util"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
