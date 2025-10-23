@@ -6,9 +6,9 @@ import (
 	"net"
 	"time"
 
-	"github.com/ygo-skc/skc-go/common/health"
-	"github.com/ygo-skc/skc-go/common/util"
-	"github.com/ygo-skc/skc-go/common/ygo"
+	"github.com/ygo-skc/skc-go/common/v2/health"
+	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"github.com/ygo-skc/skc-go/ygo-service/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"

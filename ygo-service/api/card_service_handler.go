@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/ygo-skc/skc-go/common/util"
-	"github.com/ygo-skc/skc-go/common/ygo"
+	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 

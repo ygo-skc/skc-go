@@ -8,7 +8,7 @@ import (
 	"github.com/ygo-skc/skc-go/ygo-service/db"
 
 	_ "github.com/go-sql-driver/mysql"
-	cUtil "github.com/ygo-skc/skc-go/common/util"
+	cUtil "github.com/ygo-skc/skc-go/common/v2/util"
 	_ "google.golang.org/grpc/encoding/gzip"
 )
 

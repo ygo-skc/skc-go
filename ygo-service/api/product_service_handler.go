@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/ygo-skc/skc-go/common/util"
-	"github.com/ygo-skc/skc-go/common/ygo"
+	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v2/ygo"
 )
 
 func (s *ygoProductServiceServer) GetCardsByProductID(ctx context.Context, req *ygo.ResourceID) (*ygo.Product, error) {

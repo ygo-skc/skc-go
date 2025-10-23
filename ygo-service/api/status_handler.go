@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/ygo-skc/skc-go/common/health"
-	"github.com/ygo-skc/skc-go/common/util"
+	"github.com/ygo-skc/skc-go/common/v2/health"
+	"github.com/ygo-skc/skc-go/common/v2/util"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
