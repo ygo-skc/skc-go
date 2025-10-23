@@ -12,6 +12,129 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	cardAttributes = `
+card_number,
+card_color,
+card_name,
+card_attribute,
+card_effect,
+monster_type,
+monster_attack,
+monster_defense`
+
+	dbVersionQuery = "SELECT VERSION()"
+
+	cardColorIDsQuery = `
+SELECT
+	color_id,
+	card_color
+FROM
+	card_colors
+ORDER BY
+	color_id`
+
+	cardByCardIDQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_number = ?`
+	cardsByCardIDsQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_number IN (%s)`
+
+	cardsByCardNamesQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_name IN (%s)`
+	searchCardUsingEffectQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	MATCH (card_effect) AGAINST (? IN BOOLEAN MODE)
+ORDER BY
+	color_id,
+	card_name`
+
+	archetypeInclusionSubQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	MATCH (card_effect) AGAINST ('+"This card is always treated as" +"%s"' IN BOOLEAN MODE)`
+	archetypeExclusionSubQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	MATCH (card_effect) AGAINST ('+"This card is not treated as" +"%s"' IN BOOLEAN MODE)`
+
+	archetypalCardsUsingCardNameQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_name LIKE BINARY ?
+ORDER BY
+	card_name`
+	archetypalCardsUsingCardTextQuery = `
+SELECT
+	a.*
+FROM
+	(%s) a
+WHERE
+	a.card_effect REGEXP 'always treated as a.*"%s".* card'
+ORDER BY
+	card_name`
+	nonArchetypalCardsUsingCardTextQuery = `
+SELECT
+	a.*
+FROM
+	(%s) a
+WHERE
+	a.card_effect REGEXP 'not treated as.*"%s".* card'
+ORDER BY
+	card_name`
+
+	randomCardQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_color != 'Token'
+ORDER BY
+	RAND()
+LIMIT
+	1`
+	randomCardWithBlackListQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_number NOT IN (%s)
+	AND card_color != 'Token'
+ORDER BY
+	RAND()
+LIMIT
+	1`
+)
+
 type CardRepository interface {
 	GetCardColorIDs(context.Context) (*ygo.CardColors, *status.Status)
 
