@@ -2,9 +2,11 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/ygo-skc/skc-go/common/v2/model"
+	"github.com/ygo-skc/skc-go/common/v2/util"
 	cUtil "github.com/ygo-skc/skc-go/common/v2/util"
 	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/grpc/codes"
@@ -51,6 +53,47 @@ FROM
 WHERE
 	product_id IN (%s)`
 )
+
+func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.ProductItem, map[string]uint32, *status.Status) {
+	items := make([]*ygo.ProductItem, 0)
+	itemByCardIDxPosition := make(map[string]*ygo.ProductItem)
+	rarityDistribution := make(map[string]uint32)
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+		productPosition, rarity            string
+	)
+	for rows.Next() {
+		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &productPosition, &rarity); err != nil {
+			return nil, nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
+		} else {
+			// either create a new ProductItem or use reference to existing Item and update the rarities
+			key := fmt.Sprintf("%s-%s", id, productPosition)
+			if _, exists := itemByCardIDxPosition[key]; exists {
+				itemByCardIDxPosition[key].Rarities = append(itemByCardIDxPosition[key].Rarities, rarity)
+			} else {
+				item := &ygo.ProductItem{
+					Card: model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+						WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build(),
+					Position: productPosition,
+					Rarities: []string{rarity},
+				}
+				items = append(items, item)
+				itemByCardIDxPosition[key] = item
+			}
+
+			// running total of all rarities
+			if num, exists := rarityDistribution[rarity]; exists {
+				rarityDistribution[rarity] = num + 1
+			} else {
+				rarityDistribution[rarity] = 1
+			}
+		}
+	}
+
+	return items, rarityDistribution, nil
+}
 
 type ProductRepository interface {
 	GetCardsByProductID(context.Context, string) (*ygo.Product, *status.Status)

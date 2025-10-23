@@ -2,10 +2,13 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/ygo-skc/skc-go/common/v2/model"
+	"github.com/ygo-skc/skc-go/common/v2/util"
 	cUtil "github.com/ygo-skc/skc-go/common/v2/util"
 	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/grpc/codes"
@@ -134,6 +137,64 @@ ORDER BY
 LIMIT
 	1`
 )
+
+func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *status.Status) {
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+	)
+
+	if err := skcDBConn.QueryRow(query, args...).Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+
+	card := model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+		WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build()
+	return card, nil
+}
+
+func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (map[string]*ygo.Card, *status.Status) {
+	cards := make(map[string]*ygo.Card)
+
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+	)
+	for rows.Next() {
+		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
+		} else {
+			card := model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+				WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build()
+			cards[keyFn(card)] = card
+		}
+	}
+
+	return cards, nil
+}
+
+func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *status.Status) {
+	cardList := make([]*ygo.Card, 0)
+
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+	)
+	for rows.Next() {
+		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
+		} else {
+			cardList = append(cardList,
+				model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+					WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build())
+		}
+	}
+
+	return cardList, nil
+}
 
 type CardRepository interface {
 	GetCardColorIDs(context.Context) (*ygo.CardColors, *status.Status)
