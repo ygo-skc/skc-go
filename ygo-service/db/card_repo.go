@@ -154,9 +154,7 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 	return card, nil
 }
 
-func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card) string) (map[string]*ygo.Card, *status.Status) {
-	cards := make(map[string]*ygo.Card)
-
+func parseCardRows[T []*ygo.Card | map[string]*ygo.Card](ctx context.Context, rows *sql.Rows, dataStructure *T, collector func(*T, *ygo.Card)) *status.Status {
 	var (
 		id, color, name, attribute, effect string
 		monsterType                        *string
@@ -164,36 +162,26 @@ func parseRowsForCards(ctx context.Context, rows *sql.Rows, keyFn func(*ygo.Card
 	)
 	for rows.Next() {
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
-			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
+			return handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
-			card := model.NewYGOCardProtoBuilder(id, name).WithColor(color).
-				WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build()
-			cards[keyFn(card)] = card
+			collector(dataStructure, model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+				WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build())
 		}
 	}
 
-	return cards, nil
+	return nil
 }
 
-func parseRowsForCardList(ctx context.Context, rows *sql.Rows) ([]*ygo.Card, *status.Status) {
-	cardList := make([]*ygo.Card, 0)
+func collectWithList(cardList *[]*ygo.Card, card *ygo.Card) {
+	*cardList = append(*cardList, card)
+}
 
-	var (
-		id, color, name, attribute, effect string
-		monsterType                        *string
-		atk, def                           *uint32
-	)
-	for rows.Next() {
-		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
-			return nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
-		} else {
-			cardList = append(cardList,
-				model.NewYGOCardProtoBuilder(id, name).WithColor(color).
-					WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build())
-		}
-	}
+func collectWithMapUsingIDKey(cards *map[string]*ygo.Card, card *ygo.Card) {
+	(*cards)[model.CardIDAsKey(card)] = card
+}
 
-	return cardList, nil
+func collectWithMapUsingNameKey(cards *map[string]*ygo.Card, card *ygo.Card) {
+	(*cards)[model.CardNameAsKey(card)] = card
 }
 
 type CardRepository interface {
@@ -263,7 +251,8 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCards(ctx, rows, model.CardIDAsKey); err != nil {
+		cards := make(map[string]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingIDKey); err != nil {
 			return nil, err
 		} else {
 			return &ygo.Cards{
@@ -285,7 +274,8 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCards(ctx, rows, model.CardNameAsKey); err != nil {
+		cards := make(map[string]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingNameKey); err != nil {
 			return nil, err
 		} else {
 			return &ygo.Cards{
@@ -315,7 +305,8 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 	if rows, err := skcDBConn.Query(query, strings.Join(fullTextNames, " ")); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+		cards := make([]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: cards}, err
@@ -332,7 +323,8 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	if rows, err := skcDBConn.Query(query, searchTerm); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+		cards := make([]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: cards}, err
@@ -349,7 +341,8 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 	if rows, err := skcDBConn.Query(query); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+		cards := make([]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: cards}, err
@@ -365,7 +358,8 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 	if rows, err := skcDBConn.Query(query); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+		cards := make([]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: cards}, err
