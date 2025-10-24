@@ -7,7 +7,6 @@ import (
 
 	"github.com/ygo-skc/skc-go/common/v2/model"
 	"github.com/ygo-skc/skc-go/common/v2/util"
-	cUtil "github.com/ygo-skc/skc-go/common/v2/util"
 	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -104,7 +103,7 @@ type ProductRepository interface {
 type YGOProductRepository struct{}
 
 func (imp YGOProductRepository) GetCardsByProductID(ctx context.Context, productID string) (*ygo.Product, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving product data using ID %s", productID))
 
 	if product, err := queryProductInfo(logger, productID); err != nil {
@@ -139,7 +138,7 @@ func (imp YGOProductRepository) GetProductSummaryByID(ctx context.Context, produ
 }
 
 func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, products model.ProductIDs) (*ygo.Products, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving summary of the following products: %v", products))
 
 	args, numProducts := buildVariableQuerySubjects(products)

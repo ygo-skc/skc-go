@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/ygo-skc/skc-go/common/v2/util"
-	cUtil "github.com/ygo-skc/skc-go/common/v2/util"
 	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/grpc/status"
 )
@@ -79,7 +78,7 @@ type ScoreRepository interface {
 type YGOScoreRepository struct{}
 
 func (imp YGOScoreRepository) GetDatesForFormat(ctx context.Context, format string) ([]string, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving effective dates")
 
 	if rows, err := skcDBConn.Query(datesForFormatQuery, format); err != nil {
@@ -102,7 +101,7 @@ func (imp YGOScoreRepository) GetDatesForFormat(ctx context.Context, format stri
 func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID string, todaysDate time.Time,
 	parser func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status) {
 
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card score data")
 
 	if rows, err := skcDBConn.Query(cardScoreQuery, cardID); err != nil {
@@ -129,7 +128,7 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []string, todaysDate time.Time,
 	parser func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status) {
 
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card score data using ID's: %v", cardIDs))
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
