@@ -148,8 +148,14 @@ func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card
 		return nil, handleQueryError(logger, err)
 	}
 
-	card := model.NewYGOCardProtoBuilder(id, name).WithColor(color).
-		WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build()
+	card := model.NewYGOCardProtoBuilder(id, name).
+		WithColor(color).
+		WithAttribute(attribute).
+		WithEffect(effect).
+		WithMonsterType(monsterType).
+		WithAttack(atk).
+		WithDefense(def).
+		Build()
 	return card, nil
 }
 
@@ -163,8 +169,16 @@ func parseCardRows[T []*ygo.Card | map[string]*ygo.Card](ctx context.Context, ro
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return handleRowParsingError(util.RetrieveLogger(ctx), err)
 		} else {
-			collector(dataStructure, model.NewYGOCardProtoBuilder(id, name).WithColor(color).
-				WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build())
+			collector(
+				dataStructure,
+				model.NewYGOCardProtoBuilder(id, name).
+					WithColor(color).
+					WithAttribute(attribute).
+					WithEffect(effect).
+					WithMonsterType(monsterType).
+					WithAttack(atk).
+					WithDefense(def).
+					Build())
 		}
 	}
 

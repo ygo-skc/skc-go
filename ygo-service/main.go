@@ -8,7 +8,7 @@ import (
 	"github.com/ygo-skc/skc-go/ygo-service/db"
 
 	_ "github.com/go-sql-driver/mysql"
-	cUtil "github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v2/util"
 	_ "google.golang.org/grpc/encoding/gzip"
 )
 
@@ -19,7 +19,7 @@ const (
 func init() {
 	isCICD := os.Getenv("IS_CICD")
 	if isCICD != "true" && !strings.HasSuffix(os.Args[0], ".test") {
-		cUtil.ConfigureEnv(ENV_VARIABLE_NAME)
+		util.ConfigureEnv(ENV_VARIABLE_NAME)
 	}
 }
 
