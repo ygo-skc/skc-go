@@ -32,7 +32,7 @@ WHERE
 	AND cs.format = ?
 	AND cs.effective_date = ?
 ORDER BY
-	card_name`
+	%s`
 
 	cardScoreQuery = `
 SELECT
@@ -82,18 +82,29 @@ ORDER BY
 )
 
 type ScoreRepository interface {
-	GetScoresByFormatAndDate(context.Context, string, string) ([]*ygo.CardScoreEntry, uint32, *status.Status)
+	GetScoresByFormatAndDate(context.Context, string, string, ygo.CardRestrictionSortOrder) ([]*ygo.CardScoreEntry, uint32, *status.Status)
 
 	GetCardScoreByID(context.Context, string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status)
 	GetCardScoresByIDs(context.Context, []string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status)
 }
 type YGOScoreRepository struct{}
 
-func (imp YGOScoreRepository) GetScoresByFormatAndDate(ctx context.Context, format string, effectiveDate string) ([]*ygo.CardScoreEntry, uint32, *status.Status) {
+func (imp YGOScoreRepository) GetScoresByFormatAndDate(
+	ctx context.Context, format string, effectiveDate string, sortOrder ygo.CardRestrictionSortOrder) ([]*ygo.CardScoreEntry, uint32, *status.Status) {
+
 	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving scores using format %s and date %s", format, effectiveDate))
 
-	if rows, err := skcDBConn.Query(cardScoreByFormatAndDateQuery, format, effectiveDate); err != nil {
+	var sortingSubQuery string
+	switch sortOrder {
+	case ygo.CardRestrictionSortOrder_CARD_NAME:
+		sortingSubQuery = "card_name"
+	case ygo.CardRestrictionSortOrder_SCORE_THEN_COLOR:
+		sortingSubQuery = "score DESC, card_color, card_name"
+	}
+
+	query := fmt.Sprintf(cardScoreByFormatAndDateQuery, sortingSubQuery)
+	if rows, err := skcDBConn.Query(query, format, effectiveDate); err != nil {
 		return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
 	} else {
 		var (

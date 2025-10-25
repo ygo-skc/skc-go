@@ -23,7 +23,7 @@ func (s *ygoScoreServiceServer) GetScoresByFormatAndDate(ctx context.Context, re
 		slog.String("effective_date", effectiveDate),
 	)
 
-	if entries, numEntries, err := scoreRepo.GetScoresByFormatAndDate(newCtx, format, effectiveDate); err != nil {
+	if entries, numEntries, err := scoreRepo.GetScoresByFormatAndDate(newCtx, format, effectiveDate, req.SortOrder); err != nil {
 		return nil, err.Err()
 	} else {
 		if numEntries == 0 {
