@@ -32,6 +32,13 @@ message BlackListed {
   repeated string black_listed_refs = 1;
 }
 
-message Dates {
-  repeated string dates = 1;
+message EffectiveTimeline {
+  repeated string allDates = 1;
+  repeated string futureDates = 2;
+  string currentDate = 3;
+}
+
+enum CardRestrictionSortOrder {
+  CARD_NAME = 0;
+  SCORE_THEN_COLOR = 1;
 }
