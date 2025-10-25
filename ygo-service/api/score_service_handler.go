@@ -15,13 +15,28 @@ import (
 )
 
 func (s *ygoScoreServiceServer) GetScoresByFormatAndDate(ctx context.Context, req *ygo.RestrictedContentRequest) (*ygo.ScoresForFormatAndDate, error) {
-	_, newCtx := util.NewLogger(ctx, "Scores By Format & Date",
-		slog.String("format", req.Format), slog.String("effective_date", req.EffectiveDate))
+	format := req.Format
+	effectiveDate := req.EffectiveDate
 
-	if entries, err := scoreRepo.GetScoresByFormatAndDate(newCtx, req.Format, req.EffectiveDate); err != nil {
+	logger, newCtx := util.NewLogger(ctx, "Scores By Format & Date",
+		slog.String("format", format),
+		slog.String("effective_date", effectiveDate),
+	)
+
+	if entries, numEntries, err := scoreRepo.GetScoresByFormatAndDate(newCtx, format, effectiveDate); err != nil {
 		return nil, err.Err()
 	} else {
-		return &ygo.ScoresForFormatAndDate{Entries: entries}, nil
+		if numEntries == 0 {
+			logger.Error("Cannot find format and date combination")
+			return nil, status.New(codes.NotFound, "Format and date combination DNE").Err()
+		}
+
+		return &ygo.ScoresForFormatAndDate{
+			Format:        format,
+			EffectiveDate: effectiveDate,
+			Entries:       entries,
+			TotalEntries:  numEntries,
+		}, nil
 	}
 }
 

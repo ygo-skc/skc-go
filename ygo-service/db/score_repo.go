@@ -6,12 +6,34 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ygo-skc/skc-go/common/v2/model"
 	"github.com/ygo-skc/skc-go/common/v2/util"
 	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/grpc/status"
 )
 
 const (
+	cardScoreByFormatAndDateQuery = `
+SELECT
+	ci.card_number,
+	card_color,
+	card_name,
+	card_attribute,
+	card_effect,
+	monster_type,
+	monster_attack,
+	monster_defense,
+	score
+FROM
+	card_info AS ci,
+	card_scores AS cs
+WHERE
+	ci.card_number = cs.card_number
+	AND cs.format = ?
+	AND cs.effective_date = ?
+ORDER BY
+	card_name`
+
 	cardScoreQuery = `
 SELECT
 	score_versions.format,
@@ -60,31 +82,47 @@ ORDER BY
 )
 
 type ScoreRepository interface {
-	GetScoresByFormatAndDate(context.Context, string, string) ([]*ygo.CardScoreEntry, *status.Status)
+	GetScoresByFormatAndDate(context.Context, string, string) ([]*ygo.CardScoreEntry, uint32, *status.Status)
 
 	GetCardScoreByID(context.Context, string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status)
 	GetCardScoresByIDs(context.Context, []string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status)
 }
 type YGOScoreRepository struct{}
 
-func (imp YGOScoreRepository) GetDatesForFormat(ctx context.Context, format string) ([]string, *status.Status) {
+func (imp YGOScoreRepository) GetScoresByFormatAndDate(ctx context.Context, format string, effectiveDate string) ([]*ygo.CardScoreEntry, uint32, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info("Retrieving effective dates")
+	logger.Info(fmt.Sprintf("Retrieving scores using format %s and date %s", format, effectiveDate))
 
-	if rows, err := skcDBConn.Query(datesForFormatQuery, format); err != nil {
-		return nil, handleQueryError(logger, err)
+	if rows, err := skcDBConn.Query(cardScoreByFormatAndDateQuery, format, effectiveDate); err != nil {
+		return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
 	} else {
-		scores := make([]string, 0, 5)
-		var date string
+		var (
+			id, color, name, attribute, effect string
+			monsterType                        *string
+			atk, def                           *uint32
+			score                              uint32
+		)
+		entries := make([]*ygo.CardScoreEntry, 0, 600)
+		var numEntries uint32
 
 		for rows.Next() {
-			if err := rows.Scan(&date); err != nil {
-				return nil, handleRowParsingError(logger, err)
-			} else {
-				scores = append(scores, date)
+			if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &score); err != nil {
+				return make([]*ygo.CardScoreEntry, 0), 0, handleRowParsingError(util.RetrieveLogger(ctx), err)
 			}
+			entries = append(entries, &ygo.CardScoreEntry{
+				Card: model.NewYGOCardProtoBuilder(id, name).
+					WithColor(color).
+					WithAttribute(attribute).
+					WithEffect(effect).
+					WithMonsterType(monsterType).
+					WithAttack(atk).
+					WithDefense(def).
+					Build(),
+				Score: score,
+			})
+			numEntries++
 		}
-		return scores, nil
+		return entries, numEntries, nil
 	}
 }
 
