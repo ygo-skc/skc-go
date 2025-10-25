@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
-	"strings"
 	"time"
 
 	"github.com/ygo-skc/skc-go/common/v2/model"
@@ -15,19 +14,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *ygoScoreServiceServer) GetDatesForFormat(ctx context.Context, req *ygo.Format) (*ygo.Dates, error) {
-	format := req.Value
-	logger, newCtx := util.NewLogger(ctx, "Dates for Format", slog.String("format", format))
+func (s *ygoScoreServiceServer) GetScoresByFormatAndDate(ctx context.Context, req *ygo.RestrictedContentRequest) (*ygo.ScoresForFormatAndDate, error) {
+	_, newCtx := util.NewLogger(ctx, "Scores By Format & Date",
+		slog.String("format", req.Format), slog.String("effective_date", req.EffectiveDate))
 
-	if !strings.EqualFold(format, "Genesys") {
-		logger.Error("Format not supported")
-		return nil, status.New(codes.InvalidArgument, "Format not supported").Err()
-	}
-
-	if dates, err := scoreRepo.GetDatesForFormat(newCtx, format); err != nil {
+	if entries, err := scoreRepo.GetScoresByFormatAndDate(newCtx, req.Format, req.EffectiveDate); err != nil {
 		return nil, err.Err()
 	} else {
-		return &ygo.Dates{Dates: dates}, nil
+		return &ygo.ScoresForFormatAndDate{Entries: entries}, nil
 	}
 }
 

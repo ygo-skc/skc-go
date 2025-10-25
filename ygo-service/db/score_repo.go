@@ -12,16 +12,6 @@ import (
 )
 
 const (
-	datesForFormatQuery = `
-SELECT
-	UNIQUE effective_date
-FROM
-	card_scores
-WHERE
-	format = ?
-ORDER BY
-	effective_date DESC;`
-
 	cardScoreQuery = `
 SELECT
 	score_versions.format,
@@ -70,7 +60,7 @@ ORDER BY
 )
 
 type ScoreRepository interface {
-	GetDatesForFormat(context.Context, string) ([]string, *status.Status)
+	GetScoresByFormatAndDate(context.Context, string, string) ([]*ygo.CardScoreEntry, *status.Status)
 
 	GetCardScoreByID(context.Context, string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status)
 	GetCardScoresByIDs(context.Context, []string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status)

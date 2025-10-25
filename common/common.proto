@@ -35,7 +35,7 @@ message BlackListed {
 message EffectiveTimeline {
   repeated string allDates = 1;
   repeated string futureDates = 2;
-  string currentDate = 3;
+  string activeDate = 3;
 }
 
 enum CardRestrictionSortOrder {

@@ -387,7 +387,7 @@ type EffectiveTimeline struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AllDates      []string               `protobuf:"bytes,1,rep,name=allDates,proto3" json:"allDates,omitempty"`
 	FutureDates   []string               `protobuf:"bytes,2,rep,name=futureDates,proto3" json:"futureDates,omitempty"`
-	CurrentDate   string                 `protobuf:"bytes,3,opt,name=currentDate,proto3" json:"currentDate,omitempty"`
+	ActiveDate    string                 `protobuf:"bytes,3,opt,name=activeDate,proto3" json:"activeDate,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -436,9 +436,9 @@ func (x *EffectiveTimeline) GetFutureDates() []string {
 	return nil
 }
 
-func (x *EffectiveTimeline) GetCurrentDate() string {
+func (x *EffectiveTimeline) GetActiveDate() string {
 	if x != nil {
-		return x.CurrentDate
+		return x.ActiveDate
 	}
 	return ""
 }
@@ -465,11 +465,13 @@ const file_common_proto_rawDesc = "" +
 	"\tArchetype\x12\x1c\n" +
 	"\tarchetype\x18\x01 \x01(\tR\tarchetype\"9\n" +
 	"\vBlackListed\x12*\n" +
-	"\x11black_listed_refs\x18\x01 \x03(\tR\x0fblackListedRefs\"s\n" +
+	"\x11black_listed_refs\x18\x01 \x03(\tR\x0fblackListedRefs\"q\n" +
 	"\x11EffectiveTimeline\x12\x1a\n" +
 	"\ballDates\x18\x01 \x03(\tR\ballDates\x12 \n" +
-	"\vfutureDates\x18\x02 \x03(\tR\vfutureDates\x12 \n" +
-	"\vcurrentDate\x18\x03 \x01(\tR\vcurrentDate*?\n" +
+	"\vfutureDates\x18\x02 \x03(\tR\vfutureDates\x12\x1e\n" +
+	"\n" +
+	"activeDate\x18\x03 \x01(\tR\n" +
+	"activeDate*?\n" +
 	"\x18CardRestrictionSortOrder\x12\r\n" +
 	"\tCARD_NAME\x10\x00\x12\x14\n" +
 	"\x10SCORE_THEN_COLOR\x10\x01B\x06Z\x04/ygob\x06proto3"

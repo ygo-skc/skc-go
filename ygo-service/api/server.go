@@ -28,9 +28,10 @@ func init() {
 }
 
 var (
-	cardRepo    db.CardRepository    = db.YGOCardRepository{}
-	productRepo db.ProductRepository = db.YGOProductRepository{}
-	scoreRepo   db.ScoreRepository   = db.YGOScoreRepository{}
+	cardRepo            db.CardRepository            = db.YGOCardRepository{}
+	productRepo         db.ProductRepository         = db.YGOProductRepository{}
+	cardRestrictionRepo db.CardRestrictionRepository = db.YGOCardRestrictionRepository{}
+	scoreRepo           db.ScoreRepository           = db.YGOScoreRepository{}
 )
 
 const (
@@ -47,6 +48,10 @@ type ygoCardServiceServer struct {
 
 type ygoProductServiceServer struct {
 	ygo.ProductServiceServer
+}
+
+type ygoCardRestrictionServiceServer struct {
+	ygo.CardRestrictionServiceServer
 }
 
 type ygoScoreServiceServer struct {
@@ -84,6 +89,7 @@ func RunService() {
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
 		ygo.RegisterCardServiceServer(grpcServer, &ygoCardServiceServer{})
 		ygo.RegisterProductServiceServer(grpcServer, &ygoProductServiceServer{})
+		ygo.RegisterCardRestrictionServiceServer(grpcServer, &ygoCardRestrictionServiceServer{})
 		ygo.RegisterScoreServiceServer(grpcServer, &ygoScoreServiceServer{})
 
 		log.Printf("Starting gRPC service on port %d...", port)
