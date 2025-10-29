@@ -31,9 +31,12 @@ service ProductService {
 	rpc GetProductsSummaryByID(ygo.common.ResourceIDs) returns (Products);
 }
 
+service CardRestrictionService {
+	rpc GetEffectiveTimelineForFormat(Format) returns (ygo.common.EffectiveTimeline);
+}
+
 service ScoreService {
-	rpc GetDatesForFormat(Format) returns (ygo.common.Dates);
-	rpc GetScoresForFormat(Format) returns (ygo.common.Dates);
+	rpc GetScoresByFormatAndDate(RestrictedContentRequest) returns (ScoresForFormatAndDate);
 
 	rpc GetCardScoreByID(ygo.common.ResourceID) returns (CardScore);
   	rpc GetCardScoresByIDs(ygo.common.ResourceIDs) returns (CardScores);
@@ -98,14 +101,23 @@ message Products {
 
 message Format {
 	string value = 1;
-	google.protobuf.StringValue effective_date = 2;
 }
 
-message ScoreFormatEntry {
-	string effective_date = 1;
-	google.protobuf.StringValue next_format_date = 2;
-	google.protobuf.StringValue previous_format_date = 3;
-	repeated CardScoreEntry entries = 4;
+message RestrictedContentRequest {
+	string format = 1;
+	string effective_date = 2;
+	common.CardRestrictionSortOrder sort_order = 3;
+}
+
+// score specific data types
+
+message ScoresForFormatAndDate {
+	string format = 1;
+	string effective_date = 2;
+	google.protobuf.StringValue next_format_date = 3;
+	google.protobuf.StringValue previous_format_date = 4;
+	repeated CardScoreEntry entries = 5;
+	uint32 total_entries = 6;
 }
 
 message CardScoreEntry {
@@ -117,7 +129,7 @@ message CardScore {
   map<string, uint32> current_score_by_format = 1;
   repeated string unique_formats = 2;
   repeated ScoreEntry score_history = 3;
-  repeated string scheduled_changes = 4;
+  repeated string scheduled_changes = 4;;
 }
 
 message CardScores {

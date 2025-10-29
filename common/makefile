@@ -7,8 +7,12 @@ API_HEALTH_GRPC_DIR := ./health
 # default
 all: deps clean generate-grpc
 
+# must install protoc-gen-grpc-swift & swift-protobuf via brew. Note: protoc-gen-grpc-swift is on v2 thus we specify the postfix -2 and manually declare the plugin in the swift gen portion of this block
 generate-grpc:
 	protoc --go_out=./ --go-grpc_out=./ common.proto ygo_service.proto health.proto
+	mkdir -p swift-gen
+	protoc --plugin=protoc-gen-grpc-swift=$(shell which protoc-gen-grpc-swift-2) \
+	--swift_out=swift-gen --grpc-swift_out=swift-gen --grpc-swift_opt=Client=true,Server=false common.proto ygo_service.proto
 	go vet ./...
 
 clean:

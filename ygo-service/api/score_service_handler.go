@@ -5,29 +5,38 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
-	"strings"
 	"time"
 
-	"github.com/ygo-skc/skc-go/common/model"
-	"github.com/ygo-skc/skc-go/common/util"
-	"github.com/ygo-skc/skc-go/common/ygo"
+	"github.com/ygo-skc/skc-go/common/v2/model"
+	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (s *ygoScoreServiceServer) GetDatesForFormat(ctx context.Context, req *ygo.Format) (*ygo.Dates, error) {
-	format := req.Value
-	logger, newCtx := util.NewLogger(ctx, "Dates for Format", slog.String("format", format))
+func (s *ygoScoreServiceServer) GetScoresByFormatAndDate(ctx context.Context, req *ygo.RestrictedContentRequest) (*ygo.ScoresForFormatAndDate, error) {
+	format := req.Format
+	effectiveDate := req.EffectiveDate
 
-	if !strings.EqualFold(format, "Genesys") {
-		logger.Error("Format not supported")
-		return nil, status.New(codes.InvalidArgument, "Format not supported").Err()
-	}
+	logger, newCtx := util.NewLogger(ctx, "Scores By Format & Date",
+		slog.String("format", format),
+		slog.String("effective_date", effectiveDate),
+	)
 
-	if dates, err := scoreRepo.GetDatesForFormat(newCtx, format); err != nil {
+	if entries, numEntries, err := scoreRepo.GetScoresByFormatAndDate(newCtx, format, effectiveDate, req.SortOrder); err != nil {
 		return nil, err.Err()
 	} else {
-		return &ygo.Dates{Dates: dates}, nil
+		if numEntries == 0 {
+			logger.Error("Cannot find format and date combination")
+			return nil, status.New(codes.NotFound, "Format and date combination DNE").Err()
+		}
+
+		return &ygo.ScoresForFormatAndDate{
+			Format:        format,
+			EffectiveDate: effectiveDate,
+			Entries:       entries,
+			TotalEntries:  numEntries,
+		}, nil
 	}
 }
 

@@ -6,29 +6,39 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ygo-skc/skc-go/common/util"
-	cUtil "github.com/ygo-skc/skc-go/common/util"
-	"github.com/ygo-skc/skc-go/common/ygo"
+	"github.com/ygo-skc/skc-go/common/v2/model"
+	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/grpc/status"
 )
 
 const (
-	datesForFormatQuery = `
+	cardScoreByFormatAndDateQuery = `
 SELECT
-	UNIQUE effective_date
+	ci.card_number,
+	card_color,
+	card_name,
+	card_attribute,
+	card_effect,
+	monster_type,
+	monster_attack,
+	monster_defense,
+	score
 FROM
-	card_scores
+	card_scores AS cs FORCE INDEX (FORMAT)
+	JOIN card_info AS ci ON ci.card_number = cs.card_number
 WHERE
-	format = ?
+	cs.format = ?
+	AND cs.effective_date = ?
 ORDER BY
-	effective_date DESC;`
+	%s`
 
 	cardScoreQuery = `
 SELECT
 	score_versions.format,
 	score_versions.effective_date,
 	COALESCE(scores.score, 0) AS score,
-	cards.card_number
+	? AS card_number
 FROM
 	(
 		SELECT DISTINCT
@@ -36,15 +46,12 @@ FROM
 			effective_date
 		FROM
 			card_scores
-	) score_versions
-	CROSS JOIN cards
-	LEFT JOIN card_scores scores ON scores.format = score_versions.format
+	) AS score_versions
+	LEFT JOIN card_scores AS scores ON scores.format = score_versions.format
 	AND scores.effective_date = score_versions.effective_date
-	AND scores.card_number = cards.card_number
-WHERE
-	cards.card_number = ?
+	AND scores.card_number = ?
 ORDER BY
-	score_versions.effective_date DESC;`
+	score_versions.effective_date DESC`
 
 	multiCardScoreQuery = `
 SELECT
@@ -62,50 +69,77 @@ FROM
 	) score_versions
 	CROSS JOIN cards
 	LEFT JOIN card_scores scores ON scores.format = score_versions.format
-	AND scores.effective_date = score_versions.effective_date
 	AND scores.card_number = cards.card_number
+	AND scores.effective_date = score_versions.effective_date
 WHERE
 	cards.card_number IN (%s)
 ORDER BY
-	score_versions.effective_date DESC;`
+	score_versions.effective_date DESC`
 )
 
 type ScoreRepository interface {
-	GetDatesForFormat(context.Context, string) ([]string, *status.Status)
+	GetScoresByFormatAndDate(context.Context, string, string, ygo.CardRestrictionSortOrder) ([]*ygo.CardScoreEntry, uint32, *status.Status)
 
 	GetCardScoreByID(context.Context, string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status)
 	GetCardScoresByIDs(context.Context, []string, time.Time, func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status)
 }
 type YGOScoreRepository struct{}
 
-func (imp YGOScoreRepository) GetDatesForFormat(ctx context.Context, format string) ([]string, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
-	logger.Info("Retrieving effective dates")
+func (imp YGOScoreRepository) GetScoresByFormatAndDate(
+	ctx context.Context, format string, effectiveDate string, sortOrder ygo.CardRestrictionSortOrder) ([]*ygo.CardScoreEntry, uint32, *status.Status) {
 
-	if rows, err := skcDBConn.Query(datesForFormatQuery, format); err != nil {
-		return nil, handleQueryError(logger, err)
+	logger := util.RetrieveLogger(ctx)
+	logger.Info(fmt.Sprintf("Retrieving scores using format %s and date %s", format, effectiveDate))
+
+	var sortingSubQuery string
+	switch sortOrder {
+	case ygo.CardRestrictionSortOrder_CARD_NAME:
+		sortingSubQuery = "card_name"
+	case ygo.CardRestrictionSortOrder_SCORE_THEN_COLOR:
+		sortingSubQuery = "score DESC, card_color, card_name"
+	}
+
+	query := fmt.Sprintf(cardScoreByFormatAndDateQuery, sortingSubQuery)
+	if rows, err := skcDBConn.Query(query, format, effectiveDate); err != nil {
+		return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
 	} else {
-		scores := make([]string, 0, 5)
-		var date string
+		var (
+			id, color, name, attribute, effect string
+			monsterType                        *string
+			atk, def                           *uint32
+			score                              uint32
+		)
+		entries := make([]*ygo.CardScoreEntry, 0, 600)
+		var numEntries uint32
 
 		for rows.Next() {
-			if err := rows.Scan(&date); err != nil {
-				return nil, handleRowParsingError(logger, err)
-			} else {
-				scores = append(scores, date)
+			if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &score); err != nil {
+				return make([]*ygo.CardScoreEntry, 0), 0, handleRowParsingError(util.RetrieveLogger(ctx), err)
 			}
+			entries = append(entries, &ygo.CardScoreEntry{
+				Card: model.NewYGOCardProtoBuilder(id, name).
+					WithColor(color).
+					WithAttribute(attribute).
+					WithEffect(effect).
+					WithMonsterType(monsterType).
+					WithAttack(atk).
+					WithDefense(def).
+					Build(),
+				Score: score,
+			})
+			numEntries++
 		}
-		return scores, nil
+		return entries, numEntries, nil
 	}
 }
 
 func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID string, todaysDate time.Time,
 	parser func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status) {
 
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card score data")
 
-	if rows, err := skcDBConn.Query(cardScoreQuery, cardID); err != nil {
+	if rows, err := skcDBConn.Query(cardScoreQuery, cardID, cardID); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		score := &ygo.CardScore{
@@ -129,7 +163,7 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []string, todaysDate time.Time,
 	parser func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status) {
 
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card score data using ID's: %v", cardIDs))
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)

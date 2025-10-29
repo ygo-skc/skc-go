@@ -1,6 +1,6 @@
 package model
 
-import "github.com/ygo-skc/skc-go/common/ygo"
+import "github.com/ygo-skc/skc-go/common/v2/ygo"
 
 // =======================
 // Map Keys Type

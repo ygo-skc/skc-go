@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/ygo-skc/skc-go/common/ygo"
+	"github.com/ygo-skc/skc-go/common/v2/ygo"
 )
 
 func YGOCardRESTFromProto(c *ygo.Card) YGOCard {

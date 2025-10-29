@@ -2,15 +2,200 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"log/slog"
 	"strings"
 
-	"github.com/ygo-skc/skc-go/common/model"
-	cUtil "github.com/ygo-skc/skc-go/common/util"
-	"github.com/ygo-skc/skc-go/common/ygo"
+	"github.com/ygo-skc/skc-go/common/v2/model"
+	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v2/ygo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+const (
+	cardAttributes = `
+card_number,
+card_color,
+card_name,
+card_attribute,
+card_effect,
+monster_type,
+monster_attack,
+monster_defense`
+
+	dbVersionQuery = "SELECT VERSION()"
+
+	cardColorIDsQuery = `
+SELECT
+	color_id,
+	card_color
+FROM
+	card_colors
+ORDER BY
+	color_id`
+
+	cardByCardIDQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_number = ?`
+	cardsByCardIDsQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_number IN (%s)`
+
+	cardsByCardNamesQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_name IN (%s)`
+	searchCardUsingEffectQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	MATCH (card_effect) AGAINST (? IN BOOLEAN MODE)
+ORDER BY
+	color_id,
+	card_name`
+
+	archetypeInclusionSubQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	MATCH (card_effect) AGAINST ('+"This card is always treated as" +"%s"' IN BOOLEAN MODE)`
+	archetypeExclusionSubQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	MATCH (card_effect) AGAINST ('+"This card is not treated as" +"%s"' IN BOOLEAN MODE)`
+
+	archetypalCardsUsingCardNameQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_name LIKE BINARY ?
+ORDER BY
+	card_name`
+	archetypalCardsUsingCardTextQuery = `
+SELECT
+	a.*
+FROM
+	(%s) a
+WHERE
+	a.card_effect REGEXP 'always treated as a.*"%s".* card'
+ORDER BY
+	card_name`
+	nonArchetypalCardsUsingCardTextQuery = `
+SELECT
+	a.*
+FROM
+	(%s) a
+WHERE
+	a.card_effect REGEXP 'not treated as.*"%s".* card'
+ORDER BY
+	card_name`
+
+	randomCardQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_color != 'Token'
+ORDER BY
+	RAND()
+LIMIT
+	1`
+	randomCardWithBlackListQuery = `
+SELECT
+	%s
+FROM
+	card_info
+WHERE
+	card_number NOT IN (%s)
+	AND card_color != 'Token'
+ORDER BY
+	RAND()
+LIMIT
+	1`
+)
+
+func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *status.Status) {
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+	)
+
+	if err := skcDBConn.QueryRow(query, args...).Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+
+	card := model.NewYGOCardProtoBuilder(id, name).
+		WithColor(color).
+		WithAttribute(attribute).
+		WithEffect(effect).
+		WithMonsterType(monsterType).
+		WithAttack(atk).
+		WithDefense(def).
+		Build()
+	return card, nil
+}
+
+func parseCardRows[T []*ygo.Card | map[string]*ygo.Card](ctx context.Context, rows *sql.Rows, dataStructure *T, collector func(*T, *ygo.Card)) *status.Status {
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+	)
+	for rows.Next() {
+		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+			return handleRowParsingError(util.RetrieveLogger(ctx), err)
+		} else {
+			collector(
+				dataStructure,
+				model.NewYGOCardProtoBuilder(id, name).
+					WithColor(color).
+					WithAttribute(attribute).
+					WithEffect(effect).
+					WithMonsterType(monsterType).
+					WithAttack(atk).
+					WithDefense(def).
+					Build())
+		}
+	}
+
+	return nil
+}
+
+func collectWithList(cardList *[]*ygo.Card, card *ygo.Card) {
+	*cardList = append(*cardList, card)
+}
+
+func collectWithMapUsingIDKey(cards *map[string]*ygo.Card, card *ygo.Card) {
+	(*cards)[model.CardIDAsKey(card)] = card
+}
+
+func collectWithMapUsingNameKey(cards *map[string]*ygo.Card, card *ygo.Card) {
+	(*cards)[model.CardNameAsKey(card)] = card
+}
 
 type CardRepository interface {
 	GetCardColorIDs(context.Context) (*ygo.CardColors, *status.Status)
@@ -31,7 +216,7 @@ type YGOCardRepository struct{}
 
 // Get IDs for all card colors currently in database.
 func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColors, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card colors")
 
 	if rows, err := skcDBConn.Query(cardColorIDsQuery); err != nil {
@@ -55,7 +240,7 @@ func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColo
 }
 
 func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data using ID %v", cardID))
 
 	args := make([]interface{}, 1)
@@ -70,7 +255,7 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 }
 
 func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.CardIDs) (*ygo.Cards, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data using ID's: %v", cardIDs))
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
@@ -79,7 +264,8 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCards(ctx, rows, model.CardIDAsKey); err != nil {
+		cards := make(map[string]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingIDKey); err != nil {
 			return nil, err
 		} else {
 			return &ygo.Cards{
@@ -92,7 +278,7 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 
 // Uses card names to find instance of card
 func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames model.CardNames) (*ygo.Cards, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data using %d different name(s)", len(cardNames)))
 
 	args, numCards := buildVariableQuerySubjects(cardNames)
@@ -101,7 +287,8 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCards(ctx, rows, model.CardNameAsKey); err != nil {
+		cards := make(map[string]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingNameKey); err != nil {
 			return nil, err
 		} else {
 			return &ygo.Cards{
@@ -114,7 +301,7 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 
 func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context, namesOfCards []string) (*ygo.CardList, *status.Status) {
 	numCards := len(namesOfCards)
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	if numCards == 0 {
 		logger.Info("User did not provide any card names, responding w/ empty list of references")
 		return &ygo.CardList{Cards: []*ygo.Card{}}, nil
@@ -131,7 +318,8 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 	if rows, err := skcDBConn.Query(query, strings.Join(fullTextNames, " ")); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+		cards := make([]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: cards}, err
@@ -140,7 +328,7 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 }
 
 func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference archetype %s in their name", archetypeName))
 	searchTerm := `%` + archetypeName + `%`
 
@@ -148,7 +336,8 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	if rows, err := skcDBConn.Query(query, searchTerm); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+		cards := make([]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: cards}, err
@@ -157,7 +346,7 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 }
 
 func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly considered part of archetype %s", archetypeName))
 
 	subQuery := fmt.Sprintf(archetypeInclusionSubQuery, cardAttributes, archetypeName)
@@ -165,7 +354,8 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 	if rows, err := skcDBConn.Query(query); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+		cards := make([]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: cards}, err
@@ -173,7 +363,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 	}
 }
 func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly NOT considered part of archetype %s", archetypeName))
 
 	subQuery := fmt.Sprintf(archetypeExclusionSubQuery, cardAttributes, archetypeName)
@@ -181,7 +371,8 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 	if rows, err := skcDBConn.Query(query); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
-		if cards, err := parseRowsForCardList(ctx, rows); err != nil {
+		cards := make([]*ygo.Card, 0)
+		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 			return nil, err
 		} else {
 			return &ygo.CardList{Cards: cards}, err
@@ -190,7 +381,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 }
 
 func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards []string) (*ygo.Card, *status.Status) {
-	logger := cUtil.RetrieveLogger(ctx)
+	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving random card from DB. Client has provided %d blacklisted IDs", len(blacklistedCards)))
 
 	// pick correct query based on contents of blacklistedCards

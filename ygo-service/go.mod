@@ -4,12 +4,12 @@ go 1.25
 
 require (
 	github.com/go-sql-driver/mysql v1.9.3
-	github.com/ygo-skc/skc-go/common v1.5.1
+	github.com/ygo-skc/skc-go/common/v2 v2.0.1
 	google.golang.org/grpc v1.76.0
 	google.golang.org/protobuf v1.36.10
 )
 
-replace github.com/ygo-skc/skc-go/common => ../common
+replace github.com/ygo-skc/skc-go/common/v2 => ../common
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

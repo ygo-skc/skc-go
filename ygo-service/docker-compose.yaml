@@ -14,7 +14,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 75m
+          memory: 40m
     networks:
       - skc
     environment:

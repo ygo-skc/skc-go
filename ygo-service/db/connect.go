@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/ygo-skc/skc-go/common/util"
+	"github.com/ygo-skc/skc-go/common/v2/util"
 )
 
 var (
