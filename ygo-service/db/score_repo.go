@@ -25,11 +25,10 @@ SELECT
 	monster_defense,
 	score
 FROM
-	card_info AS ci,
-	card_scores AS cs
+	card_scores AS cs FORCE INDEX (FORMAT)
+	JOIN card_info AS ci ON ci.card_number = cs.card_number
 WHERE
-	ci.card_number = cs.card_number
-	AND cs.format = ?
+	cs.format = ?
 	AND cs.effective_date = ?
 ORDER BY
 	%s`
@@ -39,7 +38,7 @@ SELECT
 	score_versions.format,
 	score_versions.effective_date,
 	COALESCE(scores.score, 0) AS score,
-	cards.card_number
+	? AS card_number
 FROM
 	(
 		SELECT DISTINCT
@@ -47,15 +46,12 @@ FROM
 			effective_date
 		FROM
 			card_scores
-	) score_versions
-	CROSS JOIN cards
-	LEFT JOIN card_scores scores ON scores.format = score_versions.format
+	) AS score_versions
+	LEFT JOIN card_scores AS scores ON scores.format = score_versions.format
 	AND scores.effective_date = score_versions.effective_date
-	AND scores.card_number = cards.card_number
-WHERE
-	cards.card_number = ?
+	AND scores.card_number = ?
 ORDER BY
-	score_versions.effective_date DESC;`
+	score_versions.effective_date DESC`
 
 	multiCardScoreQuery = `
 SELECT
@@ -73,12 +69,12 @@ FROM
 	) score_versions
 	CROSS JOIN cards
 	LEFT JOIN card_scores scores ON scores.format = score_versions.format
-	AND scores.effective_date = score_versions.effective_date
 	AND scores.card_number = cards.card_number
+	AND scores.effective_date = score_versions.effective_date
 WHERE
 	cards.card_number IN (%s)
 ORDER BY
-	score_versions.effective_date DESC;`
+	score_versions.effective_date DESC`
 )
 
 type ScoreRepository interface {
@@ -143,7 +139,7 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card score data")
 
-	if rows, err := skcDBConn.Query(cardScoreQuery, cardID); err != nil {
+	if rows, err := skcDBConn.Query(cardScoreQuery, cardID, cardID); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
 		score := &ygo.CardScore{
