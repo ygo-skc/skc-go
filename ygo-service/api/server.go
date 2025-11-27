@@ -59,33 +59,30 @@ type ygoScoreServiceServer struct {
 }
 
 func RunService() {
-	// combine certs and create TLS creds
 	util.CombineCerts("certs")
 	if creds, err := credentials.NewServerTLSFromFile("certs/concatenated.crt", "certs/private.key"); err != nil {
 		log.Fatalf("Unable to create TLS credentials: %v", err)
 	} else {
-		// Register the service implementation with the server
 		grpcServer := grpc.NewServer(
 			grpc.Creds(creds),
 			grpc.MaxConcurrentStreams(1024),
 			grpc.KeepaliveParams(keepalive.ServerParameters{
-				MaxConnectionIdle:     15 * time.Minute,       // how long a connection can last while idle
-				MaxConnectionAge:      40 * time.Minute,       // total time a connection can live for before killed
-				MaxConnectionAgeGrace: 15 * time.Second,       // time after MaxConnectionAge where connection can finish work
-				Time:                  45 * time.Second,       // how often to ping client
-				Timeout:               300 * time.Millisecond, // how fast ping should be
+				MaxConnectionIdle:     15 * time.Minute, // how long a connection can last while idle
+				MaxConnectionAge:      40 * time.Minute, // total time a connection can live for before killed
+				MaxConnectionAgeGrace: 15 * time.Second, // time after MaxConnectionAge where connection can finish work
+				Time:                  45 * time.Second, // how often to ping client
+				Timeout:               10 * time.Second, // how fast ping should be
 			}),
 			grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
-				MinTime:             45 * time.Second, // prevents clients from sending pings too often
+				MinTime:             30 * time.Second, // prevents clients from sending pings too often
 				PermitWithoutStream: true,             // allow pings when no active RPC
 			}),
-			grpc.ConnectionTimeout(50*time.Millisecond),
+			grpc.ConnectionTimeout(10*time.Second),
 			// below are experimental
 			grpc.NumStreamWorkers(128),
 			grpc.SharedWriteBuffer(true),
 		)
 
-		// register services
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
 		ygo.RegisterCardServiceServer(grpcServer, &ygoCardServiceServer{})
 		ygo.RegisterProductServiceServer(grpcServer, &ygoProductServiceServer{})
