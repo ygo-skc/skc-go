@@ -39,8 +39,7 @@ func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *sta
 }
 
 func convertToFullText(subject string) string {
-	fullTextSubject := spaceRegex.ReplaceAllString(strings.ReplaceAll(subject, "-", " "), " +")
-	return fmt.Sprintf(`"+%s"`, fullTextSubject) // match phrase, not all words in text will match only consecutive matches of words in phrase
+	return fmt.Sprintf(`+"%s"`, subject) // match phrase
 }
 
 func buildVariableQuerySubjects(subjects []string) ([]interface{}, int) {
