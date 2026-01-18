@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"regexp"
 	"strings"
 
 	"github.com/ygo-skc/skc-go/common/v2/ygo"
@@ -13,6 +14,11 @@ import (
 
 const (
 	genericError = "Error occurred while querying DB"
+)
+
+var (
+	spaceRegex = regexp.MustCompile(`[ ]+`)
+	quoteRegex = regexp.MustCompile(`['"]`)
 )
 
 func handleQueryError(logger *slog.Logger, err error) *status.Status {
@@ -38,8 +44,9 @@ func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *sta
 	return &ygo.Product{ID: id, Locale: locale, Name: name, ReleaseDate: releaseDate, Type: t, SubType: subType}, nil
 }
 
+// removes quotes from text as full text search does not handle them well
 func convertToFullText(subject string) string {
-	return fmt.Sprintf(`+"%s"`, subject) // match phrase
+	return fmt.Sprintf(`"%s"`, quoteRegex.ReplaceAllString(subject, "")) // match phrase
 }
 
 func buildVariableQuerySubjects(subjects []string) ([]interface{}, int) {
