@@ -94,9 +94,9 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 	var sortingSubQuery string
 	switch sortOrder {
 	case ygo.CardRestrictionSortOrder_CARD_NAME:
-		sortingSubQuery = "card_name"
+		sortingSubQuery = "card_color, card_name"
 	case ygo.CardRestrictionSortOrder_SCORE_THEN_COLOR:
-		sortingSubQuery = "score DESC, card_color, card_name"
+		sortingSubQuery = "score, card_color, card_name"
 	}
 
 	query := fmt.Sprintf(cardScoreByFormatAndDateQuery, sortingSubQuery)
