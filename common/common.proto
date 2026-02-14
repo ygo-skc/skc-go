@@ -39,6 +39,6 @@ message EffectiveTimeline {
 }
 
 enum CardRestrictionSortOrder {
-  CARD_NAME = 0;
-  SCORE_THEN_COLOR = 1;
+  CARD_COLOR_ASC_CARD_NAME_ASC = 0;
+  SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC = 1;
 }

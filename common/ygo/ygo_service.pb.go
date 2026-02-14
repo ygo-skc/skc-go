@@ -676,7 +676,7 @@ func (x *RestrictedContentRequest) GetSortOrder() CardRestrictionSortOrder {
 	if x != nil {
 		return x.SortOrder
 	}
-	return CardRestrictionSortOrder_CARD_NAME
+	return CardRestrictionSortOrder_CARD_COLOR_ASC_CARD_NAME_ASC
 }
 
 type ScoresForFormatAndDate struct {

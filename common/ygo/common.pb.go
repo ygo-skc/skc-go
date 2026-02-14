@@ -24,19 +24,19 @@ const (
 type CardRestrictionSortOrder int32
 
 const (
-	CardRestrictionSortOrder_CARD_NAME        CardRestrictionSortOrder = 0
-	CardRestrictionSortOrder_SCORE_THEN_COLOR CardRestrictionSortOrder = 1
+	CardRestrictionSortOrder_CARD_COLOR_ASC_CARD_NAME_ASC            CardRestrictionSortOrder = 0
+	CardRestrictionSortOrder_SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC CardRestrictionSortOrder = 1
 )
 
 // Enum value maps for CardRestrictionSortOrder.
 var (
 	CardRestrictionSortOrder_name = map[int32]string{
-		0: "CARD_NAME",
-		1: "SCORE_THEN_COLOR",
+		0: "CARD_COLOR_ASC_CARD_NAME_ASC",
+		1: "SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC",
 	}
 	CardRestrictionSortOrder_value = map[string]int32{
-		"CARD_NAME":        0,
-		"SCORE_THEN_COLOR": 1,
+		"CARD_COLOR_ASC_CARD_NAME_ASC":            0,
+		"SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC": 1,
 	}
 )
 
@@ -471,10 +471,10 @@ const file_common_proto_rawDesc = "" +
 	"\vfutureDates\x18\x02 \x03(\tR\vfutureDates\x12\x1e\n" +
 	"\n" +
 	"activeDate\x18\x03 \x01(\tR\n" +
-	"activeDate*?\n" +
-	"\x18CardRestrictionSortOrder\x12\r\n" +
-	"\tCARD_NAME\x10\x00\x12\x14\n" +
-	"\x10SCORE_THEN_COLOR\x10\x01B\x06Z\x04/ygob\x06proto3"
+	"activeDate*i\n" +
+	"\x18CardRestrictionSortOrder\x12 \n" +
+	"\x1cCARD_COLOR_ASC_CARD_NAME_ASC\x10\x00\x12+\n" +
+	"'SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC\x10\x01B\x06Z\x04/ygob\x06proto3"
 
 var (
 	file_common_proto_rawDescOnce sync.Once
