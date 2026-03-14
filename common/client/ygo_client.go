@@ -40,6 +40,13 @@ func NewYGOServiceClients(sslServerName string, serviceHost string) (*YGOClientI
 
 	conn, err := grpc.NewClient(serviceHost,
 		grpc.WithTransportCredentials(creds),
+
+		// below fields can be high since im on same docker network. But since this is a shared lib, change them if that ever changes
+		grpc.WithReadBufferSize(256<<10),
+		grpc.WithWriteBufferSize(256<<10),
+		grpc.WithInitialWindowSize(256<<10),
+		grpc.WithInitialConnWindowSize(4*256*1024), // if above 3 change, change the middle value here too
+
 		grpc.WithDefaultCallOptions(
 			grpc.UseCompressor("gzip"),
 		),
@@ -59,7 +66,7 @@ func NewYGOServiceClients(sslServerName string, serviceHost string) (*YGOClientI
 		grpc.WithKeepaliveParams(keepalive.ClientParameters{
 			Time:                30 * time.Second,
 			Timeout:             1 * time.Second,
-			PermitWithoutStream: true,
+			PermitWithoutStream: false,
 		}))
 
 	if err != nil {
