@@ -83,8 +83,8 @@ func RunService() {
 			grpc.NumStreamWorkers(uint32(runtime.GOMAXPROCS(0))),
 			grpc.SharedWriteBuffer(true),
 
-			grpc.MaxRecvMsgSize(50<<10),
-			grpc.MaxSendMsgSize(50<<10),
+			grpc.MaxRecvMsgSize(200<<10),
+			grpc.MaxSendMsgSize(2<<20),
 		)
 
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
