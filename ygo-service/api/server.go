@@ -68,23 +68,23 @@ func RunService() {
 			grpc.Creds(creds),
 			grpc.MaxConcurrentStreams(1024),
 			grpc.KeepaliveParams(keepalive.ServerParameters{
-				MaxConnectionIdle:     5 * time.Minute,  // how long a connection can last while idle
-				MaxConnectionAge:      20 * time.Minute, // total time a connection can live for before killed
+				MaxConnectionIdle:     1 * time.Minute,  // how long a connection can last while idle
+				MaxConnectionAge:      15 * time.Minute, // total time a connection can live for before killed
 				MaxConnectionAgeGrace: 15 * time.Second, // time after MaxConnectionAge where connection can finish work
-				Time:                  20 * time.Second, // how often to ping client
-				Timeout:               10 * time.Second, // how fast ping should be
+				Time:                  15 * time.Second, // how often to ping client
+				Timeout:               3 * time.Second,  // how fast ping should be
 			}),
 			grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
 				MinTime:             15 * time.Second, // prevents clients from sending pings too often
 				PermitWithoutStream: true,             // allow pings when no active RPC
 			}),
-			grpc.ConnectionTimeout(10*time.Second),
+			grpc.ConnectionTimeout(4*time.Second),
 			// below are experimental
 			grpc.NumStreamWorkers(uint32(runtime.GOMAXPROCS(0))),
 			grpc.SharedWriteBuffer(true),
 
-			grpc.MaxRecvMsgSize(1*1024*1024),
-			grpc.MaxSendMsgSize(10*1024*1024),
+			grpc.MaxRecvMsgSize(50<<10),
+			grpc.MaxSendMsgSize(50<<10),
 		)
 
 		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
