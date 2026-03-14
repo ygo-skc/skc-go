@@ -45,13 +45,14 @@ func NewYGOServiceClients(sslServerName string, serviceHost string) (*YGOClientI
 		),
 		grpc.WithDefaultServiceConfig(`{
 			"methodConfig": [{
-				"name": [{"service": "ygo.CardService"}, {"service": "ygo.ProductService"}],
+				"name": [{"service": ""}],
+				"timeout": "6s",
 				"retryPolicy": {
 					"MaxAttempts": 3,
 					"InitialBackoff": "0.1s",
 					"MaxBackoff": "1s",
 					"BackoffMultiplier": 2.0,
-					"RetryableStatusCodes": ["UNAVAILABLE", "DEADLINE_EXCEEDED"]
+					"RetryableStatusCodes": ["UNKNOWN", "DEADLINE_EXCEEDED", "DATA_LOSS", "UNAVAILABLE"]
 				}
 			}]
 		}`),
