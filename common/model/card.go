@@ -4,8 +4,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ygo-skc/skc-go/common/v2/util"
 	"github.com/ygo-skc/skc-go/common/v2/ygo"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 type YGOResource interface {
@@ -60,9 +60,9 @@ func (c YGOCardREST) ToProto() *ygo.Card {
 		Name:        c.Name,
 		Attribute:   c.Attribute,
 		Effect:      c.Effect,
-		MonsterType: util.ProtoStringValue(c.MonsterType),
-		Attack:      util.ProtoUInt32Value(c.Attack),
-		Defense:     util.ProtoUInt32Value(c.Defense),
+		MonsterType: wrapperspb.String(*c.MonsterType),
+		Attack:      wrapperspb.UInt32(*c.Attack),
+		Defense:     wrapperspb.UInt32(*c.Defense),
 	}
 }
 
