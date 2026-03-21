@@ -67,6 +67,12 @@ func RunService() {
 		grpcServer := grpc.NewServer(
 			grpc.Creds(creds),
 			grpc.MaxConcurrentStreams(1024),
+
+			grpc.ReadBufferSize(256<<10),
+			grpc.WriteBufferSize(256<<10),
+			grpc.InitialWindowSize(512<<10),        // per stream setting
+			grpc.InitialConnWindowSize(5*512*1024), // if above 3 change, change the middle value here too - this controls how much data is sent for all streams in a connection
+
 			grpc.KeepaliveParams(keepalive.ServerParameters{
 				MaxConnectionIdle:     1 * time.Minute,  // how long a connection can last while idle
 				MaxConnectionAge:      15 * time.Minute, // total time a connection can live for before killed
@@ -76,10 +82,10 @@ func RunService() {
 			}),
 			grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
 				MinTime:             15 * time.Second, // prevents clients from sending pings too often
-				PermitWithoutStream: true,             // allow pings when no active RPC
+				PermitWithoutStream: false,            // allow pings when no active RPC - if true conn will probably never close...
 			}),
 			grpc.ConnectionTimeout(4*time.Second),
-			// below are experimental
+
 			grpc.NumStreamWorkers(uint32(runtime.GOMAXPROCS(0))),
 			grpc.SharedWriteBuffer(true),
 
