@@ -137,7 +137,7 @@ LIMIT
 	1`
 )
 
-func queryCard(logger *slog.Logger, query string, args []interface{}) (*ygo.Card, *status.Status) {
+func queryCard(logger *slog.Logger, query string, args []any) (*ygo.Card, *status.Status) {
 	var (
 		id, color, name, attribute, effect string
 		monsterType                        *string
@@ -243,7 +243,7 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 	logger := util.RetrieveLogger(ctx)
 	logger.Info(fmt.Sprintf("Retrieving card data using ID %v", cardID))
 
-	args := make([]interface{}, 1)
+	args := make([]any, 1)
 	args[0] = cardID
 	query := fmt.Sprintf(cardByCardIDQuery, cardAttributes)
 
@@ -387,7 +387,7 @@ func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards
 	// pick correct query based on contents of blacklistedCards
 	numBlackListed := len(blacklistedCards)
 	var query string
-	var args []interface{}
+	var args []any
 	if numBlackListed == 0 {
 		query = fmt.Sprintf(randomCardQuery, cardAttributes)
 	} else {

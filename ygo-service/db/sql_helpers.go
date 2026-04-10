@@ -49,9 +49,9 @@ func convertToFullText(subject string) string {
 	return fmt.Sprintf(`"%s"`, quoteRegex.ReplaceAllString(subject, "")) // match phrase
 }
 
-func buildVariableQuerySubjects(subjects []string) ([]interface{}, int) {
+func buildVariableQuerySubjects(subjects []string) ([]any, int) {
 	numSubjects := len(subjects)
-	args := make([]interface{}, numSubjects)
+	args := make([]any, numSubjects)
 
 	for index, subject := range subjects {
 		args[index] = subject
