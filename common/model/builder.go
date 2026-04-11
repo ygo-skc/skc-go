@@ -1,8 +1,8 @@
 package model
 
 import (
+	"github.com/ygo-skc/skc-go/common/v2/util"
 	"github.com/ygo-skc/skc-go/common/v2/ygo"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 type YGOCardProtoBuilder struct {
@@ -30,15 +30,15 @@ func (b *YGOCardProtoBuilder) WithEffect(effect string) *YGOCardProtoBuilder {
 	return b
 }
 func (b *YGOCardProtoBuilder) WithMonsterType(monsterType *string) *YGOCardProtoBuilder {
-	b.c.MonsterType = wrapperspb.String(*monsterType)
+	b.c.MonsterType = util.ProtoStringValue(monsterType)
 	return b
 }
 func (b *YGOCardProtoBuilder) WithAttack(atk *uint32) *YGOCardProtoBuilder {
-	b.c.Attack = wrapperspb.UInt32(*atk)
+	b.c.Attack = util.ProtoUInt32Value(atk)
 	return b
 }
 func (b *YGOCardProtoBuilder) WithDefense(def *uint32) *YGOCardProtoBuilder {
-	b.c.Defense = wrapperspb.UInt32(*def)
+	b.c.Defense = util.ProtoUInt32Value(def)
 	return b
 }
 func (b *YGOCardProtoBuilder) Build() *ygo.Card {
