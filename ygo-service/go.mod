@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/ygo-skc/skc-go/common/v2 v2.1.6
-	google.golang.org/grpc v1.82.0
+	google.golang.org/grpc v1.82.1
 	google.golang.org/protobuf v1.36.11
 )
 
