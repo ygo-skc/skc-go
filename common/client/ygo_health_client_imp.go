@@ -2,6 +2,7 @@ package client
 
 import (
 	context "context"
+	"log/slog"
 	"net/http"
 
 	"github.com/ygo-skc/skc-go/common/v2/health"
@@ -22,7 +23,7 @@ func (imp YGOHealthClientImpV1) GetAPIStatus(ctx context.Context) (*health.APISt
 	logger := util.RetrieveLogger(ctx)
 
 	if h, err := imp.client.APIStatus(ctx, &emptypb.Empty{}); err != nil {
-		logger.Error("There was an issue retrieving YGO Service status")
+		logger.Error("Issue retrieving YGO Service status", slog.Any("err", err))
 		return nil, &model.APIError{Message: "API is down", StatusCode: http.StatusInternalServerError}
 	} else {
 		return h, nil

@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/ygo-skc/skc-go/common/v2/model"
@@ -20,7 +20,7 @@ type YGOUtilRepository struct{}
 func (imp YGOCardRepository) GetDBVersion(ctx context.Context) (string, error) {
 	var version string
 	if err := skcDBConn.QueryRow(dbVersionQuery).Scan(&version); err != nil {
-		util.RetrieveLogger(ctx).Error(fmt.Sprintf("Error getting SKC DB version - %v", err))
+		util.RetrieveLogger(ctx).Error("Error getting SKC DB version", slog.Any("err", err))
 		return version, &model.APIError{Message: genericError, StatusCode: http.StatusInternalServerError}
 	}
 

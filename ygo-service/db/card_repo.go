@@ -234,14 +234,14 @@ func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColo
 			cardColorIDs[cardColor] = colorId
 		}
 
-		logger.Info(fmt.Sprintf("Retrieved %d card colors", len(cardColorIDs)))
+		logger.Info("Retrieved card colors", slog.Int("count", len(cardColorIDs)))
 		return &ygo.CardColors{Values: cardColorIDs}, nil
 	}
 }
 
 func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving card data using ID %v", cardID))
+	logger.Info("Retrieving card data", slog.String("card_id", cardID))
 
 	args := make([]any, 1)
 	args[0] = cardID
@@ -249,14 +249,14 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 
 	c, err := queryCard(logger, query, args)
 	if err != nil && err.Code() == codes.NotFound {
-		logger.Info("Card ID is not valid")
+		logger.Info("Card ID not found", slog.String("card_id", cardID))
 	}
 	return c, err
 }
 
 func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.CardIDs) (*ygo.Cards, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving card data using ID's: %v", cardIDs))
+	logger.Info("Retrieving card data", slog.Any("card_ids", cardIDs))
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
 	query := fmt.Sprintf(cardsByCardIDsQuery, cardAttributes, variablePlaceholders(numCards))
@@ -279,7 +279,7 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 // Uses card names to find instance of card
 func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames model.CardNames) (*ygo.Cards, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving card data using %d different name(s)", len(cardNames)))
+	logger.Info("Retrieving card data", slog.Int("card_name_count", len(cardNames)))
 
 	args, numCards := buildVariableQuerySubjects(cardNames)
 	query := fmt.Sprintf(cardsByCardNamesQuery, cardAttributes, variablePlaceholders(numCards))
@@ -303,10 +303,10 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 	numCards := len(namesOfCards)
 	logger := util.RetrieveLogger(ctx)
 	if numCards == 0 {
-		logger.Info("User did not provide any card names, responding w/ empty list of references")
+		logger.Info("No card names provided, returning empty list of references")
 		return &ygo.CardList{Cards: []*ygo.Card{}}, nil
 	} else {
-		logger.Info(fmt.Sprintf("Retrieving cards that reference one or more of the following cards by name in their text: %v", namesOfCards))
+		logger.Info("Retrieving cards referencing card names in effect text", slog.Any("names", namesOfCards))
 	}
 
 	fullTextNames := make([]string, numCards)
@@ -329,7 +329,7 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 
 func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving card data from DB for all cards that reference archetype %s in their name", archetypeName))
+	logger.Info("Retrieving cards by archetype name", slog.String("archetype", archetypeName))
 	searchTerm := `%` + archetypeName + `%`
 
 	query := fmt.Sprintf(archetypalCardsUsingCardNameQuery, cardAttributes)
@@ -347,7 +347,7 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 
 func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly considered part of archetype %s", archetypeName))
+	logger.Info("Retrieving explicit archetype inclusions", slog.String("archetype", archetypeName))
 
 	subQuery := fmt.Sprintf(archetypeInclusionSubQuery, cardAttributes, archetypeName)
 	query := fmt.Sprintf(archetypalCardsUsingCardTextQuery, subQuery, archetypeName)
@@ -364,7 +364,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 }
 func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving cards that are explicitly NOT considered part of archetype %s", archetypeName))
+	logger.Info("Retrieving explicit archetype exclusions", slog.String("archetype", archetypeName))
 
 	subQuery := fmt.Sprintf(archetypeExclusionSubQuery, cardAttributes, archetypeName)
 	query := fmt.Sprintf(nonArchetypalCardsUsingCardTextQuery, subQuery, archetypeName)
@@ -382,7 +382,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 
 func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards []string) (*ygo.Card, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving random card from DB. Client has provided %d blacklisted IDs", len(blacklistedCards)))
+	logger.Info("Retrieving random card", slog.Int("blacklisted_count", len(blacklistedCards)))
 
 	// pick correct query based on contents of blacklistedCards
 	numBlackListed := len(blacklistedCards)
@@ -396,6 +396,8 @@ func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards
 	}
 
 	c, err := queryCard(logger, query, args)
-	logger.Info(fmt.Sprintf("Random card determined to be; ID: %s, Name: %s", c.ID, c.Name))
+	if err == nil {
+		logger.Info("Random card selected", slog.String("card_id", c.ID), slog.String("card_name", c.Name))
+	}
 	return c, err
 }

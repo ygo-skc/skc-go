@@ -27,7 +27,7 @@ func (s *ygoScoreServiceServer) GetScoresByFormatAndDate(ctx context.Context, re
 		return nil, err.Err()
 	} else {
 		if numEntries == 0 {
-			logger.Error("Cannot find format and date combination")
+			logger.Error("Format and date combination not found")
 			return nil, status.New(codes.NotFound, "Format and date combination DNE").Err()
 		}
 
@@ -49,7 +49,7 @@ func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.R
 		return nil, err.Err()
 	} else {
 		if len(score.ScoreHistory) == 0 {
-			logger.Error("Scores not retrieved since card ID DNE")
+			logger.Error("Scores not retrieved, card ID does not exist")
 			return nil, status.New(codes.NotFound, "Resource not found").Err()
 		}
 		return score, nil

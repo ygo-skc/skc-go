@@ -1,8 +1,6 @@
 package util
 
 import (
-	"fmt"
-	"log"
 	"log/slog"
 	"os"
 
@@ -13,11 +11,13 @@ var EnvMap map[string]string
 
 func ConfigureEnv(envFileVarName string) {
 	if envFile, isOk := os.LookupEnv(envFileVarName); !isOk {
-		log.Fatalf("Could not find environment variable %s in path", envFileVarName)
+		slog.Error("Environment variable not found", slog.String("env_var", envFileVarName))
+		os.Exit(1)
 	} else {
-		slog.Info(fmt.Sprintf("Loading env from file %s", envFile))
+		slog.Info("Loading env file", slog.String("file", envFile))
 		if env, err := godotenv.Read(envFile); err != nil {
-			log.Fatalln("Could not load environment file (does it exist?). Terminating program.")
+			slog.Error("Failed to load environment file", slog.String("file", envFile), slog.Any("err", err))
+			os.Exit(1)
 		} else {
 			EnvMap = env
 		}

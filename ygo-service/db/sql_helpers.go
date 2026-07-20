@@ -22,7 +22,7 @@ var (
 )
 
 func handleQueryError(logger *slog.Logger, err error) *status.Status {
-	logger.Error(fmt.Sprintf("Error fetching data from DB - %v", err))
+	logger.Error("Error fetching data from DB", slog.Any("err", err))
 
 	if err == sql.ErrNoRows {
 		return status.New(codes.NotFound, "No results found")
@@ -31,7 +31,7 @@ func handleQueryError(logger *slog.Logger, err error) *status.Status {
 }
 
 func handleRowParsingError(logger *slog.Logger, err error) *status.Status {
-	logger.Error(fmt.Sprintf("Error parsing data from DB - %v", err))
+	logger.Error("Error parsing data from DB", slog.Any("err", err))
 	return status.New(codes.Internal, genericError)
 }
 

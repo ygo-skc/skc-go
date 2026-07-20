@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log/slog"
 
 	"github.com/ygo-skc/skc-go/common/v2/model"
 	"github.com/ygo-skc/skc-go/common/v2/util"
@@ -104,7 +105,7 @@ type YGOProductRepository struct{}
 
 func (imp YGOProductRepository) GetCardsByProductID(ctx context.Context, productID string) (*ygo.Product, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving product data using ID %s", productID))
+	logger.Info("Retrieving product data", slog.String("product_id", productID))
 
 	if product, err := queryProductInfo(logger, productID); err != nil {
 		return nil, err
@@ -139,7 +140,7 @@ func (imp YGOProductRepository) GetProductSummaryByID(ctx context.Context, produ
 
 func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, products model.ProductIDs) (*ygo.Products, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving summary of the following products: %v", products))
+	logger.Info("Retrieving product summaries", slog.Any("product_ids", products))
 
 	args, numProducts := buildVariableQuerySubjects(products)
 	productData := make(map[string]*ygo.ProductSummary, numProducts)
