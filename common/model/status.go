@@ -14,6 +14,6 @@ type DownstreamItem struct {
 type Status string
 
 const (
-	Up   = "Up"
-	Down = "Down"
+	Up   Status = "Up"
+	Down Status = "Down"
 )

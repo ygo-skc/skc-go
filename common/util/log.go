@@ -16,11 +16,11 @@ func init() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr, slogOpts)))
 }
 
-type contextKey string
+type loggerKeyType struct{}
+
+var loggerKey = loggerKeyType{}
 
 const (
-	loggerKey contextKey = "logger"
-
 	traceIDKey         = "trace_id"
 	spanIDKey          = "span_id"
 	flowKey            = "app.flow"

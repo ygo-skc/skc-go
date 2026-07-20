@@ -193,7 +193,7 @@ func getArchetypalCardsUsingCardName(ctx context.Context, client ygo.CardService
 }
 
 func (imp YGOCardClientImpV1) GetExplicitArchetypalInclusionsProto(ctx context.Context, archetype string) (*ygo.CardList, *model.APIError) {
-	return getArchetypalCardsUsingCardName(ctx, imp.client, archetype)
+	return getExplicitArchetypalInclusions(ctx, imp.client, archetype)
 }
 
 func (imp YGOCardClientImpV1) GetExplicitArchetypalInclusions(ctx context.Context, archetype string) ([]model.YGOCard, *model.APIError) {

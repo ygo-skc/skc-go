@@ -10,6 +10,8 @@ type AtomicWaitGroup[T any] struct {
 	wg   *sync.WaitGroup
 }
 
+// NewAtomicWaitGroup adds one to wg. Store must be called exactly once on the
+// returned instance, otherwise any call to Load blocks forever.
 func NewAtomicWaitGroup[T any](wg *sync.WaitGroup) *AtomicWaitGroup[T] {
 	wg.Add(1)
 	return &AtomicWaitGroup[T]{
@@ -18,9 +20,9 @@ func NewAtomicWaitGroup[T any](wg *sync.WaitGroup) *AtomicWaitGroup[T] {
 	}
 }
 
-func (t AtomicWaitGroup[T]) Store(d *T) {
-	t.data.Store(d)
-	t.wg.Done()
+func (a *AtomicWaitGroup[T]) Store(d *T) {
+	a.data.Store(d)
+	a.wg.Done()
 }
 
 func (a *AtomicWaitGroup[T]) Load() *T {
