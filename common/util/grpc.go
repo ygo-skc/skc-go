@@ -26,6 +26,5 @@ func NewServer(creds credentials.TransportCredentials) *grpc.Server {
 		grpc.ConnectionTimeout(50*time.Millisecond),
 		// below are experimental
 		grpc.NumStreamWorkers(128),
-		grpc.SharedWriteBuffer(true),
 	)
 }
