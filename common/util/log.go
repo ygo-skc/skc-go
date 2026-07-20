@@ -65,13 +65,11 @@ func NewLogger(ctx context.Context, flow string, customAttributes ...slog.Attr) 
 }
 
 func AddLoggerAttribute(ctx context.Context, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
-	newAttributes := []any{}
-
-	for _, customAttribute := range customAttributes {
-		newAttributes = append(newAttributes, customAttribute)
+	newAttributes := make([]any, len(customAttributes))
+	for i, customAttribute := range customAttributes {
+		newAttributes[i] = customAttribute
 	}
 
-	l := RetrieveLogger(ctx)
-	l = l.With(newAttributes...)
+	l := RetrieveLogger(ctx).With(newAttributes...)
 	return l, context.WithValue(ctx, loggerKey, l)
 }

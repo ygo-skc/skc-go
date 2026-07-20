@@ -1,7 +1,7 @@
 package model
 
 import (
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/ygo-skc/skc-go/common/v2/util"
@@ -28,8 +28,8 @@ type YGOCard interface {
 type YGOCards []YGOCard
 
 func (c YGOCards) SortCardsByName() {
-	sort.SliceStable(c, func(i, j int) bool {
-		return (c)[i].GetName() < (c)[j].GetName()
+	slices.SortStableFunc(c, func(a, b YGOCard) int {
+		return strings.Compare(a.GetName(), b.GetName())
 	})
 }
 
