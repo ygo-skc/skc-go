@@ -23,7 +23,7 @@ func (imp YGOProductClientImpV1) GetCardsByProductIDProto(ctx context.Context, p
 	logger.Info("Retrieving cards for product", slog.String("product_id", productID))
 	p, err := imp.client.GetCardsByProductID(ctx, &ygo.ResourceID{ID: productID})
 	if err != nil {
-		logger.Error("Issue calling YGO Product Service", slog.String("operation", "get_cards_by_product"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Product Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return p, nil
@@ -34,7 +34,7 @@ func (imp YGOProductClientImpV1) GetProductSummaryByIDProto(ctx context.Context,
 	logger.Info("Retrieving product summary", slog.String("product_id", productID))
 	ps, err := imp.client.GetProductSummaryByID(ctx, &ygo.ResourceID{ID: productID})
 	if err != nil {
-		logger.Error("Issue calling YGO Product Service", slog.String("operation", "get_product_summary"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Product Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return ps, nil
@@ -45,7 +45,7 @@ func (imp YGOProductClientImpV1) GetProductsSummaryByIDProto(ctx context.Context
 	logger.Info("Retrieving product summaries", slog.Any("product_ids", productIDs))
 	ps, err := imp.client.GetProductsSummaryByID(ctx, &ygo.ResourceIDs{IDs: productIDs})
 	if err != nil {
-		logger.Error("Issue calling YGO Product Service", slog.String("operation", "get_products_summary"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Product Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return ps, nil

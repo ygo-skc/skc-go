@@ -30,7 +30,7 @@ func (imp YGOCardClientImpV1) GetCardColorsProto(ctx context.Context) (*ygo.Card
 	logger.Info("Retrieving card colors")
 	cColors, err := imp.client.GetCardColors(ctx, &emptypb.Empty{})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "get_card_colors"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return cColors, nil
@@ -41,7 +41,7 @@ func (imp YGOCardClientImpV1) GetCardByIDProto(ctx context.Context, cardID strin
 	logger.Info("Fetching card info", slog.String("card_id", cardID))
 	card, err := imp.client.GetCardByID(ctx, &ygo.ResourceID{ID: cardID})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "get_card_by_id"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return card, nil
@@ -52,7 +52,7 @@ func (imp YGOCardClientImpV1) GetCardsByIDProto(ctx context.Context, cardIDs mod
 	logger.Info("Fetching card info", slog.Any("card_ids", cardIDs))
 	cards, err := imp.client.GetCardsByID(ctx, &ygo.ResourceIDs{IDs: cardIDs})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "get_cards_by_id"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	if cards.UnknownResources == nil {
@@ -66,7 +66,7 @@ func (imp YGOCardClientImpV1) GetCardsByNameProto(ctx context.Context, cardNames
 	logger.Info("Fetching card info", slog.Int("card_name_count", len(cardNames)))
 	cards, err := imp.client.GetCardsByName(ctx, &ygo.ResourceNames{Names: cardNames})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "get_cards_by_name"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	if cards.UnknownResources == nil {
@@ -80,7 +80,7 @@ func (imp YGOCardClientImpV1) GetCardsReferencingNameInEffectProto(ctx context.C
 	logger.Info("Fetching cards referencing names in card text", slog.Any("names", namesOfCards))
 	cards, err := imp.client.GetCardsReferencingNameInEffect(ctx, &ygo.ResourceNames{Names: namesOfCards})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "search_card_references_using_text"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return cards, nil
@@ -94,7 +94,7 @@ func (imp YGOCardClientImpV1) GetArchetypalCardsUsingCardNameProto(ctx context.C
 	logger.Info("Fetching archetypal cards", slog.String("archetype", archetype))
 	cards, err := imp.client.GetArchetypalCardsUsingCardName(ctx, &ygo.Archetype{Archetype: archetype})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "get_archetypal_cards_using_name"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return cards, nil
@@ -105,7 +105,7 @@ func (imp YGOCardClientImpV1) GetExplicitArchetypalInclusionsProto(ctx context.C
 	logger.Info("Fetching explicit archetype inclusions", slog.String("archetype", archetype))
 	cards, err := imp.client.GetExplicitArchetypalInclusions(ctx, &ygo.Archetype{Archetype: archetype})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "get_explicit_archetype_inclusions"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return cards, nil
@@ -116,7 +116,7 @@ func (imp YGOCardClientImpV1) GetExplicitArchetypalExclusionsProto(ctx context.C
 	logger.Info("Fetching explicit archetype exclusions", slog.String("archetype", archetype))
 	cards, err := imp.client.GetExplicitArchetypalExclusions(ctx, &ygo.Archetype{Archetype: archetype})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "get_explicit_archetype_exclusions"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return cards, nil
@@ -130,7 +130,7 @@ func (imp YGOCardClientImpV1) GetRandomCardProto(ctx context.Context, blackListe
 	logger.Info("Getting random card")
 	card, err := imp.client.GetRandomCard(ctx, &ygo.BlackListed{BlackListedRefs: blackListedIDs})
 	if err != nil {
-		logger.Error("Issue calling YGO Card Service", slog.String("operation", "get_random_card"), slog.Any("err", err))
+		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
 		return nil, RPCErrorToAPIError(err)
 	}
 	return card, nil
