@@ -20,7 +20,7 @@ type YGOProductClientImpV1 struct {
 
 func (imp YGOProductClientImpV1) GetCardsByProductIDProto(ctx context.Context, productID string) (*ygo.Product, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info("Retrieving cards for product", slog.String("product_id", productID))
+	logger.Info("Retrieving cards associated to product", slog.String("resource", productID))
 	p, err := imp.client.GetCardsByProductID(ctx, &ygo.ResourceID{ID: productID})
 	if err != nil {
 		logger.Error("Issue calling YGO Product Service", slog.Any("err", err))
@@ -31,7 +31,7 @@ func (imp YGOProductClientImpV1) GetCardsByProductIDProto(ctx context.Context, p
 
 func (imp YGOProductClientImpV1) GetProductSummaryByIDProto(ctx context.Context, productID string) (*ygo.ProductSummary, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info("Retrieving product summary", slog.String("product_id", productID))
+	logger.Info("Retrieving product summary", slog.String("resource", productID))
 	ps, err := imp.client.GetProductSummaryByID(ctx, &ygo.ResourceID{ID: productID})
 	if err != nil {
 		logger.Error("Issue calling YGO Product Service", slog.Any("err", err))
