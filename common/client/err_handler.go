@@ -8,13 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// RPCErrorToAPIError translates a gRPC error into a *model.APIError, mapping the
-// gRPC status code to the closest HTTP status code. For not-found the service's
-// own status message is surfaced so the caller sees which resource was missing;
-// every other code gets a generic message to avoid leaking internal detail.
-// Logging is intentionally left to the caller so each RPC method can record its
-// own context.
-func RPCErrorToAPIError(err error) *model.APIError {
+func rpcErrorToAPIError(err error) *model.APIError {
 	st := status.Convert(err)
 	httpStatus := httpStatusFromGRPCCode(st.Code())
 

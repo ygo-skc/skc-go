@@ -23,7 +23,7 @@ func (imp YGOHealthClientImpV1) GetAPIStatus(ctx context.Context) (*health.APISt
 	h, err := imp.client.APIStatus(ctx, &emptypb.Empty{})
 	if err != nil {
 		logger.Error("Issue retrieving YGO Service status", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	return h, nil
 }

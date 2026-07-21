@@ -31,7 +31,7 @@ func (imp YGOCardClientImpV1) GetCardColorsProto(ctx context.Context) (*ygo.Card
 	cColors, err := imp.client.GetCardColors(ctx, &emptypb.Empty{})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	return cColors, nil
 }
@@ -42,7 +42,7 @@ func (imp YGOCardClientImpV1) GetCardByIDProto(ctx context.Context, cardID strin
 	card, err := imp.client.GetCardByID(ctx, &ygo.ResourceID{ID: cardID})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	return card, nil
 }
@@ -53,7 +53,7 @@ func (imp YGOCardClientImpV1) GetCardsByIDProto(ctx context.Context, cardIDs mod
 	cards, err := imp.client.GetCardsByID(ctx, &ygo.ResourceIDs{IDs: cardIDs})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	if cards.UnknownResources == nil {
 		cards.UnknownResources = make([]string, 0)
@@ -67,7 +67,7 @@ func (imp YGOCardClientImpV1) GetCardsByNameProto(ctx context.Context, cardNames
 	cards, err := imp.client.GetCardsByName(ctx, &ygo.ResourceNames{Names: cardNames})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	if cards.UnknownResources == nil {
 		cards.UnknownResources = make([]string, 0)
@@ -81,7 +81,7 @@ func (imp YGOCardClientImpV1) GetCardsReferencingNameInEffectProto(ctx context.C
 	cards, err := imp.client.GetCardsReferencingNameInEffect(ctx, &ygo.ResourceNames{Names: namesOfCards})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	return cards, nil
 }
@@ -95,7 +95,7 @@ func (imp YGOCardClientImpV1) GetArchetypalCardsUsingCardNameProto(ctx context.C
 	cards, err := imp.client.GetArchetypalCardsUsingCardName(ctx, &ygo.Archetype{Archetype: archetype})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	return cards, nil
 }
@@ -106,7 +106,7 @@ func (imp YGOCardClientImpV1) GetExplicitArchetypalInclusionsProto(ctx context.C
 	cards, err := imp.client.GetExplicitArchetypalInclusions(ctx, &ygo.Archetype{Archetype: archetype})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	return cards, nil
 }
@@ -117,7 +117,7 @@ func (imp YGOCardClientImpV1) GetExplicitArchetypalExclusionsProto(ctx context.C
 	cards, err := imp.client.GetExplicitArchetypalExclusions(ctx, &ygo.Archetype{Archetype: archetype})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	return cards, nil
 }
@@ -131,7 +131,7 @@ func (imp YGOCardClientImpV1) GetRandomCardProto(ctx context.Context, blackListe
 	card, err := imp.client.GetRandomCard(ctx, &ygo.BlackListed{BlackListedRefs: blackListedIDs})
 	if err != nil {
 		logger.Error("Issue calling YGO Card Service", slog.Any("err", err))
-		return nil, RPCErrorToAPIError(err)
+		return nil, rpcErrorToAPIError(err)
 	}
 	return card, nil
 }
