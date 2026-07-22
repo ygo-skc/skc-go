@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ygo-skc/skc-go/common/v2/ygo"
+	"github.com/ygo-skc/skc-go/common/v3/ygo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

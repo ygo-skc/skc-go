@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/ygo-skc/skc-go/common/v2/model"
-	"github.com/ygo-skc/skc-go/common/v2/util"
-	"github.com/ygo-skc/skc-go/common/v2/ygo"
+	"github.com/ygo-skc/skc-go/common/v3/model"
+	"github.com/ygo-skc/skc-go/common/v3/util"
+	"github.com/ygo-skc/skc-go/common/v3/ygo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

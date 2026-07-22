@@ -3,7 +3,7 @@ package client
 import (
 	"net/http"
 
-	"github.com/ygo-skc/skc-go/common/v2/model"
+	"github.com/ygo-skc/skc-go/common/v3/model"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

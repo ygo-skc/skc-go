@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/ygo-skc/skc-go/common/v2/util"
-	"github.com/ygo-skc/skc-go/common/v2/ygo"
+	"github.com/ygo-skc/skc-go/common/v3/util"
+	"github.com/ygo-skc/skc-go/common/v3/ygo"
 )
 
 type YGOCardProtoBuilder struct {

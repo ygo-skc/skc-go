@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v3/util"
 )
 
 var (

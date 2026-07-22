@@ -4,12 +4,12 @@ go 1.26
 
 require (
 	github.com/go-sql-driver/mysql v1.10.0
-	github.com/ygo-skc/skc-go/common/v2 v2.1.6
+	github.com/ygo-skc/skc-go/common/v3 v3.0.0-00010101000000-000000000000
 	google.golang.org/grpc v1.82.1
 	google.golang.org/protobuf v1.36.11
 )
 
-replace github.com/ygo-skc/skc-go/common/v2 => ../common
+replace github.com/ygo-skc/skc-go/common/v3 => ../common
 
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect

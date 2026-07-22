@@ -8,9 +8,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/ygo-skc/skc-go/common/v2/health"
-	"github.com/ygo-skc/skc-go/common/v2/util"
-	"github.com/ygo-skc/skc-go/common/v2/ygo"
+	"github.com/ygo-skc/skc-go/common/v3/health"
+	"github.com/ygo-skc/skc-go/common/v3/util"
+	"github.com/ygo-skc/skc-go/common/v3/ygo"
 	"github.com/ygo-skc/skc-go/ygo-service/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"

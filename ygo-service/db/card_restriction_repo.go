@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v3/util"
 	"google.golang.org/grpc/status"
 )
 

@@ -1,4 +1,4 @@
-module github.com/ygo-skc/skc-go/common/v2
+module github.com/ygo-skc/skc-go/common/v3
 
 go 1.26
 

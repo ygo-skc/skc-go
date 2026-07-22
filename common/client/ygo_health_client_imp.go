@@ -4,9 +4,9 @@ import (
 	context "context"
 	"log/slog"
 
-	"github.com/ygo-skc/skc-go/common/v2/health"
-	"github.com/ygo-skc/skc-go/common/v2/model"
-	"github.com/ygo-skc/skc-go/common/v2/util"
+	"github.com/ygo-skc/skc-go/common/v3/health"
+	"github.com/ygo-skc/skc-go/common/v3/model"
+	"github.com/ygo-skc/skc-go/common/v3/util"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
