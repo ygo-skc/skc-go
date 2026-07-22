@@ -100,21 +100,25 @@ func IsExtraDeckMonster(c YGOCard) bool {
 
 // Uses new line as delimiter to split card effect. Materials are found in the first token.
 func GetPotentialMaterialsAsString(c YGOCard) string {
-	var effectTokens []string
-
 	if !IsExtraDeckMonster(c) {
 		return ""
 	}
 
+	var effectTokens []string
 	color := strings.ToUpper(c.GetColor())
+
 	if strings.Contains(color, "PENDULUM") && color != "PENDULUM-EFFECT" && color != "PENDULUM-NORMAL" {
-		effectTokens = strings.SplitAfter(strings.SplitAfter(c.GetEffect(), "\n\nMonster Effect\n")[1], "\n")
+		pendulumEffectTokens := strings.SplitAfter(c.GetEffect(), "\n\nMonster Effect\n")
+		if len(pendulumEffectTokens) < 2 {
+			return ""
+		}
+		effectTokens = strings.SplitAfter(pendulumEffectTokens[1], "\n")
 	} else {
 		effectTokens = strings.SplitAfter(c.GetEffect(), "\n")
 	}
 
 	if len(effectTokens) < 2 {
-		return c.GetEffect()
+		return ""
 	}
 	return effectTokens[0]
 }
