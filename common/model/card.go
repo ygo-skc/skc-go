@@ -117,7 +117,9 @@ func GetPotentialMaterialsAsString(c YGOCard) string {
 		effectTokens = strings.SplitAfter(c.GetEffect(), "\n")
 	}
 
-	if len(effectTokens) < 2 {
+	hasEffect := c.GetMonsterType() != nil && strings.Contains(*c.GetMonsterType(), "/Effect")
+
+	if len(effectTokens) < 2 && hasEffect {
 		return ""
 	}
 	return effectTokens[0]
