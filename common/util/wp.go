@@ -73,7 +73,14 @@ func (wp *WorkerPool) Run() {
 	}
 
 	for _, task := range wp.tasks {
-		wp.tChan <- task
+		select {
+		case wp.tChan <- task:
+		case <-wp.ctx.Done():
+			// workers have stopped draining tChan; abandon remaining sends to avoid blocking forever
+			close(wp.tChan)
+			wg.Wait()
+			return
+		}
 	}
 
 	close(wp.tChan)

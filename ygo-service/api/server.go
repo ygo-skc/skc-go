@@ -2,8 +2,9 @@ package api
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net"
+	"os"
 	"runtime"
 	"time"
 
@@ -22,7 +23,8 @@ var (
 
 func init() {
 	if location, err := time.LoadLocation("America/Chicago"); err != nil {
-		log.Fatalf("Could not load Chicago location - err %v", err)
+		slog.Error("Failed to load Chicago location", slog.Any("err", err))
+		os.Exit(1)
 	} else {
 		chicagoLocation = location
 	}
@@ -62,7 +64,8 @@ type ygoScoreServiceServer struct {
 func RunService() {
 	util.CombineCerts("certs")
 	if creds, err := credentials.NewServerTLSFromFile("certs/concatenated.crt", "certs/private.key"); err != nil {
-		log.Fatalf("Unable to create TLS credentials: %v", err)
+		slog.Error("Unable to create TLS credentials", slog.Any("err", err))
+		os.Exit(1)
 	} else {
 		grpcServer := grpc.NewServer(
 			grpc.Creds(creds),
@@ -99,13 +102,15 @@ func RunService() {
 		ygo.RegisterCardRestrictionServiceServer(grpcServer, &ygoCardRestrictionServiceServer{})
 		ygo.RegisterScoreServiceServer(grpcServer, &ygoScoreServiceServer{})
 
-		log.Printf("Starting gRPC service on port %d...", port)
+		slog.Info("Starting gRPC service", slog.Int("port", port))
 		listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 		if err != nil {
-			log.Fatalf("Failed to listen: %v", err)
+			slog.Error("Failed to listen", slog.Any("err", err))
+			os.Exit(1)
 		}
 		if err := grpcServer.Serve(listener); err != nil {
-			log.Fatalf("Failed to serve: %v", err)
+			slog.Error("Failed to serve grpc", slog.Any("err", err))
+			os.Exit(1)
 		}
 	}
 }

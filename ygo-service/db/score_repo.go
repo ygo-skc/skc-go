@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/ygo-skc/skc-go/common/v2/model"
@@ -89,7 +90,7 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 	ctx context.Context, format string, effectiveDate string, sortOrder ygo.CardRestrictionSortOrder) ([]*ygo.CardScoreEntry, uint32, *status.Status) {
 
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving scores using format %s and date %s", format, effectiveDate))
+	logger.Info("Retrieving scores", slog.String("format", format), slog.String("effective_date", effectiveDate))
 
 	var sortingSubQuery string
 	switch sortOrder {
@@ -137,7 +138,7 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 	parser func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (*ygo.CardScore, *status.Status) {
 
 	logger := util.RetrieveLogger(ctx)
-	logger.Info("Retrieving card score data")
+	logger.Info("Retrieving card score data", slog.String("card_id", cardID))
 
 	if rows, err := skcDBConn.Query(cardScoreQuery, cardID, cardID); err != nil {
 		return nil, handleQueryError(logger, err)
@@ -164,7 +165,7 @@ func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []
 	parser func(*ygo.CardScore, *ygo.ScoreEntry, time.Time)) (map[string]*ygo.CardScore, *status.Status) {
 
 	logger := util.RetrieveLogger(ctx)
-	logger.Info(fmt.Sprintf("Retrieving card score data using ID's: %v", cardIDs))
+	logger.Info("Retrieving card score data", slog.Any("card_ids", cardIDs))
 
 	args, numCards := buildVariableQuerySubjects(cardIDs)
 	query := fmt.Sprintf(multiCardScoreQuery, variablePlaceholders(numCards))

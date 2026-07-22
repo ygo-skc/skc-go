@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/ygo-skc/skc-go/common/v2/util"
 	"google.golang.org/grpc/status"
@@ -26,7 +27,7 @@ type YGOCardRestrictionRepository struct{}
 
 func (imp YGOCardRestrictionRepository) GetDatesForFormat(ctx context.Context, format string) ([]string, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
-	logger.Info("Retrieving effective dates")
+	logger.Info("Retrieving effective dates", slog.String("format", format))
 
 	if rows, err := skcDBConn.Query(datesForFormatQuery, format); err != nil {
 		return nil, handleQueryError(logger, err)

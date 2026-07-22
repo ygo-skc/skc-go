@@ -16,11 +16,11 @@ func init() {
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr, slogOpts)))
 }
 
-type contextKey string
+type loggerKeyType struct{}
+
+var loggerKey = loggerKeyType{}
 
 const (
-	loggerKey contextKey = "logger"
-
 	traceIDKey         = "trace_id"
 	spanIDKey          = "span_id"
 	flowKey            = "app.flow"
@@ -38,24 +38,32 @@ func RetrieveLogger(ctx context.Context) *slog.Logger {
 }
 
 func NewLogger(ctx context.Context, flow string, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
-	defaults := []any{
-		slog.String(traceIDKey, traceFromContext(ctx)),
-		slog.String(spanIDKey, uuid.New().String()),
-		slog.String(flowKey, flow),
-	}
+	traceID := traceFromContext(ctx)
+	var originatingFlow, clientID string
 
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		if flow := md.Get(flowMetaName); len(flow) > 0 && flow[0] != "" {
-			defaults = append(defaults, slog.String(originatingFlowKey, flow[0]))
+			originatingFlow = flow[0]
 		}
-		if clientID := md.Get(clientIDMetaName); len(clientID) > 0 && clientID[0] != "" {
-			defaults = append(defaults, slog.String(clientIDKey, clientID[0]))
+		if id := md.Get(clientIDMetaName); len(id) > 0 && id[0] != "" {
+			clientID = id[0]
 		}
-		if traceID := md.Get(traceMetaName); len(traceID) > 0 && traceID[0] != "" {
-			defaults = append(defaults, slog.String(traceIDKey, traceID[0])) // overrides default
+		if trace := md.Get(traceMetaName); len(trace) > 0 && trace[0] != "" {
+			traceID = trace[0] // override trace if present
 		}
 	}
 
+	defaults := []any{
+		slog.String(traceIDKey, traceID),
+		slog.String(spanIDKey,uuid.New().String()),
+		slog.String(flowKey, flow),
+	}
+	if originatingFlow != "" {
+		defaults = append(defaults, slog.String(originatingFlowKey, originatingFlow))
+	}
+	if clientID != "" {
+		defaults = append(defaults, slog.String(clientIDKey, clientID))
+	}
 	for _, customAttribute := range customAttributes {
 		defaults = append(defaults, customAttribute)
 	}
@@ -65,13 +73,11 @@ func NewLogger(ctx context.Context, flow string, customAttributes ...slog.Attr) 
 }
 
 func AddLoggerAttribute(ctx context.Context, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
-	newAttributes := []any{}
-
-	for _, customAttribute := range customAttributes {
-		newAttributes = append(newAttributes, customAttribute)
+	newAttributes := make([]any, len(customAttributes))
+	for i, customAttribute := range customAttributes {
+		newAttributes[i] = customAttribute
 	}
 
-	l := RetrieveLogger(ctx)
-	l = l.With(newAttributes...)
+	l := RetrieveLogger(ctx).With(newAttributes...)
 	return l, context.WithValue(ctx, loggerKey, l)
 }

@@ -3,7 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/ygo-skc/skc-go/common/v2/util"
@@ -25,7 +26,8 @@ func EstablishDBConn() {
 
 	var err error
 	if skcDBConn, err = sql.Open("mysql", dataSourceName); err != nil {
-		log.Fatalln("Error occurred while trying to establish DB connection: ", err)
+		slog.Error("Failed to establish DB connection", slog.Any("err", err))
+		os.Exit(1)
 	}
 
 	skcDBConn.SetMaxOpenConns(maxPoolSize)

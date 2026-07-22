@@ -2,7 +2,6 @@ package client
 
 import (
 	"crypto/tls"
-	"fmt"
 	"log/slog"
 	"time"
 
@@ -28,10 +27,10 @@ func newYGOClientImpV1(conn *grpc.ClientConn) *YGOClientImpV1 {
 }
 
 func NewYGOServiceClients(sslServerName string, serviceHost string) (*YGOClientImpV1, error) {
-	slog.Info(fmt.Sprintf("Creating Card Service gRPC Client using SSL Server Name %s and Host %s",
-		sslServerName,
-		serviceHost,
-	))
+	slog.Info("Creating YGO service gRPC client",
+		slog.String("ssl_server_name", sslServerName),
+		slog.String("service_host", serviceHost),
+	)
 
 	creds := credentials.NewTLS(&tls.Config{
 		InsecureSkipVerify: false,

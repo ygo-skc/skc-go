@@ -3,10 +3,7 @@ package parser
 import "strings"
 
 func TextContainsSubStr(text, substring string) bool {
-	if occurrences := OccurrencesOfQuotedSubStr(text, substring, true); occurrences == 1 {
-		return true
-	}
-	return false
+	return OccurrencesOfQuotedSubStr(text, substring, true) == 1
 }
 
 func OccurrencesOfQuotedSubStr(text, substring string, exitOnFirstOccurrence bool) int {
