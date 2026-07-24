@@ -25,8 +25,6 @@ monster_type,
 monster_attack,
 monster_defense`
 
-	dbVersionQuery = "SELECT VERSION()"
-
 	cardColorIDsQuery = `
 SELECT
 	color_id,
@@ -137,14 +135,14 @@ LIMIT
 	1`
 )
 
-func queryCard(logger *slog.Logger, query string, args []any) (*ygo.Card, *status.Status) {
+func queryCard(ctx context.Context, logger *slog.Logger, query string, args []any) (*ygo.Card, *status.Status) {
 	var (
 		id, color, name, attribute, effect string
 		monsterType                        *string
 		atk, def                           *uint32
 	)
 
-	if err := skcDBConn.QueryRow(query, args...).Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
+	if err := skcDBConn.QueryRowContext(ctx, query, args...).Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 		return nil, handleQueryError(logger, err)
 	}
 
@@ -221,7 +219,7 @@ func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (map[string]ui
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card colors")
 
-	rows, err := skcDBConn.Query(cardColorIDsQuery)
+	rows, err := skcDBConn.QueryContext(ctx, cardColorIDsQuery)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}
@@ -255,7 +253,7 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 	args[0] = cardID
 	query := fmt.Sprintf(cardByCardIDQuery, cardAttributes)
 
-	c, err := queryCard(logger, query, args)
+	c, err := queryCard(ctx, logger, query, args)
 	if err != nil && err.Code() == codes.NotFound {
 		logger.Info("Card ID not found", slog.String("card_id", cardID))
 	}
@@ -269,7 +267,7 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 	args, numCards := buildVariableQuerySubjects(cardIDs)
 	query := fmt.Sprintf(cardsByCardIDsQuery, cardAttributes, variablePlaceholders(numCards))
 
-	rows, err := skcDBConn.Query(query, args...)
+	rows, err := skcDBConn.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}
@@ -293,7 +291,7 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	args, numCards := buildVariableQuerySubjects(cardNames)
 	query := fmt.Sprintf(cardsByCardNamesQuery, cardAttributes, variablePlaceholders(numCards))
 
-	rows, err := skcDBConn.Query(query, args...)
+	rows, err := skcDBConn.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}
@@ -324,7 +322,7 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 	}
 
 	query := fmt.Sprintf(searchCardUsingEffectQuery, cardAttributes)
-	rows, err := skcDBConn.Query(query, strings.Join(fullTextNames, " "))
+	rows, err := skcDBConn.QueryContext(ctx, query, strings.Join(fullTextNames, " "))
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}
@@ -343,7 +341,7 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	searchTerm := `%` + archetypeName + `%`
 
 	query := fmt.Sprintf(archetypalCardsUsingCardNameQuery, cardAttributes)
-	rows, err := skcDBConn.Query(query, searchTerm)
+	rows, err := skcDBConn.QueryContext(ctx, query, searchTerm)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}
@@ -362,7 +360,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 
 	subQuery := fmt.Sprintf(archetypeInclusionSubQuery, cardAttributes, archetypeName)
 	query := fmt.Sprintf(archetypalCardsUsingCardTextQuery, subQuery, archetypeName)
-	rows, err := skcDBConn.Query(query)
+	rows, err := skcDBConn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}
@@ -380,7 +378,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 
 	subQuery := fmt.Sprintf(archetypeExclusionSubQuery, cardAttributes, archetypeName)
 	query := fmt.Sprintf(nonArchetypalCardsUsingCardTextQuery, subQuery, archetypeName)
-	rows, err := skcDBConn.Query(query)
+	rows, err := skcDBConn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}
@@ -408,7 +406,7 @@ func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards
 		query = fmt.Sprintf(randomCardWithBlackListQuery, cardAttributes, variablePlaceholders(numBlackListed))
 	}
 
-	c, err := queryCard(logger, query, args)
+	c, err := queryCard(ctx, logger, query, args)
 	if err == nil {
 		logger.Info("Random card selected", slog.String("card_id", c.Id), slog.String("card_name", c.Name))
 	}

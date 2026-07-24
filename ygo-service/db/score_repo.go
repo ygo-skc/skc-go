@@ -101,7 +101,7 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 	}
 
 	query := fmt.Sprintf(cardScoreByFormatAndDateQuery, sortingSubQuery)
-	rows, err := skcDBConn.Query(query, format, effectiveDate)
+	rows, err := skcDBConn.QueryContext(ctx, query, format, effectiveDate)
 	if err != nil {
 		return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
 	}
@@ -146,7 +146,7 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card score data", slog.String("card_id", cardID))
 
-	rows, err := skcDBConn.Query(cardScoreQuery, cardID, cardID)
+	rows, err := skcDBConn.QueryContext(ctx, cardScoreQuery, cardID, cardID)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}
@@ -182,7 +182,7 @@ func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []
 	args, numCards := buildVariableQuerySubjects(cardIDs)
 	query := fmt.Sprintf(multiCardScoreQuery, variablePlaceholders(numCards))
 
-	rows, err := skcDBConn.Query(query, args...)
+	rows, err := skcDBConn.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}

@@ -110,13 +110,13 @@ func (imp YGOProductRepository) GetCardsByProductID(ctx context.Context, product
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving product data", slog.String("product_id", productID))
 
-	product, err := queryProductInfo(logger, productID)
+	product, err := queryProductInfo(ctx, logger, productID)
 	if err != nil {
 		return nil, err
 	}
 
 	query := fmt.Sprintf(cardsByProductIDQuery, cardAttributes)
-	rows, dbErr := skcDBConn.Query(query, productID)
+	rows, dbErr := skcDBConn.QueryContext(ctx, query, productID)
 	if dbErr != nil {
 		return nil, handleQueryError(logger, dbErr)
 	}
@@ -155,7 +155,7 @@ func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, prod
 
 	query := fmt.Sprintf(productInfoByIDs, variablePlaceholders(numProducts))
 
-	rows, err := skcDBConn.Query(query, args...)
+	rows, err := skcDBConn.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}

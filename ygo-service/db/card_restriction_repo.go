@@ -29,7 +29,7 @@ func (imp YGOCardRestrictionRepository) GetDatesForFormat(ctx context.Context, f
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving effective dates", slog.String("format", format))
 
-	rows, err := skcDBConn.Query(datesForFormatQuery, format)
+	rows, err := skcDBConn.QueryContext(ctx, datesForFormatQuery, format)
 	if err != nil {
 		return nil, handleQueryError(logger, err)
 	}

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log/slog"
@@ -35,10 +36,10 @@ func handleRowParsingError(logger *slog.Logger, err error) *status.Status {
 	return status.New(codes.Internal, genericError)
 }
 
-func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *status.Status) {
+func queryProductInfo(ctx context.Context, logger *slog.Logger, productID string) (*ygo.Product, *status.Status) {
 	var id, locale, name, t, subType, releaseDate string
 
-	if err := skcDBConn.QueryRow(productDetailsQuery, productID).Scan(&id, &locale, &name, &t, &subType, &releaseDate); err != nil {
+	if err := skcDBConn.QueryRowContext(ctx, productDetailsQuery, productID).Scan(&id, &locale, &name, &t, &subType, &releaseDate); err != nil {
 		return nil, handleQueryError(logger, err)
 	}
 	return &ygo.Product{Id: id, Locale: locale, Name: name, ReleaseDate: releaseDate, Type: t, SubType: subType}, nil
