@@ -4,11 +4,11 @@ option go_package = "/ygo";
 package ygo.common;
 
 message ResourceID {
-  string ID = 1;
+  string id = 1;
 }
 
 message ResourceIDs {
-  repeated string IDs = 1;
+  repeated string ids = 1;
 }
 
 message ResourceName{
@@ -20,12 +20,12 @@ message ResourceNames {
 }
 
 message SearchTerm {
-  string ID = 1;
+  string id = 1;
   string name = 2;
 }
 
 message Archetype {
-	string archetype = 1;
+	string name = 1;
 }
 
 message BlackListed {
@@ -33,9 +33,9 @@ message BlackListed {
 }
 
 message EffectiveTimeline {
-  repeated string allDates = 1;
-  repeated string futureDates = 2;
-  string activeDate = 3;
+  repeated string all_dates = 1;
+  repeated string future_dates = 2;
+  string active_date = 3;
 }
 
 enum CardRestrictionSortOrder {

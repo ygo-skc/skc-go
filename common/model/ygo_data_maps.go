@@ -64,8 +64,8 @@ func FindMissingKeys[T CardIDs | CardNames | ProductIDs | ProductNames, R *ygo.C
 	return missingIDs
 }
 
-func CardIDAsKey(c *ygo.Card) string   { return c.ID }
+func CardIDAsKey(c *ygo.Card) string   { return c.Id }
 func CardNameAsKey(c *ygo.Card) string { return c.Name }
 
-func ProductIDAsKey(p *ygo.ProductSummary) string   { return p.ID }
+func ProductIDAsKey(p *ygo.ProductSummary) string   { return p.Id }
 func ProductNameAsKey(p *ygo.ProductSummary) string { return p.Name }

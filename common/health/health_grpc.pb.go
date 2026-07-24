@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -27,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HealthServiceClient interface {
-	APIStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*APIStatusDetails, error)
+	APIStatus(ctx context.Context, in *APIStatusRequest, opts ...grpc.CallOption) (*APIStatusResponse, error)
 }
 
 type healthServiceClient struct {
@@ -38,9 +37,9 @@ func NewHealthServiceClient(cc grpc.ClientConnInterface) HealthServiceClient {
 	return &healthServiceClient{cc}
 }
 
-func (c *healthServiceClient) APIStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*APIStatusDetails, error) {
+func (c *healthServiceClient) APIStatus(ctx context.Context, in *APIStatusRequest, opts ...grpc.CallOption) (*APIStatusResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(APIStatusDetails)
+	out := new(APIStatusResponse)
 	err := c.cc.Invoke(ctx, HealthService_APIStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -52,7 +51,7 @@ func (c *healthServiceClient) APIStatus(ctx context.Context, in *emptypb.Empty, 
 // All implementations must embed UnimplementedHealthServiceServer
 // for forward compatibility.
 type HealthServiceServer interface {
-	APIStatus(context.Context, *emptypb.Empty) (*APIStatusDetails, error)
+	APIStatus(context.Context, *APIStatusRequest) (*APIStatusResponse, error)
 	mustEmbedUnimplementedHealthServiceServer()
 }
 
@@ -63,7 +62,7 @@ type HealthServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedHealthServiceServer struct{}
 
-func (UnimplementedHealthServiceServer) APIStatus(context.Context, *emptypb.Empty) (*APIStatusDetails, error) {
+func (UnimplementedHealthServiceServer) APIStatus(context.Context, *APIStatusRequest) (*APIStatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method APIStatus not implemented")
 }
 func (UnimplementedHealthServiceServer) mustEmbedUnimplementedHealthServiceServer() {}
@@ -88,7 +87,7 @@ func RegisterHealthServiceServer(s grpc.ServiceRegistrar, srv HealthServiceServe
 }
 
 func _HealthService_APIStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(APIStatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -100,7 +99,7 @@ func _HealthService_APIStatus_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: HealthService_APIStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HealthServiceServer).APIStatus(ctx, req.(*emptypb.Empty))
+		return srv.(HealthServiceServer).APIStatus(ctx, req.(*APIStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

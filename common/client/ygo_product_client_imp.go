@@ -14,6 +14,7 @@ type YGOProductClientImp interface {
 	GetProductSummaryByIDProto(context.Context, string) (*ygo.ProductSummary, *model.APIError)
 	GetProductsSummaryByIDProto(context.Context, model.ProductIDs) (*ygo.Products, *model.APIError)
 }
+
 type YGOProductClientImpV1 struct {
 	client ygo.ProductServiceClient
 }
@@ -21,32 +22,32 @@ type YGOProductClientImpV1 struct {
 func (imp YGOProductClientImpV1) GetCardsByProductIDProto(ctx context.Context, productID string) (*ygo.Product, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving cards associated to product", slog.String("ygo_service.resource", productID))
-	p, err := imp.client.GetCardsByProductID(ctx, &ygo.ResourceID{ID: productID})
+	p, err := imp.client.GetCardsByProductID(ctx, &ygo.GetCardsByProductIDRequest{Subject: &ygo.ResourceID{Id: productID}})
 	if err != nil {
 		logger.Error("Issue calling YGO Product Service", slog.Any("err", err))
 		return nil, rpcErrorToAPIError(err)
 	}
-	return p, nil
+	return p.Product, nil
 }
 
 func (imp YGOProductClientImpV1) GetProductSummaryByIDProto(ctx context.Context, productID string) (*ygo.ProductSummary, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving product summary", slog.String("ygo_service.resource", productID))
-	ps, err := imp.client.GetProductSummaryByID(ctx, &ygo.ResourceID{ID: productID})
+	ps, err := imp.client.GetProductSummaryByID(ctx, &ygo.GetProductSummaryByIDRequest{Subject: &ygo.ResourceID{Id: productID}})
 	if err != nil {
 		logger.Error("Issue calling YGO Product Service", slog.Any("err", err))
 		return nil, rpcErrorToAPIError(err)
 	}
-	return ps, nil
+	return ps.ProductSummary, nil
 }
 
 func (imp YGOProductClientImpV1) GetProductsSummaryByIDProto(ctx context.Context, productIDs model.ProductIDs) (*ygo.Products, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving product summaries", slog.Any("product_ids", productIDs))
-	ps, err := imp.client.GetProductsSummaryByID(ctx, &ygo.ResourceIDs{IDs: productIDs})
+	ps, err := imp.client.GetProductsSummaryByID(ctx, &ygo.GetProductsSummaryByIDRequest{Subjects: &ygo.ResourceIDs{Ids: productIDs}})
 	if err != nil {
 		logger.Error("Issue calling YGO Product Service", slog.Any("err", err))
 		return nil, rpcErrorToAPIError(err)
 	}
-	return ps, nil
+	return ps.Products, nil
 }

@@ -3,12 +3,12 @@ syntax = "proto3";
 option go_package = "/health";
 package health;
 
-import "google/protobuf/empty.proto";
-
 service HealthService {
-  rpc APIStatus (google.protobuf.Empty) returns (APIStatusDetails);
+  rpc APIStatus (APIStatusRequest) returns (APIStatusResponse);
 }
 
-message APIStatusDetails {
+message APIStatusRequest {}
+
+message APIStatusResponse {
   string version = 1;
 }

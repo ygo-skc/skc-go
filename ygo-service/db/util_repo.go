@@ -7,12 +7,10 @@ import (
 
 	"github.com/ygo-skc/skc-go/common/v3/model"
 	"github.com/ygo-skc/skc-go/common/v3/util"
-	"github.com/ygo-skc/skc-go/common/v3/ygo"
-	"google.golang.org/grpc/status"
 )
 
 type UtilRepository interface {
-	GetCardColorIDs(context.Context) (*ygo.CardColors, *status.Status)
+	GetDBVersion(context.Context) (string, error)
 }
 type YGOUtilRepository struct{}
 

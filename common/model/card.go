@@ -55,7 +55,7 @@ func (c YGOCardREST) GetDefense() *uint32     { return c.Defense }
 
 func (c YGOCardREST) ToProto() *ygo.Card {
 	return &ygo.Card{
-		ID:          c.ID,
+		Id:          c.ID,
 		Color:       c.Color,
 		Name:        c.Name,
 		Attribute:   c.Attribute,
@@ -68,7 +68,7 @@ func (c YGOCardREST) ToProto() *ygo.Card {
 
 type YGOCardGRPC struct{ *ygo.Card }
 
-func (c YGOCardGRPC) GetID() string        { return c.ID }
+func (c YGOCardGRPC) GetID() string        { return c.Id }
 func (c YGOCardGRPC) GetColor() string     { return c.Color }
 func (c YGOCardGRPC) GetName() string      { return c.Name }
 func (c YGOCardGRPC) GetAttribute() string { return c.Attribute }

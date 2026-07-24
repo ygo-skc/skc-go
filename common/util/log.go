@@ -25,7 +25,7 @@ const (
 	spanIDKey          = "span_id"
 	flowKey            = "app.flow"
 	originatingFlowKey = "app.origin"
-	clientIDKey        = "client.id"
+	clientIDKey        = "client_id"
 )
 
 func RetrieveLogger(ctx context.Context) *slog.Logger {

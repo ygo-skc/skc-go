@@ -12,7 +12,7 @@ type YGOCardProtoBuilder struct {
 func NewYGOCardProtoBuilder(id, name string) *YGOCardProtoBuilder {
 	return &YGOCardProtoBuilder{
 		c: &ygo.Card{
-			ID:   id,
+			Id:   id,
 			Name: name,
 		},
 	}

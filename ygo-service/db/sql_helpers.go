@@ -41,7 +41,7 @@ func queryProductInfo(logger *slog.Logger, productID string) (*ygo.Product, *sta
 	if err := skcDBConn.QueryRow(productDetailsQuery, productID).Scan(&id, &locale, &name, &t, &subType, &releaseDate); err != nil {
 		return nil, handleQueryError(logger, err)
 	}
-	return &ygo.Product{ID: id, Locale: locale, Name: name, ReleaseDate: releaseDate, Type: t, SubType: subType}, nil
+	return &ygo.Product{Id: id, Locale: locale, Name: name, ReleaseDate: releaseDate, Type: t, SubType: subType}, nil
 }
 
 // removes quotes from text as full text search does not handle them well

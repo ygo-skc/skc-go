@@ -69,7 +69,7 @@ func (CardRestrictionSortOrder) EnumDescriptor() ([]byte, []int) {
 
 type ResourceID struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ID            string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -104,16 +104,16 @@ func (*ResourceID) Descriptor() ([]byte, []int) {
 	return file_common_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ResourceID) GetID() string {
+func (x *ResourceID) GetId() string {
 	if x != nil {
-		return x.ID
+		return x.Id
 	}
 	return ""
 }
 
 type ResourceIDs struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	IDs           []string               `protobuf:"bytes,1,rep,name=IDs,proto3" json:"IDs,omitempty"`
+	Ids           []string               `protobuf:"bytes,1,rep,name=ids,proto3" json:"ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -148,9 +148,9 @@ func (*ResourceIDs) Descriptor() ([]byte, []int) {
 	return file_common_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ResourceIDs) GetIDs() []string {
+func (x *ResourceIDs) GetIds() []string {
 	if x != nil {
-		return x.IDs
+		return x.Ids
 	}
 	return nil
 }
@@ -245,7 +245,7 @@ func (x *ResourceNames) GetNames() []string {
 
 type SearchTerm struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ID            string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -281,9 +281,9 @@ func (*SearchTerm) Descriptor() ([]byte, []int) {
 	return file_common_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *SearchTerm) GetID() string {
+func (x *SearchTerm) GetId() string {
 	if x != nil {
-		return x.ID
+		return x.Id
 	}
 	return ""
 }
@@ -297,7 +297,7 @@ func (x *SearchTerm) GetName() string {
 
 type Archetype struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Archetype     string                 `protobuf:"bytes,1,opt,name=archetype,proto3" json:"archetype,omitempty"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -332,9 +332,9 @@ func (*Archetype) Descriptor() ([]byte, []int) {
 	return file_common_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *Archetype) GetArchetype() string {
+func (x *Archetype) GetName() string {
 	if x != nil {
-		return x.Archetype
+		return x.Name
 	}
 	return ""
 }
@@ -385,9 +385,9 @@ func (x *BlackListed) GetBlackListedRefs() []string {
 
 type EffectiveTimeline struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AllDates      []string               `protobuf:"bytes,1,rep,name=allDates,proto3" json:"allDates,omitempty"`
-	FutureDates   []string               `protobuf:"bytes,2,rep,name=futureDates,proto3" json:"futureDates,omitempty"`
-	ActiveDate    string                 `protobuf:"bytes,3,opt,name=activeDate,proto3" json:"activeDate,omitempty"`
+	AllDates      []string               `protobuf:"bytes,1,rep,name=all_dates,json=allDates,proto3" json:"all_dates,omitempty"`
+	FutureDates   []string               `protobuf:"bytes,2,rep,name=future_dates,json=futureDates,proto3" json:"future_dates,omitempty"`
+	ActiveDate    string                 `protobuf:"bytes,3,opt,name=active_date,json=activeDate,proto3" json:"active_date,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -451,26 +451,25 @@ const file_common_proto_rawDesc = "" +
 	"ygo.common\"\x1c\n" +
 	"\n" +
 	"ResourceID\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\"\x1f\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
 	"\vResourceIDs\x12\x10\n" +
-	"\x03IDs\x18\x01 \x03(\tR\x03IDs\"$\n" +
+	"\x03ids\x18\x01 \x03(\tR\x03ids\"$\n" +
 	"\fResourceName\x12\x14\n" +
 	"\x05value\x18\x01 \x01(\tR\x05value\"%\n" +
 	"\rResourceNames\x12\x14\n" +
 	"\x05names\x18\x01 \x03(\tR\x05names\"0\n" +
 	"\n" +
 	"SearchTerm\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\")\n" +
-	"\tArchetype\x12\x1c\n" +
-	"\tarchetype\x18\x01 \x01(\tR\tarchetype\"9\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"\x1f\n" +
+	"\tArchetype\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"9\n" +
 	"\vBlackListed\x12*\n" +
-	"\x11black_listed_refs\x18\x01 \x03(\tR\x0fblackListedRefs\"q\n" +
-	"\x11EffectiveTimeline\x12\x1a\n" +
-	"\ballDates\x18\x01 \x03(\tR\ballDates\x12 \n" +
-	"\vfutureDates\x18\x02 \x03(\tR\vfutureDates\x12\x1e\n" +
-	"\n" +
-	"activeDate\x18\x03 \x01(\tR\n" +
+	"\x11black_listed_refs\x18\x01 \x03(\tR\x0fblackListedRefs\"t\n" +
+	"\x11EffectiveTimeline\x12\x1b\n" +
+	"\tall_dates\x18\x01 \x03(\tR\ballDates\x12!\n" +
+	"\ffuture_dates\x18\x02 \x03(\tR\vfutureDates\x12\x1f\n" +
+	"\vactive_date\x18\x03 \x01(\tR\n" +
 	"activeDate*i\n" +
 	"\x18CardRestrictionSortOrder\x12 \n" +
 	"\x1cCARD_COLOR_ASC_CARD_NAME_ASC\x10\x00\x12+\n" +

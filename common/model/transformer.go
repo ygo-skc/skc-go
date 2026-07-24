@@ -46,7 +46,7 @@ func BatchProductSummaryFromProductsProto[T ProductIDs](p *ygo.Products, keyFn f
 	batchProductInfo := make(ProductSummaryDataMap, len(p.Products))
 	for _, product := range p.Products {
 		batchProductInfo[keyFn(product)] = YGOProductSummaryREST{
-			ID:          product.ID,
+			ID:          product.Id,
 			Locale:      product.Locale,
 			Name:        product.Name,
 			Type:        product.Type,

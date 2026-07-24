@@ -198,7 +198,7 @@ func collectWithMapUsingNameKey(cards *map[string]*ygo.Card, card *ygo.Card) {
 }
 
 type CardRepository interface {
-	GetCardColorIDs(context.Context) (*ygo.CardColors, *status.Status)
+	GetCardColorIDs(context.Context) (map[string]uint32, *status.Status)
 
 	GetCardByID(context.Context, string) (*ygo.Card, *status.Status)
 	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *status.Status)
@@ -215,7 +215,7 @@ type CardRepository interface {
 type YGOCardRepository struct{}
 
 // Get IDs for all card colors currently in database.
-func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColors, *status.Status) {
+func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (map[string]uint32, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card colors")
 
@@ -235,7 +235,7 @@ func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (*ygo.CardColo
 		}
 
 		logger.Info("Retrieved card colors", slog.Int("count", len(cardColorIDs)))
-		return &ygo.CardColors{Values: cardColorIDs}, nil
+		return cardColorIDs, nil
 	}
 }
 
@@ -397,7 +397,7 @@ func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards
 
 	c, err := queryCard(logger, query, args)
 	if err == nil {
-		logger.Info("Random card selected", slog.String("card_id", c.ID), slog.String("card_name", c.Name))
+		logger.Info("Random card selected", slog.String("card_id", c.Id), slog.String("card_name", c.Name))
 	}
 	return c, err
 }

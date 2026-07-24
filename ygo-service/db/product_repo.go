@@ -158,7 +158,7 @@ func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, prod
 				return nil, handleRowParsingError(logger, err)
 			}
 
-			productData[id] = &ygo.ProductSummary{ID: id, Locale: locale, Name: name, Type: t, SubType: subType, ReleaseDate: releaseDate, TotalItems: totalItems}
+			productData[id] = &ygo.ProductSummary{Id: id, Locale: locale, Name: name, Type: t, SubType: subType, ReleaseDate: releaseDate, TotalItems: totalItems}
 		}
 	}
 

@@ -5,30 +5,123 @@ package ygo;
 
 import "common.proto";
 import "google/protobuf/wrappers.proto";
-import "google/protobuf/empty.proto";
 
 service CardService {
-  rpc GetCardColors(google.protobuf.Empty) returns (CardColors);
+  rpc GetCardColors(GetCardColorsRequest) returns (GetCardColorsResponse);
 
-  rpc GetCardByID(ygo.common.ResourceID) returns (Card);
-  rpc GetCardsByID(ygo.common.ResourceIDs) returns (Cards);
+  rpc GetCardByID(GetCardByIDRequest) returns (GetCardByIDResponse);
+  rpc GetCardsByID(GetCardsByIDRequest) returns (GetCardsByIDResponse);
 
-  rpc GetCardsByName(ygo.common.ResourceNames) returns (Cards);
+  rpc GetCardsByName(GetCardsByNameRequest) returns (GetCardsByNameResponse);
 
-  rpc GetCardsReferencingNameInEffect(ygo.common.ResourceNames) returns (CardList);
+  rpc GetCardsReferencingNameInEffect(GetCardsReferencingNameInEffectRequest) returns (GetCardsReferencingNameInEffectResponse);
 
-  rpc GetArchetypalCardsUsingCardName(ygo.common.Archetype) returns (CardList);
-  rpc GetExplicitArchetypalInclusions(ygo.common.Archetype) returns (CardList);
-  rpc GetExplicitArchetypalExclusions(ygo.common.Archetype) returns (CardList);
+  rpc GetArchetypalCardsUsingCardName(GetArchetypalCardsUsingCardNameRequest) returns (GetArchetypalCardsUsingCardNameResponse);
+  rpc GetExplicitArchetypalInclusions(GetExplicitArchetypalInclusionsRequest) returns (GetExplicitArchetypalInclusionsResponse);
+  rpc GetExplicitArchetypalExclusions(GetExplicitArchetypalExclusionsRequest) returns (GetExplicitArchetypalExclusionsResponse);
 
-  rpc GetRandomCard(ygo.common.BlackListed) returns (Card);
+  rpc GetRandomCard(GetRandomCardRequest) returns (GetRandomCardResponse);
+}
+
+message GetCardColorsRequest {}
+
+message GetCardColorsResponse {
+  map<string, uint32> values = 1;
+}
+
+message GetCardByIDRequest {
+    ygo.common.ResourceID subject = 1;
+}
+
+message GetCardByIDResponse {
+    Card card = 1;
+}
+
+message GetCardsByIDRequest {
+    ygo.common.ResourceIDs subjects = 1;
+}
+
+message GetCardsByIDResponse {
+    Cards cards = 1;
+}
+
+message GetCardsByNameRequest {
+    ygo.common.ResourceNames subjects = 1;
+}
+
+message GetCardsByNameResponse {
+    Cards cards = 1;
+}
+
+message GetCardsReferencingNameInEffectRequest {
+    ygo.common.ResourceNames subjects = 1;
+}
+
+message GetCardsReferencingNameInEffectResponse {
+    CardList cards = 1;
+}
+
+message GetArchetypalCardsUsingCardNameRequest {
+    ygo.common.Archetype subject = 1;
+}
+
+message GetArchetypalCardsUsingCardNameResponse {
+    CardList cards = 1;
+}
+
+message GetExplicitArchetypalInclusionsRequest {
+    ygo.common.Archetype subject = 1;
+}
+
+message GetExplicitArchetypalInclusionsResponse {
+    CardList cards = 1;
+}
+
+message GetExplicitArchetypalExclusionsRequest {
+    ygo.common.Archetype subject = 1;
+}
+
+message GetExplicitArchetypalExclusionsResponse {
+    CardList cards = 1;
+}
+
+message GetRandomCardRequest {
+    ygo.common.BlackListed blacklist = 1;
+}
+
+message GetRandomCardResponse {
+    Card card = 1;
 }
 
 service ProductService {
-	rpc GetCardsByProductID(ygo.common.ResourceID) returns (Product);
+	rpc GetCardsByProductID(GetCardsByProductIDRequest) returns (GetCardsByProductIDResponse);
 
-	rpc GetProductSummaryByID(ygo.common.ResourceID) returns (ProductSummary);
-	rpc GetProductsSummaryByID(ygo.common.ResourceIDs) returns (Products);
+	rpc GetProductSummaryByID(GetProductSummaryByIDRequest) returns (GetProductSummaryByIDResponse);
+	rpc GetProductsSummaryByID(GetProductsSummaryByIDRequest) returns (GetProductsSummaryByIDResponse);
+}
+
+message GetCardsByProductIDRequest {
+    ygo.common.ResourceID subject = 1;
+}
+
+message GetCardsByProductIDResponse {
+    Product product = 1;
+}
+
+message GetProductSummaryByIDRequest {
+    ygo.common.ResourceID subject = 1;
+}
+
+message GetProductSummaryByIDResponse {
+    ProductSummary product_summary = 1;
+}
+
+message GetProductsSummaryByIDRequest {
+    ygo.common.ResourceIDs subjects = 1;
+}
+
+message GetProductsSummaryByIDResponse {
+    Products products = 1;
 }
 
 service CardRestrictionService {
@@ -39,15 +132,19 @@ service ScoreService {
 	rpc GetScoresByFormatAndDate(RestrictedContentRequest) returns (ScoresForFormatAndDate);
 
 	rpc GetCardScoreByID(ygo.common.ResourceID) returns (CardScore);
-  	rpc GetCardScoresByIDs(ygo.common.ResourceIDs) returns (CardScores);
+  	rpc GetCardScoresByIDs(GetCardScoresByIDsRequest) returns (GetCardScoresByIDsResponse);
 }
 
-message CardColors {
-  map<string, uint32> values = 1;
+message GetCardScoresByIDsRequest {
+    ygo.common.ResourceIDs subjects = 1;
+}
+
+message GetCardScoresByIDsResponse {
+    CardScores scores = 1;
 }
 
 message Card {
-  string ID = 1;
+  string id = 1;
   string color = 2;
   string name = 3;
   string attribute = 4;
@@ -67,15 +164,15 @@ message CardList {
 }
 
 message Product {
-  string ID = 1;
+  string id = 1;
   string locale = 2;
   string name = 3;
   string type = 4;
-  string subType = 5;
-  string releaseDate = 6;
-  uint32 totalItems = 7;
+  string sub_type = 5;
+  string release_date = 6;
+  uint32 total_items = 7;
   repeated ProductItem items = 8;
-  map<string, uint32> rarityDistribution = 9;
+  map<string, uint32> rarity_distribution = 9;
 }
 
 message ProductItem {
@@ -85,13 +182,13 @@ message ProductItem {
 }
 
 message ProductSummary {
-  string ID = 1;
+  string id = 1;
   string locale = 2;
   string name = 3;
   string type = 4;
-  string subType = 5;
-  string releaseDate = 6;
-  uint32 totalItems = 7;
+  string sub_type = 5;
+  string release_date = 6;
+  uint32 total_items = 7;
 }
 
 message Products {

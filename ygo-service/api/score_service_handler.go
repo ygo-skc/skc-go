@@ -41,11 +41,11 @@ func (s *ygoScoreServiceServer) GetScoresByFormatAndDate(ctx context.Context, re
 }
 
 func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.ResourceID) (*ygo.CardScore, error) {
-	logger, newCtx := util.NewLogger(ctx, "Card Score", slog.String("card_id", req.ID))
+	logger, newCtx := util.NewLogger(ctx, "Card Score", slog.String("card_id", req.Id))
 
 	today := time.Now().In(chicagoLocation)
 	todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
-	if score, err := scoreRepo.GetCardScoreByID(newCtx, req.ID, todaysDate, parser); err != nil {
+	if score, err := scoreRepo.GetCardScoreByID(newCtx, req.Id, todaysDate, parser); err != nil {
 		return nil, err.Err()
 	} else {
 		if len(score.ScoreHistory) == 0 {
@@ -56,18 +56,18 @@ func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.R
 	}
 }
 
-func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo.ResourceIDs) (*ygo.CardScores, error) {
+func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo.GetCardScoresByIDsRequest) (*ygo.GetCardScoresByIDsResponse, error) {
 	_, newCtx := util.NewLogger(ctx, "Multi-card Score")
 
 	today := time.Now().In(chicagoLocation)
 	todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
-	if scores, err := scoreRepo.GetCardScoresByIDs(newCtx, req.IDs, todaysDate, parser); err != nil {
+	if scores, err := scoreRepo.GetCardScoresByIDs(newCtx, req.Subjects.Ids, todaysDate, parser); err != nil {
 		return nil, err.Err()
 	} else {
-		return &ygo.CardScores{
+		return &ygo.GetCardScoresByIDsResponse{Scores: &ygo.CardScores{
 			CardInfo:         scores,
-			UnknownResources: model.FindMissingKeys(scores, model.CardIDs(req.IDs)),
-		}, nil
+			UnknownResources: model.FindMissingKeys(scores, model.CardIDs(req.Subjects.Ids)),
+		}}, nil
 	}
 }
 
