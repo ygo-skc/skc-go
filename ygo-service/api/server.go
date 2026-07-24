@@ -92,7 +92,6 @@ func RunService() {
 		grpc.ConnectionTimeout(4*time.Second),
 
 		grpc.NumStreamWorkers(uint32(runtime.GOMAXPROCS(0))),
-		grpc.SharedWriteBuffer(true),
 
 		grpc.MaxRecvMsgSize(200<<10),
 		grpc.MaxSendMsgSize(2<<20),
