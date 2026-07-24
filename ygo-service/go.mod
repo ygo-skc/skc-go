@@ -6,7 +6,6 @@ require (
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/ygo-skc/skc-go/common/v3 v3.0.0-00010101000000-000000000000
 	google.golang.org/grpc v1.82.1
-	google.golang.org/protobuf v1.36.11
 )
 
 replace github.com/ygo-skc/skc-go/common/v3 => ../common
@@ -19,4 +18,5 @@ require (
 	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478 // indirect
+	google.golang.org/protobuf v1.36.11 // indirect
 )
