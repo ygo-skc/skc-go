@@ -73,10 +73,10 @@ func RunService() {
 		grpc.Creds(creds),
 		grpc.MaxConcurrentStreams(1024),
 
-		grpc.ReadBufferSize(256<<10),
-		grpc.WriteBufferSize(256<<10),
-		grpc.InitialWindowSize(512<<10),        // per stream setting
-		grpc.InitialConnWindowSize(5*512*1024), // if above 3 change, change the middle value here too - this controls how much data is sent for all streams in a connection
+		grpc.ReadBufferSize(64<<10),
+		grpc.WriteBufferSize(64<<10),
+		grpc.InitialWindowSize(256<<10),   // per stream setting
+		grpc.InitialConnWindowSize(4<<20), // this controls how much data is sent for all streams in a connection
 
 		grpc.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionIdle:     1 * time.Minute,  // how long a connection can last while idle
