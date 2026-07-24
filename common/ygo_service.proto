@@ -30,7 +30,7 @@ message GetCardColorsResponse {
 }
 
 message GetCardByIDRequest {
-    ygo.common.ResourceID subject = 1;
+    ygo.ResourceID subject = 1;
 }
 
 message GetCardByIDResponse {
@@ -38,7 +38,7 @@ message GetCardByIDResponse {
 }
 
 message GetCardsByIDRequest {
-    ygo.common.ResourceIDs subjects = 1;
+    ygo.ResourceIDs subjects = 1;
 }
 
 message GetCardsByIDResponse {
@@ -46,7 +46,7 @@ message GetCardsByIDResponse {
 }
 
 message GetCardsByNameRequest {
-    ygo.common.ResourceNames subjects = 1;
+    ygo.ResourceNames subjects = 1;
 }
 
 message GetCardsByNameResponse {
@@ -54,7 +54,7 @@ message GetCardsByNameResponse {
 }
 
 message GetCardsReferencingNameInEffectRequest {
-    ygo.common.ResourceNames subjects = 1;
+    ygo.ResourceNames subjects = 1;
 }
 
 message GetCardsReferencingNameInEffectResponse {
@@ -62,7 +62,7 @@ message GetCardsReferencingNameInEffectResponse {
 }
 
 message GetArchetypalCardsUsingCardNameRequest {
-    ygo.common.Archetype subject = 1;
+    ygo.Archetype subject = 1;
 }
 
 message GetArchetypalCardsUsingCardNameResponse {
@@ -70,7 +70,7 @@ message GetArchetypalCardsUsingCardNameResponse {
 }
 
 message GetExplicitArchetypalInclusionsRequest {
-    ygo.common.Archetype subject = 1;
+    ygo.Archetype subject = 1;
 }
 
 message GetExplicitArchetypalInclusionsResponse {
@@ -78,7 +78,7 @@ message GetExplicitArchetypalInclusionsResponse {
 }
 
 message GetExplicitArchetypalExclusionsRequest {
-    ygo.common.Archetype subject = 1;
+    ygo.Archetype subject = 1;
 }
 
 message GetExplicitArchetypalExclusionsResponse {
@@ -86,7 +86,7 @@ message GetExplicitArchetypalExclusionsResponse {
 }
 
 message GetRandomCardRequest {
-    ygo.common.BlackListed blacklist = 1;
+    ygo.BlackListed blacklist = 1;
 }
 
 message GetRandomCardResponse {
@@ -101,7 +101,7 @@ service ProductService {
 }
 
 message GetCardsByProductIDRequest {
-    ygo.common.ResourceID subject = 1;
+    ygo.ResourceID subject = 1;
 }
 
 message GetCardsByProductIDResponse {
@@ -109,7 +109,7 @@ message GetCardsByProductIDResponse {
 }
 
 message GetProductSummaryByIDRequest {
-    ygo.common.ResourceID subject = 1;
+    ygo.ResourceID subject = 1;
 }
 
 message GetProductSummaryByIDResponse {
@@ -117,7 +117,7 @@ message GetProductSummaryByIDResponse {
 }
 
 message GetProductsSummaryByIDRequest {
-    ygo.common.ResourceIDs subjects = 1;
+    ygo.ResourceIDs subjects = 1;
 }
 
 message GetProductsSummaryByIDResponse {
@@ -125,18 +125,18 @@ message GetProductsSummaryByIDResponse {
 }
 
 service CardRestrictionService {
-	rpc GetEffectiveTimelineForFormat(Format) returns (ygo.common.EffectiveTimeline);
+	rpc GetEffectiveTimelineForFormat(Format) returns (ygo.EffectiveTimeline);
 }
 
 service ScoreService {
 	rpc GetScoresByFormatAndDate(RestrictedContentRequest) returns (ScoresForFormatAndDate);
 
-	rpc GetCardScoreByID(ygo.common.ResourceID) returns (CardScore);
+	rpc GetCardScoreByID(ygo.ResourceID) returns (CardScore);
   	rpc GetCardScoresByIDs(GetCardScoresByIDsRequest) returns (GetCardScoresByIDsResponse);
 }
 
 message GetCardScoresByIDsRequest {
-    ygo.common.ResourceIDs subjects = 1;
+    ygo.ResourceIDs subjects = 1;
 }
 
 message GetCardScoresByIDsResponse {
@@ -203,7 +203,7 @@ message Format {
 message RestrictedContentRequest {
 	string format = 1;
 	string effective_date = 2;
-	common.CardRestrictionSortOrder sort_order = 3;
+	ygo.CardRestrictionSortOrder sort_order = 3;
 }
 
 // score specific data types

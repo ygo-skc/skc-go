@@ -1714,7 +1714,7 @@ type RestrictedContentRequest struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Format        string                   `protobuf:"bytes,1,opt,name=format,proto3" json:"format,omitempty"`
 	EffectiveDate string                   `protobuf:"bytes,2,opt,name=effective_date,json=effectiveDate,proto3" json:"effective_date,omitempty"`
-	SortOrder     CardRestrictionSortOrder `protobuf:"varint,3,opt,name=sort_order,json=sortOrder,proto3,enum=ygo.common.CardRestrictionSortOrder" json:"sort_order,omitempty"`
+	SortOrder     CardRestrictionSortOrder `protobuf:"varint,3,opt,name=sort_order,json=sortOrder,proto3,enum=ygo.CardRestrictionSortOrder" json:"sort_order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2096,55 +2096,55 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x06values\x18\x01 \x03(\v2&.ygo.GetCardColorsResponse.ValuesEntryR\x06values\x1a9\n" +
 	"\vValuesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"F\n" +
-	"\x12GetCardByIDRequest\x120\n" +
-	"\asubject\x18\x01 \x01(\v2\x16.ygo.common.ResourceIDR\asubject\"4\n" +
+	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"?\n" +
+	"\x12GetCardByIDRequest\x12)\n" +
+	"\asubject\x18\x01 \x01(\v2\x0f.ygo.ResourceIDR\asubject\"4\n" +
 	"\x13GetCardByIDResponse\x12\x1d\n" +
-	"\x04card\x18\x01 \x01(\v2\t.ygo.CardR\x04card\"J\n" +
-	"\x13GetCardsByIDRequest\x123\n" +
-	"\bsubjects\x18\x01 \x01(\v2\x17.ygo.common.ResourceIDsR\bsubjects\"8\n" +
+	"\x04card\x18\x01 \x01(\v2\t.ygo.CardR\x04card\"C\n" +
+	"\x13GetCardsByIDRequest\x12,\n" +
+	"\bsubjects\x18\x01 \x01(\v2\x10.ygo.ResourceIDsR\bsubjects\"8\n" +
 	"\x14GetCardsByIDResponse\x12 \n" +
 	"\x05cards\x18\x01 \x01(\v2\n" +
-	".ygo.CardsR\x05cards\"N\n" +
-	"\x15GetCardsByNameRequest\x125\n" +
-	"\bsubjects\x18\x01 \x01(\v2\x19.ygo.common.ResourceNamesR\bsubjects\":\n" +
+	".ygo.CardsR\x05cards\"G\n" +
+	"\x15GetCardsByNameRequest\x12.\n" +
+	"\bsubjects\x18\x01 \x01(\v2\x12.ygo.ResourceNamesR\bsubjects\":\n" +
 	"\x16GetCardsByNameResponse\x12 \n" +
 	"\x05cards\x18\x01 \x01(\v2\n" +
-	".ygo.CardsR\x05cards\"_\n" +
-	"&GetCardsReferencingNameInEffectRequest\x125\n" +
-	"\bsubjects\x18\x01 \x01(\v2\x19.ygo.common.ResourceNamesR\bsubjects\"N\n" +
+	".ygo.CardsR\x05cards\"X\n" +
+	"&GetCardsReferencingNameInEffectRequest\x12.\n" +
+	"\bsubjects\x18\x01 \x01(\v2\x12.ygo.ResourceNamesR\bsubjects\"N\n" +
 	"'GetCardsReferencingNameInEffectResponse\x12#\n" +
-	"\x05cards\x18\x01 \x01(\v2\r.ygo.CardListR\x05cards\"Y\n" +
-	"&GetArchetypalCardsUsingCardNameRequest\x12/\n" +
-	"\asubject\x18\x01 \x01(\v2\x15.ygo.common.ArchetypeR\asubject\"N\n" +
+	"\x05cards\x18\x01 \x01(\v2\r.ygo.CardListR\x05cards\"R\n" +
+	"&GetArchetypalCardsUsingCardNameRequest\x12(\n" +
+	"\asubject\x18\x01 \x01(\v2\x0e.ygo.ArchetypeR\asubject\"N\n" +
 	"'GetArchetypalCardsUsingCardNameResponse\x12#\n" +
-	"\x05cards\x18\x01 \x01(\v2\r.ygo.CardListR\x05cards\"Y\n" +
-	"&GetExplicitArchetypalInclusionsRequest\x12/\n" +
-	"\asubject\x18\x01 \x01(\v2\x15.ygo.common.ArchetypeR\asubject\"N\n" +
+	"\x05cards\x18\x01 \x01(\v2\r.ygo.CardListR\x05cards\"R\n" +
+	"&GetExplicitArchetypalInclusionsRequest\x12(\n" +
+	"\asubject\x18\x01 \x01(\v2\x0e.ygo.ArchetypeR\asubject\"N\n" +
 	"'GetExplicitArchetypalInclusionsResponse\x12#\n" +
-	"\x05cards\x18\x01 \x01(\v2\r.ygo.CardListR\x05cards\"Y\n" +
-	"&GetExplicitArchetypalExclusionsRequest\x12/\n" +
-	"\asubject\x18\x01 \x01(\v2\x15.ygo.common.ArchetypeR\asubject\"N\n" +
+	"\x05cards\x18\x01 \x01(\v2\r.ygo.CardListR\x05cards\"R\n" +
+	"&GetExplicitArchetypalExclusionsRequest\x12(\n" +
+	"\asubject\x18\x01 \x01(\v2\x0e.ygo.ArchetypeR\asubject\"N\n" +
 	"'GetExplicitArchetypalExclusionsResponse\x12#\n" +
-	"\x05cards\x18\x01 \x01(\v2\r.ygo.CardListR\x05cards\"M\n" +
-	"\x14GetRandomCardRequest\x125\n" +
-	"\tblacklist\x18\x01 \x01(\v2\x17.ygo.common.BlackListedR\tblacklist\"6\n" +
+	"\x05cards\x18\x01 \x01(\v2\r.ygo.CardListR\x05cards\"F\n" +
+	"\x14GetRandomCardRequest\x12.\n" +
+	"\tblacklist\x18\x01 \x01(\v2\x10.ygo.BlackListedR\tblacklist\"6\n" +
 	"\x15GetRandomCardResponse\x12\x1d\n" +
-	"\x04card\x18\x01 \x01(\v2\t.ygo.CardR\x04card\"N\n" +
-	"\x1aGetCardsByProductIDRequest\x120\n" +
-	"\asubject\x18\x01 \x01(\v2\x16.ygo.common.ResourceIDR\asubject\"E\n" +
+	"\x04card\x18\x01 \x01(\v2\t.ygo.CardR\x04card\"G\n" +
+	"\x1aGetCardsByProductIDRequest\x12)\n" +
+	"\asubject\x18\x01 \x01(\v2\x0f.ygo.ResourceIDR\asubject\"E\n" +
 	"\x1bGetCardsByProductIDResponse\x12&\n" +
-	"\aproduct\x18\x01 \x01(\v2\f.ygo.ProductR\aproduct\"P\n" +
-	"\x1cGetProductSummaryByIDRequest\x120\n" +
-	"\asubject\x18\x01 \x01(\v2\x16.ygo.common.ResourceIDR\asubject\"]\n" +
+	"\aproduct\x18\x01 \x01(\v2\f.ygo.ProductR\aproduct\"I\n" +
+	"\x1cGetProductSummaryByIDRequest\x12)\n" +
+	"\asubject\x18\x01 \x01(\v2\x0f.ygo.ResourceIDR\asubject\"]\n" +
 	"\x1dGetProductSummaryByIDResponse\x12<\n" +
-	"\x0fproduct_summary\x18\x01 \x01(\v2\x13.ygo.ProductSummaryR\x0eproductSummary\"T\n" +
-	"\x1dGetProductsSummaryByIDRequest\x123\n" +
-	"\bsubjects\x18\x01 \x01(\v2\x17.ygo.common.ResourceIDsR\bsubjects\"K\n" +
+	"\x0fproduct_summary\x18\x01 \x01(\v2\x13.ygo.ProductSummaryR\x0eproductSummary\"M\n" +
+	"\x1dGetProductsSummaryByIDRequest\x12,\n" +
+	"\bsubjects\x18\x01 \x01(\v2\x10.ygo.ResourceIDsR\bsubjects\"K\n" +
 	"\x1eGetProductsSummaryByIDResponse\x12)\n" +
-	"\bproducts\x18\x01 \x01(\v2\r.ygo.ProductsR\bproducts\"P\n" +
-	"\x19GetCardScoresByIDsRequest\x123\n" +
-	"\bsubjects\x18\x01 \x01(\v2\x17.ygo.common.ResourceIDsR\bsubjects\"E\n" +
+	"\bproducts\x18\x01 \x01(\v2\r.ygo.ProductsR\bproducts\"I\n" +
+	"\x19GetCardScoresByIDsRequest\x12,\n" +
+	"\bsubjects\x18\x01 \x01(\v2\x10.ygo.ResourceIDsR\bsubjects\"E\n" +
 	"\x1aGetCardScoresByIDsResponse\x12'\n" +
 	"\x06scores\x18\x01 \x01(\v2\x0f.ygo.CardScoresR\x06scores\"\xa5\x02\n" +
 	"\x04Card\x12\x0e\n" +
@@ -2198,12 +2198,12 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12)\n" +
 	"\x05value\x18\x02 \x01(\v2\x13.ygo.ProductSummaryR\x05value:\x028\x01\"\x1e\n" +
 	"\x06Format\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\tR\x05value\"\x9e\x01\n" +
+	"\x05value\x18\x01 \x01(\tR\x05value\"\x97\x01\n" +
 	"\x18RestrictedContentRequest\x12\x16\n" +
 	"\x06format\x18\x01 \x01(\tR\x06format\x12%\n" +
-	"\x0eeffective_date\x18\x02 \x01(\tR\reffectiveDate\x12C\n" +
+	"\x0eeffective_date\x18\x02 \x01(\tR\reffectiveDate\x12<\n" +
 	"\n" +
-	"sort_order\x18\x03 \x01(\x0e2$.ygo.common.CardRestrictionSortOrderR\tsortOrder\"\xc3\x02\n" +
+	"sort_order\x18\x03 \x01(\x0e2\x1d.ygo.CardRestrictionSortOrderR\tsortOrder\"\xc3\x02\n" +
 	"\x16ScoresForFormatAndDate\x12\x16\n" +
 	"\x06format\x18\x01 \x01(\tR\x06format\x12%\n" +
 	"\x0eeffective_date\x18\x02 \x01(\tR\reffectiveDate\x12F\n" +
@@ -2247,12 +2247,12 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x0eProductService\x12X\n" +
 	"\x13GetCardsByProductID\x12\x1f.ygo.GetCardsByProductIDRequest\x1a .ygo.GetCardsByProductIDResponse\x12^\n" +
 	"\x15GetProductSummaryByID\x12!.ygo.GetProductSummaryByIDRequest\x1a\".ygo.GetProductSummaryByIDResponse\x12a\n" +
-	"\x16GetProductsSummaryByID\x12\".ygo.GetProductsSummaryByIDRequest\x1a#.ygo.GetProductsSummaryByIDResponse2e\n" +
-	"\x16CardRestrictionService\x12K\n" +
-	"\x1dGetEffectiveTimelineForFormat\x12\v.ygo.Format\x1a\x1d.ygo.common.EffectiveTimeline2\xf9\x01\n" +
+	"\x16GetProductsSummaryByID\x12\".ygo.GetProductsSummaryByIDRequest\x1a#.ygo.GetProductsSummaryByIDResponse2^\n" +
+	"\x16CardRestrictionService\x12D\n" +
+	"\x1dGetEffectiveTimelineForFormat\x12\v.ygo.Format\x1a\x16.ygo.EffectiveTimeline2\xf2\x01\n" +
 	"\fScoreService\x12V\n" +
-	"\x18GetScoresByFormatAndDate\x12\x1d.ygo.RestrictedContentRequest\x1a\x1b.ygo.ScoresForFormatAndDate\x12:\n" +
-	"\x10GetCardScoreByID\x12\x16.ygo.common.ResourceID\x1a\x0e.ygo.CardScore\x12U\n" +
+	"\x18GetScoresByFormatAndDate\x12\x1d.ygo.RestrictedContentRequest\x1a\x1b.ygo.ScoresForFormatAndDate\x123\n" +
+	"\x10GetCardScoreByID\x12\x0f.ygo.ResourceID\x1a\x0e.ygo.CardScore\x12U\n" +
 	"\x12GetCardScoresByIDs\x12\x1e.ygo.GetCardScoresByIDsRequest\x1a\x1f.ygo.GetCardScoresByIDsResponseB\x06Z\x04/ygob\x06proto3"
 
 var (
@@ -2315,41 +2315,41 @@ var file_ygo_service_proto_goTypes = []any{
 	nil,                                             // 43: ygo.Products.ProductsEntry
 	nil,                                             // 44: ygo.CardScore.CurrentScoreByFormatEntry
 	nil,                                             // 45: ygo.CardScores.CardInfoEntry
-	(*ResourceID)(nil),                              // 46: ygo.common.ResourceID
-	(*ResourceIDs)(nil),                             // 47: ygo.common.ResourceIDs
-	(*ResourceNames)(nil),                           // 48: ygo.common.ResourceNames
-	(*Archetype)(nil),                               // 49: ygo.common.Archetype
-	(*BlackListed)(nil),                             // 50: ygo.common.BlackListed
+	(*ResourceID)(nil),                              // 46: ygo.ResourceID
+	(*ResourceIDs)(nil),                             // 47: ygo.ResourceIDs
+	(*ResourceNames)(nil),                           // 48: ygo.ResourceNames
+	(*Archetype)(nil),                               // 49: ygo.Archetype
+	(*BlackListed)(nil),                             // 50: ygo.BlackListed
 	(*wrapperspb.StringValue)(nil),                  // 51: google.protobuf.StringValue
 	(*wrapperspb.UInt32Value)(nil),                  // 52: google.protobuf.UInt32Value
-	(CardRestrictionSortOrder)(0),                   // 53: ygo.common.CardRestrictionSortOrder
-	(*EffectiveTimeline)(nil),                       // 54: ygo.common.EffectiveTimeline
+	(CardRestrictionSortOrder)(0),                   // 53: ygo.CardRestrictionSortOrder
+	(*EffectiveTimeline)(nil),                       // 54: ygo.EffectiveTimeline
 }
 var file_ygo_service_proto_depIdxs = []int32{
 	40, // 0: ygo.GetCardColorsResponse.values:type_name -> ygo.GetCardColorsResponse.ValuesEntry
-	46, // 1: ygo.GetCardByIDRequest.subject:type_name -> ygo.common.ResourceID
+	46, // 1: ygo.GetCardByIDRequest.subject:type_name -> ygo.ResourceID
 	26, // 2: ygo.GetCardByIDResponse.card:type_name -> ygo.Card
-	47, // 3: ygo.GetCardsByIDRequest.subjects:type_name -> ygo.common.ResourceIDs
+	47, // 3: ygo.GetCardsByIDRequest.subjects:type_name -> ygo.ResourceIDs
 	27, // 4: ygo.GetCardsByIDResponse.cards:type_name -> ygo.Cards
-	48, // 5: ygo.GetCardsByNameRequest.subjects:type_name -> ygo.common.ResourceNames
+	48, // 5: ygo.GetCardsByNameRequest.subjects:type_name -> ygo.ResourceNames
 	27, // 6: ygo.GetCardsByNameResponse.cards:type_name -> ygo.Cards
-	48, // 7: ygo.GetCardsReferencingNameInEffectRequest.subjects:type_name -> ygo.common.ResourceNames
+	48, // 7: ygo.GetCardsReferencingNameInEffectRequest.subjects:type_name -> ygo.ResourceNames
 	28, // 8: ygo.GetCardsReferencingNameInEffectResponse.cards:type_name -> ygo.CardList
-	49, // 9: ygo.GetArchetypalCardsUsingCardNameRequest.subject:type_name -> ygo.common.Archetype
+	49, // 9: ygo.GetArchetypalCardsUsingCardNameRequest.subject:type_name -> ygo.Archetype
 	28, // 10: ygo.GetArchetypalCardsUsingCardNameResponse.cards:type_name -> ygo.CardList
-	49, // 11: ygo.GetExplicitArchetypalInclusionsRequest.subject:type_name -> ygo.common.Archetype
+	49, // 11: ygo.GetExplicitArchetypalInclusionsRequest.subject:type_name -> ygo.Archetype
 	28, // 12: ygo.GetExplicitArchetypalInclusionsResponse.cards:type_name -> ygo.CardList
-	49, // 13: ygo.GetExplicitArchetypalExclusionsRequest.subject:type_name -> ygo.common.Archetype
+	49, // 13: ygo.GetExplicitArchetypalExclusionsRequest.subject:type_name -> ygo.Archetype
 	28, // 14: ygo.GetExplicitArchetypalExclusionsResponse.cards:type_name -> ygo.CardList
-	50, // 15: ygo.GetRandomCardRequest.blacklist:type_name -> ygo.common.BlackListed
+	50, // 15: ygo.GetRandomCardRequest.blacklist:type_name -> ygo.BlackListed
 	26, // 16: ygo.GetRandomCardResponse.card:type_name -> ygo.Card
-	46, // 17: ygo.GetCardsByProductIDRequest.subject:type_name -> ygo.common.ResourceID
+	46, // 17: ygo.GetCardsByProductIDRequest.subject:type_name -> ygo.ResourceID
 	29, // 18: ygo.GetCardsByProductIDResponse.product:type_name -> ygo.Product
-	46, // 19: ygo.GetProductSummaryByIDRequest.subject:type_name -> ygo.common.ResourceID
+	46, // 19: ygo.GetProductSummaryByIDRequest.subject:type_name -> ygo.ResourceID
 	31, // 20: ygo.GetProductSummaryByIDResponse.product_summary:type_name -> ygo.ProductSummary
-	47, // 21: ygo.GetProductsSummaryByIDRequest.subjects:type_name -> ygo.common.ResourceIDs
+	47, // 21: ygo.GetProductsSummaryByIDRequest.subjects:type_name -> ygo.ResourceIDs
 	32, // 22: ygo.GetProductsSummaryByIDResponse.products:type_name -> ygo.Products
-	47, // 23: ygo.GetCardScoresByIDsRequest.subjects:type_name -> ygo.common.ResourceIDs
+	47, // 23: ygo.GetCardScoresByIDsRequest.subjects:type_name -> ygo.ResourceIDs
 	38, // 24: ygo.GetCardScoresByIDsResponse.scores:type_name -> ygo.CardScores
 	51, // 25: ygo.Card.monster_type:type_name -> google.protobuf.StringValue
 	52, // 26: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
@@ -2360,7 +2360,7 @@ var file_ygo_service_proto_depIdxs = []int32{
 	42, // 31: ygo.Product.rarity_distribution:type_name -> ygo.Product.RarityDistributionEntry
 	26, // 32: ygo.ProductItem.card:type_name -> ygo.Card
 	43, // 33: ygo.Products.products:type_name -> ygo.Products.ProductsEntry
-	53, // 34: ygo.RestrictedContentRequest.sort_order:type_name -> ygo.common.CardRestrictionSortOrder
+	53, // 34: ygo.RestrictedContentRequest.sort_order:type_name -> ygo.CardRestrictionSortOrder
 	51, // 35: ygo.ScoresForFormatAndDate.next_format_date:type_name -> google.protobuf.StringValue
 	51, // 36: ygo.ScoresForFormatAndDate.previous_format_date:type_name -> google.protobuf.StringValue
 	36, // 37: ygo.ScoresForFormatAndDate.entries:type_name -> ygo.CardScoreEntry
@@ -2385,7 +2385,7 @@ var file_ygo_service_proto_depIdxs = []int32{
 	22, // 56: ygo.ProductService.GetProductsSummaryByID:input_type -> ygo.GetProductsSummaryByIDRequest
 	33, // 57: ygo.CardRestrictionService.GetEffectiveTimelineForFormat:input_type -> ygo.Format
 	34, // 58: ygo.ScoreService.GetScoresByFormatAndDate:input_type -> ygo.RestrictedContentRequest
-	46, // 59: ygo.ScoreService.GetCardScoreByID:input_type -> ygo.common.ResourceID
+	46, // 59: ygo.ScoreService.GetCardScoreByID:input_type -> ygo.ResourceID
 	24, // 60: ygo.ScoreService.GetCardScoresByIDs:input_type -> ygo.GetCardScoresByIDsRequest
 	1,  // 61: ygo.CardService.GetCardColors:output_type -> ygo.GetCardColorsResponse
 	3,  // 62: ygo.CardService.GetCardByID:output_type -> ygo.GetCardByIDResponse
@@ -2399,7 +2399,7 @@ var file_ygo_service_proto_depIdxs = []int32{
 	19, // 70: ygo.ProductService.GetCardsByProductID:output_type -> ygo.GetCardsByProductIDResponse
 	21, // 71: ygo.ProductService.GetProductSummaryByID:output_type -> ygo.GetProductSummaryByIDResponse
 	23, // 72: ygo.ProductService.GetProductsSummaryByID:output_type -> ygo.GetProductsSummaryByIDResponse
-	54, // 73: ygo.CardRestrictionService.GetEffectiveTimelineForFormat:output_type -> ygo.common.EffectiveTimeline
+	54, // 73: ygo.CardRestrictionService.GetEffectiveTimelineForFormat:output_type -> ygo.EffectiveTimeline
 	35, // 74: ygo.ScoreService.GetScoresByFormatAndDate:output_type -> ygo.ScoresForFormatAndDate
 	37, // 75: ygo.ScoreService.GetCardScoreByID:output_type -> ygo.CardScore
 	25, // 76: ygo.ScoreService.GetCardScoresByIDs:output_type -> ygo.GetCardScoresByIDsResponse

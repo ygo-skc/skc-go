@@ -447,8 +447,7 @@ var File_common_proto protoreflect.FileDescriptor
 
 const file_common_proto_rawDesc = "" +
 	"\n" +
-	"\fcommon.proto\x12\n" +
-	"ygo.common\"\x1c\n" +
+	"\fcommon.proto\x12\x03ygo\"\x1c\n" +
 	"\n" +
 	"ResourceID\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
@@ -490,15 +489,15 @@ func file_common_proto_rawDescGZIP() []byte {
 var file_common_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_common_proto_goTypes = []any{
-	(CardRestrictionSortOrder)(0), // 0: ygo.common.CardRestrictionSortOrder
-	(*ResourceID)(nil),            // 1: ygo.common.ResourceID
-	(*ResourceIDs)(nil),           // 2: ygo.common.ResourceIDs
-	(*ResourceName)(nil),          // 3: ygo.common.ResourceName
-	(*ResourceNames)(nil),         // 4: ygo.common.ResourceNames
-	(*SearchTerm)(nil),            // 5: ygo.common.SearchTerm
-	(*Archetype)(nil),             // 6: ygo.common.Archetype
-	(*BlackListed)(nil),           // 7: ygo.common.BlackListed
-	(*EffectiveTimeline)(nil),     // 8: ygo.common.EffectiveTimeline
+	(CardRestrictionSortOrder)(0), // 0: ygo.CardRestrictionSortOrder
+	(*ResourceID)(nil),            // 1: ygo.ResourceID
+	(*ResourceIDs)(nil),           // 2: ygo.ResourceIDs
+	(*ResourceName)(nil),          // 3: ygo.ResourceName
+	(*ResourceNames)(nil),         // 4: ygo.ResourceNames
+	(*SearchTerm)(nil),            // 5: ygo.SearchTerm
+	(*Archetype)(nil),             // 6: ygo.Archetype
+	(*BlackListed)(nil),           // 7: ygo.BlackListed
+	(*EffectiveTimeline)(nil),     // 8: ygo.EffectiveTimeline
 }
 var file_common_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
