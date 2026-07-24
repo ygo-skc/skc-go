@@ -16,7 +16,7 @@ var (
 )
 
 const (
-	maxPoolSize = 150
+	maxOpenConn = 100
 	maxIdle     = 50
 )
 
@@ -41,7 +41,7 @@ func EstablishDBConn() {
 	}
 	skcDBConn = sql.OpenDB(connector)
 
-	skcDBConn.SetMaxOpenConns(maxPoolSize)
+	skcDBConn.SetMaxOpenConns(maxOpenConn)
 	skcDBConn.SetConnMaxLifetime(20 * time.Minute)
 
 	skcDBConn.SetMaxIdleConns(maxIdle)
