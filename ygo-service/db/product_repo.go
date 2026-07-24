@@ -85,11 +85,7 @@ func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.Produ
 		}
 
 		// running total of all rarities
-		if num, exists := rarityDistribution[rarity]; exists {
-			rarityDistribution[rarity] = num + 1
-		} else {
-			rarityDistribution[rarity] = 1
-		}
+		rarityDistribution[rarity]++
 	}
 
 	if err := rows.Err(); err != nil {
@@ -150,10 +146,14 @@ func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, prod
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving product summaries", slog.Any("product_ids", products))
 
-	args, numProducts := buildVariableQuerySubjects(products)
-	productData := make(map[string]*ygo.ProductSummary, numProducts)
+	if len(products) == 0 {
+		return &ygo.Products{Products: make(map[string]*ygo.ProductSummary)}, nil
+	}
 
-	query := fmt.Sprintf(productInfoByIDs, variablePlaceholders(numProducts))
+	args := buildVariableQuerySubjects(products)
+	productData := make(map[string]*ygo.ProductSummary, len(products))
+
+	query := fmt.Sprintf(productInfoByIDs, variablePlaceholders(len(products)))
 
 	rows, err := skcDBConn.QueryContext(ctx, query, args...)
 	if err != nil {

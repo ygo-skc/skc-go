@@ -94,10 +94,10 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 
 	var sortingSubQuery string
 	switch sortOrder {
-	case ygo.CardRestrictionSortOrder_CARD_RESTRICTION_SORT_ORDER_UNSPECIFIED:
-		sortingSubQuery = "card_color, card_name"
 	case ygo.CardRestrictionSortOrder_CARD_RESTRICTION_SORT_ORDER_SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC:
 		sortingSubQuery = "score DESC, card_color, card_name"
+	default:
+		sortingSubQuery = "card_color, card_name"
 	}
 
 	query := fmt.Sprintf(cardScoreByFormatAndDateQuery, sortingSubQuery)
@@ -114,7 +114,6 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 		score                              uint32
 	)
 	entries := make([]*ygo.CardScoreEntry, 0, 600)
-	var numEntries uint32
 
 	for rows.Next() {
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &score); err != nil {
@@ -131,13 +130,12 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 				Build(),
 			Score: score,
 		})
-		numEntries++
 	}
 
 	if err := rows.Err(); err != nil {
 		return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
 	}
-	return entries, numEntries, nil
+	return entries, uint32(len(entries)), nil
 }
 
 func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID string, todaysDate time.Time,
@@ -179,8 +177,12 @@ func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card score data", slog.Any("card_ids", cardIDs))
 
-	args, numCards := buildVariableQuerySubjects(cardIDs)
-	query := fmt.Sprintf(multiCardScoreQuery, variablePlaceholders(numCards))
+	if len(cardIDs) == 0 {
+		return make(map[string]*ygo.CardScore), nil
+	}
+
+	args := buildVariableQuerySubjects(cardIDs)
+	query := fmt.Sprintf(multiCardScoreQuery, variablePlaceholders(len(cardIDs)))
 
 	rows, err := skcDBConn.QueryContext(ctx, query, args...)
 	if err != nil {

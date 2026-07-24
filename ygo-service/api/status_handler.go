@@ -8,7 +8,7 @@ import (
 )
 
 func (s *healthServiceServer) APIStatus(ctx context.Context, req *health.APIStatusRequest) (*health.APIStatusResponse, error) {
-	logger, _ := util.NewLogger(context.Background(), "Status")
+	logger, _ := util.NewLogger(ctx, "Status")
 	logger.Info("Retrieving status of gRPC service")
 
 	return &health.APIStatusResponse{Version: "3.0.0"}, nil

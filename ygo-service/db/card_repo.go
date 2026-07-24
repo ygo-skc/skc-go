@@ -135,7 +135,7 @@ LIMIT
 	1`
 )
 
-func queryCard(ctx context.Context, logger *slog.Logger, query string, args []any) (*ygo.Card, *status.Status) {
+func queryCard(ctx context.Context, logger *slog.Logger, query string, args ...any) (*ygo.Card, *status.Status) {
 	var (
 		id, color, name, attribute, effect string
 		monsterType                        *string
@@ -249,11 +249,9 @@ func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*y
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card data", slog.String("card_id", cardID))
 
-	args := make([]any, 1)
-	args[0] = cardID
 	query := fmt.Sprintf(cardByCardIDQuery, cardAttributes)
 
-	c, err := queryCard(ctx, logger, query, args)
+	c, err := queryCard(ctx, logger, query, cardID)
 	if err != nil && err.Code() == codes.NotFound {
 		logger.Info("Card ID not found", slog.String("card_id", cardID))
 	}
@@ -264,8 +262,12 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card data", slog.Any("card_ids", cardIDs))
 
-	args, numCards := buildVariableQuerySubjects(cardIDs)
-	query := fmt.Sprintf(cardsByCardIDsQuery, cardAttributes, variablePlaceholders(numCards))
+	if len(cardIDs) == 0 {
+		return &ygo.Cards{CardInfo: make(map[string]*ygo.Card)}, nil
+	}
+
+	args := buildVariableQuerySubjects(cardIDs)
+	query := fmt.Sprintf(cardsByCardIDsQuery, cardAttributes, variablePlaceholders(len(cardIDs)))
 
 	rows, err := skcDBConn.QueryContext(ctx, query, args...)
 	if err != nil {
@@ -273,7 +275,7 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 	}
 	defer rows.Close()
 
-	cards := make(map[string]*ygo.Card, 0)
+	cards := make(map[string]*ygo.Card, len(cardIDs))
 	if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingIDKey); err != nil {
 		return nil, err
 	}
@@ -288,8 +290,12 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card data", slog.Int("card_name_count", len(cardNames)))
 
-	args, numCards := buildVariableQuerySubjects(cardNames)
-	query := fmt.Sprintf(cardsByCardNamesQuery, cardAttributes, variablePlaceholders(numCards))
+	if len(cardNames) == 0 {
+		return &ygo.Cards{CardInfo: make(map[string]*ygo.Card)}, nil
+	}
+
+	args := buildVariableQuerySubjects(cardNames)
+	query := fmt.Sprintf(cardsByCardNamesQuery, cardAttributes, variablePlaceholders(len(cardNames)))
 
 	rows, err := skcDBConn.QueryContext(ctx, query, args...)
 	if err != nil {
@@ -297,7 +303,7 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	}
 	defer rows.Close()
 
-	cards := make(map[string]*ygo.Card, 0)
+	cards := make(map[string]*ygo.Card, len(cardNames))
 	if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingNameKey); err != nil {
 		return nil, err
 	}
@@ -402,11 +408,11 @@ func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards
 	if numBlackListed == 0 {
 		query = fmt.Sprintf(randomCardQuery, cardAttributes)
 	} else {
-		args, _ = buildVariableQuerySubjects(blacklistedCards)
+		args = buildVariableQuerySubjects(blacklistedCards)
 		query = fmt.Sprintf(randomCardWithBlackListQuery, cardAttributes, variablePlaceholders(numBlackListed))
 	}
 
-	c, err := queryCard(ctx, logger, query, args)
+	c, err := queryCard(ctx, logger, query, args...)
 	if err == nil {
 		logger.Info("Random card selected", slog.String("card_id", c.Id), slog.String("card_name", c.Name))
 	}

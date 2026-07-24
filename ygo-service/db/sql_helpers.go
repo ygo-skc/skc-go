@@ -17,10 +17,7 @@ const (
 	genericError = "Error occurred while querying DB"
 )
 
-var (
-	spaceRegex = regexp.MustCompile(`[ ]+`)
-	quoteRegex = regexp.MustCompile(`['"]`)
-)
+var quoteRegex = regexp.MustCompile(`['"]`)
 
 func handleQueryError(logger *slog.Logger, err error) *status.Status {
 	logger.Error("Error fetching data from DB", slog.Any("err", err))
@@ -50,15 +47,14 @@ func convertToFullText(subject string) string {
 	return fmt.Sprintf(`"%s"`, quoteRegex.ReplaceAllString(subject, "")) // match phrase
 }
 
-func buildVariableQuerySubjects(subjects []string) ([]any, int) {
-	numSubjects := len(subjects)
-	args := make([]any, numSubjects)
+func buildVariableQuerySubjects(subjects []string) []any {
+	args := make([]any, len(subjects))
 
 	for index, subject := range subjects {
 		args[index] = subject
 	}
 
-	return args, numSubjects
+	return args
 }
 
 func variablePlaceholders(totalFields int) string {
