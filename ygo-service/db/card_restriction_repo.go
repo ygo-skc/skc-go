@@ -32,6 +32,8 @@ func (imp YGOCardRestrictionRepository) GetDatesForFormat(ctx context.Context, f
 	if rows, err := skcDBConn.Query(datesForFormatQuery, format); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
+		defer rows.Close()
+
 		scores := make([]string, 0, 5)
 		var date string
 
@@ -41,6 +43,10 @@ func (imp YGOCardRestrictionRepository) GetDatesForFormat(ctx context.Context, f
 			} else {
 				scores = append(scores, date)
 			}
+		}
+
+		if err := rows.Err(); err != nil {
+			return nil, handleQueryError(logger, err)
 		}
 		return scores, nil
 	}

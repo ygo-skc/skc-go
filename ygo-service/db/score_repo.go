@@ -104,6 +104,8 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 	if rows, err := skcDBConn.Query(query, format, effectiveDate); err != nil {
 		return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
 	} else {
+		defer rows.Close()
+
 		var (
 			id, color, name, attribute, effect string
 			monsterType                        *string
@@ -130,6 +132,10 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 			})
 			numEntries++
 		}
+
+		if err := rows.Err(); err != nil {
+			return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
+		}
 		return entries, numEntries, nil
 	}
 }
@@ -143,6 +149,8 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 	if rows, err := skcDBConn.Query(cardScoreQuery, cardID, cardID); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
+		defer rows.Close()
+
 		score := &ygo.CardScore{
 			CurrentScoreByFormat: make(map[string]uint32, 3),
 			UniqueFormats:        make([]string, 0, 3),
@@ -156,6 +164,10 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 			} else {
 				parser(score, entry, todaysDate)
 			}
+		}
+
+		if err := rows.Err(); err != nil {
+			return nil, handleQueryError(logger, err)
 		}
 		return score, nil
 	}
@@ -173,6 +185,8 @@ func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
+		defer rows.Close()
+
 		scoresByID := make(map[string]*ygo.CardScore)
 
 		for rows.Next() {
@@ -189,6 +203,10 @@ func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []
 				}
 				parser(scoresByID[cardID], score, todaysDate)
 			}
+		}
+
+		if err := rows.Err(); err != nil {
+			return nil, handleQueryError(logger, err)
 		}
 		return scoresByID, nil
 	}

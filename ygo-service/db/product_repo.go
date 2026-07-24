@@ -92,6 +92,9 @@ func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.Produ
 		}
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, nil, handleQueryError(util.RetrieveLogger(ctx), err)
+	}
 	return items, rarityDistribution, nil
 }
 
@@ -114,6 +117,8 @@ func (imp YGOProductRepository) GetCardsByProductID(ctx context.Context, product
 		if rows, err := skcDBConn.Query(query, productID); err != nil {
 			return nil, handleQueryError(logger, err)
 		} else {
+			defer rows.Close()
+
 			if items, rarityDistribution, err := parseRowsForProductItems(ctx, rows); err != nil {
 				return nil, err
 			} else {
@@ -150,6 +155,8 @@ func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, prod
 	if rows, err := skcDBConn.Query(query, args...); err != nil {
 		return nil, handleQueryError(logger, err)
 	} else {
+		defer rows.Close()
+
 		for rows.Next() {
 			var id, locale, name, t, subType, releaseDate string
 			var totalItems uint32
@@ -159,6 +166,10 @@ func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, prod
 			}
 
 			productData[id] = &ygo.ProductSummary{Id: id, Locale: locale, Name: name, Type: t, SubType: subType, ReleaseDate: releaseDate, TotalItems: totalItems}
+		}
+
+		if err := rows.Err(); err != nil {
+			return nil, handleQueryError(logger, err)
 		}
 	}
 
