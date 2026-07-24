@@ -1,12 +1,13 @@
 package db
 
 import (
+	"context"
 	"database/sql"
-	"fmt"
 	"log/slog"
 	"os"
 	"time"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/ygo-skc/skc-go/common/v3/util"
 )
 
@@ -16,21 +17,40 @@ var (
 
 const (
 	maxPoolSize = 150
+	maxIdle     = 50
 )
 
 // Connect to SKC database.
 func EstablishDBConn() {
-	uri := "%s:%s@tcp(%s)/%s"
-	dataSourceName := fmt.Sprintf(uri, util.EnvMap["SKC_DB_USERNAME"], util.EnvMap["SKC_DB_PASSWORD"], util.EnvMap["SKC_DB_HOST"],
-		util.EnvMap["SKC_DB_NAME"])
+	config := mysql.NewConfig()
+	config.User = util.EnvMap["SKC_DB_USERNAME"]
+	config.Passwd = util.EnvMap["SKC_DB_PASSWORD"]
+	config.Net = "tcp"
+	config.Addr = util.EnvMap["SKC_DB_HOST"]
+	config.DBName = util.EnvMap["SKC_DB_NAME"]
 
-	var err error
-	if skcDBConn, err = sql.Open("mysql", dataSourceName); err != nil {
-		slog.Error("Failed to establish DB connection", slog.Any("err", err))
+	config.Timeout = 2 * time.Second
+	config.ReadTimeout = 2 * time.Second
+	config.WriteTimeout = 2 * time.Second
+	config.InterpolateParams = true
+
+	connector, err := mysql.NewConnector(config)
+	if err != nil {
+		slog.Error("Failed to configure DB connection", slog.Any("err", err))
 		os.Exit(1)
 	}
+	skcDBConn = sql.OpenDB(connector)
 
 	skcDBConn.SetMaxOpenConns(maxPoolSize)
-	skcDBConn.SetConnMaxLifetime(1 * time.Hour)
-	skcDBConn.SetConnMaxIdleTime(30 * time.Minute)
+	skcDBConn.SetConnMaxLifetime(20 * time.Minute)
+
+	skcDBConn.SetMaxIdleConns(maxIdle)
+	skcDBConn.SetConnMaxIdleTime(10 * time.Minute)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := skcDBConn.PingContext(ctx); err != nil {
+		slog.Error("Failed to ping DB", slog.Any("err", err))
+		os.Exit(1)
+	}
 }
