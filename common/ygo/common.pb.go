@@ -24,19 +24,19 @@ const (
 type CardRestrictionSortOrder int32
 
 const (
-	CardRestrictionSortOrder_CARD_COLOR_ASC_CARD_NAME_ASC            CardRestrictionSortOrder = 0
-	CardRestrictionSortOrder_SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC CardRestrictionSortOrder = 1
+	CardRestrictionSortOrder_CARD_RESTRICTION_SORT_ORDER_UNSPECIFIED                             CardRestrictionSortOrder = 0
+	CardRestrictionSortOrder_CARD_RESTRICTION_SORT_ORDER_SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC CardRestrictionSortOrder = 1
 )
 
 // Enum value maps for CardRestrictionSortOrder.
 var (
 	CardRestrictionSortOrder_name = map[int32]string{
-		0: "CARD_COLOR_ASC_CARD_NAME_ASC",
-		1: "SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC",
+		0: "CARD_RESTRICTION_SORT_ORDER_UNSPECIFIED",
+		1: "CARD_RESTRICTION_SORT_ORDER_SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC",
 	}
 	CardRestrictionSortOrder_value = map[string]int32{
-		"CARD_COLOR_ASC_CARD_NAME_ASC":            0,
-		"SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC": 1,
+		"CARD_RESTRICTION_SORT_ORDER_UNSPECIFIED":                             0,
+		"CARD_RESTRICTION_SORT_ORDER_SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC": 1,
 	}
 )
 
@@ -469,10 +469,10 @@ const file_common_proto_rawDesc = "" +
 	"\tall_dates\x18\x01 \x03(\tR\ballDates\x12!\n" +
 	"\ffuture_dates\x18\x02 \x03(\tR\vfutureDates\x12\x1f\n" +
 	"\vactive_date\x18\x03 \x01(\tR\n" +
-	"activeDate*i\n" +
-	"\x18CardRestrictionSortOrder\x12 \n" +
-	"\x1cCARD_COLOR_ASC_CARD_NAME_ASC\x10\x00\x12+\n" +
-	"'SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC\x10\x01B\x06Z\x04/ygob\x06proto3"
+	"activeDate*\x90\x01\n" +
+	"\x18CardRestrictionSortOrder\x12+\n" +
+	"'CARD_RESTRICTION_SORT_ORDER_UNSPECIFIED\x10\x00\x12G\n" +
+	"CCARD_RESTRICTION_SORT_ORDER_SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC\x10\x01B\x06Z\x04/ygob\x06proto3"
 
 var (
 	file_common_proto_rawDescOnce sync.Once
