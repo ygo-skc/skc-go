@@ -29,25 +29,24 @@ func (imp YGOCardRestrictionRepository) GetDatesForFormat(ctx context.Context, f
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving effective dates", slog.String("format", format))
 
-	if rows, err := skcDBConn.Query(datesForFormatQuery, format); err != nil {
+	rows, err := skcDBConn.Query(datesForFormatQuery, format)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		scores := make([]string, 0, 5)
-		var date string
-
-		for rows.Next() {
-			if err := rows.Scan(&date); err != nil {
-				return nil, handleRowParsingError(logger, err)
-			} else {
-				scores = append(scores, date)
-			}
-		}
-
-		if err := rows.Err(); err != nil {
-			return nil, handleQueryError(logger, err)
-		}
-		return scores, nil
 	}
+	defer rows.Close()
+
+	scores := make([]string, 0, 5)
+	var date string
+
+	for rows.Next() {
+		if err := rows.Scan(&date); err != nil {
+			return nil, handleRowParsingError(logger, err)
+		}
+		scores = append(scores, date)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+	return scores, nil
 }

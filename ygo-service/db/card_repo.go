@@ -168,18 +168,17 @@ func parseCardRows[T []*ygo.Card | map[string]*ygo.Card](ctx context.Context, ro
 	for rows.Next() {
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def); err != nil {
 			return handleRowParsingError(util.RetrieveLogger(ctx), err)
-		} else {
-			collector(
-				dataStructure,
-				model.NewYGOCardProtoBuilder(id, name).
-					WithColor(color).
-					WithAttribute(attribute).
-					WithEffect(effect).
-					WithMonsterType(monsterType).
-					WithAttack(atk).
-					WithDefense(def).
-					Build())
 		}
+		collector(
+			dataStructure,
+			model.NewYGOCardProtoBuilder(id, name).
+				WithColor(color).
+				WithAttribute(attribute).
+				WithEffect(effect).
+				WithMonsterType(monsterType).
+				WithAttack(atk).
+				WithDefense(def).
+				Build())
 	}
 
 	if err := rows.Err(); err != nil {
@@ -222,30 +221,30 @@ func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (map[string]ui
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card colors")
 
-	if rows, err := skcDBConn.Query(cardColorIDsQuery); err != nil {
+	rows, err := skcDBConn.Query(cardColorIDsQuery)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		cardColorIDs := make(map[string]uint32, 18)
-		for rows.Next() {
-			var colorId uint32
-			var cardColor string
-
-			if err := rows.Scan(&colorId, &cardColor); err != nil {
-				return nil, handleRowParsingError(logger, err)
-			}
-
-			cardColorIDs[cardColor] = colorId
-		}
-
-		if err := rows.Err(); err != nil {
-			return nil, handleQueryError(logger, err)
-		}
-
-		logger.Info("Retrieved card colors", slog.Int("count", len(cardColorIDs)))
-		return cardColorIDs, nil
 	}
+	defer rows.Close()
+
+	cardColorIDs := make(map[string]uint32, 18)
+	for rows.Next() {
+		var colorId uint32
+		var cardColor string
+
+		if err := rows.Scan(&colorId, &cardColor); err != nil {
+			return nil, handleRowParsingError(logger, err)
+		}
+
+		cardColorIDs[cardColor] = colorId
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+
+	logger.Info("Retrieved card colors", slog.Int("count", len(cardColorIDs)))
+	return cardColorIDs, nil
 }
 
 func (imp YGOCardRepository) GetCardByID(ctx context.Context, cardID string) (*ygo.Card, *status.Status) {
@@ -270,21 +269,20 @@ func (imp YGOCardRepository) GetCardsByIDs(ctx context.Context, cardIDs model.Ca
 	args, numCards := buildVariableQuerySubjects(cardIDs)
 	query := fmt.Sprintf(cardsByCardIDsQuery, cardAttributes, variablePlaceholders(numCards))
 
-	if rows, err := skcDBConn.Query(query, args...); err != nil {
+	rows, err := skcDBConn.Query(query, args...)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		cards := make(map[string]*ygo.Card, 0)
-		if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingIDKey); err != nil {
-			return nil, err
-		} else {
-			return &ygo.Cards{
-				CardInfo:         cards,
-				UnknownResources: model.FindMissingKeys(cards, cardIDs),
-			}, nil
-		}
 	}
+	defer rows.Close()
+
+	cards := make(map[string]*ygo.Card, 0)
+	if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingIDKey); err != nil {
+		return nil, err
+	}
+	return &ygo.Cards{
+		CardInfo:         cards,
+		UnknownResources: model.FindMissingKeys(cards, cardIDs),
+	}, nil
 }
 
 // Uses card names to find instance of card
@@ -295,21 +293,20 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	args, numCards := buildVariableQuerySubjects(cardNames)
 	query := fmt.Sprintf(cardsByCardNamesQuery, cardAttributes, variablePlaceholders(numCards))
 
-	if rows, err := skcDBConn.Query(query, args...); err != nil {
+	rows, err := skcDBConn.Query(query, args...)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		cards := make(map[string]*ygo.Card, 0)
-		if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingNameKey); err != nil {
-			return nil, err
-		} else {
-			return &ygo.Cards{
-				CardInfo:         cards,
-				UnknownResources: model.FindMissingKeys(cards, cardNames),
-			}, nil
-		}
 	}
+	defer rows.Close()
+
+	cards := make(map[string]*ygo.Card, 0)
+	if err := parseCardRows(ctx, rows, &cards, collectWithMapUsingNameKey); err != nil {
+		return nil, err
+	}
+	return &ygo.Cards{
+		CardInfo:         cards,
+		UnknownResources: model.FindMissingKeys(cards, cardNames),
+	}, nil
 }
 
 func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context, namesOfCards []string) (*ygo.CardList, *status.Status) {
@@ -318,9 +315,8 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 	if numCards == 0 {
 		logger.Info("No card names provided, returning empty list of references")
 		return &ygo.CardList{Cards: []*ygo.Card{}}, nil
-	} else {
-		logger.Info("Retrieving cards referencing card names in effect text", slog.Any("names", namesOfCards))
 	}
+	logger.Info("Retrieving cards referencing card names in effect text", slog.Any("names", namesOfCards))
 
 	fullTextNames := make([]string, numCards)
 	for ind, name := range namesOfCards {
@@ -328,18 +324,17 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 	}
 
 	query := fmt.Sprintf(searchCardUsingEffectQuery, cardAttributes)
-	if rows, err := skcDBConn.Query(query, strings.Join(fullTextNames, " ")); err != nil {
+	rows, err := skcDBConn.Query(query, strings.Join(fullTextNames, " "))
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		cards := make([]*ygo.Card, 0)
-		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
-			return nil, err
-		} else {
-			return &ygo.CardList{Cards: cards}, err
-		}
 	}
+	defer rows.Close()
+
+	cards := make([]*ygo.Card, 0)
+	if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
+		return nil, err
+	}
+	return &ygo.CardList{Cards: cards}, nil
 }
 
 func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
@@ -348,18 +343,17 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	searchTerm := `%` + archetypeName + `%`
 
 	query := fmt.Sprintf(archetypalCardsUsingCardNameQuery, cardAttributes)
-	if rows, err := skcDBConn.Query(query, searchTerm); err != nil {
+	rows, err := skcDBConn.Query(query, searchTerm)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		cards := make([]*ygo.Card, 0)
-		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
-			return nil, err
-		} else {
-			return &ygo.CardList{Cards: cards}, err
-		}
 	}
+	defer rows.Close()
+
+	cards := make([]*ygo.Card, 0)
+	if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
+		return nil, err
+	}
+	return &ygo.CardList{Cards: cards}, nil
 }
 
 func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
@@ -368,18 +362,17 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 
 	subQuery := fmt.Sprintf(archetypeInclusionSubQuery, cardAttributes, archetypeName)
 	query := fmt.Sprintf(archetypalCardsUsingCardTextQuery, subQuery, archetypeName)
-	if rows, err := skcDBConn.Query(query); err != nil {
+	rows, err := skcDBConn.Query(query)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		cards := make([]*ygo.Card, 0)
-		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
-			return nil, err
-		} else {
-			return &ygo.CardList{Cards: cards}, err
-		}
 	}
+	defer rows.Close()
+
+	cards := make([]*ygo.Card, 0)
+	if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
+		return nil, err
+	}
+	return &ygo.CardList{Cards: cards}, nil
 }
 func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
@@ -387,18 +380,17 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 
 	subQuery := fmt.Sprintf(archetypeExclusionSubQuery, cardAttributes, archetypeName)
 	query := fmt.Sprintf(nonArchetypalCardsUsingCardTextQuery, subQuery, archetypeName)
-	if rows, err := skcDBConn.Query(query); err != nil {
+	rows, err := skcDBConn.Query(query)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		cards := make([]*ygo.Card, 0)
-		if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
-			return nil, err
-		} else {
-			return &ygo.CardList{Cards: cards}, err
-		}
 	}
+	defer rows.Close()
+
+	cards := make([]*ygo.Card, 0)
+	if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
+		return nil, err
+	}
+	return &ygo.CardList{Cards: cards}, nil
 }
 
 func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards []string) (*ygo.Card, *status.Status) {

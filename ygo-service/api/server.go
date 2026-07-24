@@ -63,54 +63,55 @@ type ygoScoreServiceServer struct {
 
 func RunService() {
 	util.CombineCerts("certs")
-	if creds, err := credentials.NewServerTLSFromFile("certs/concatenated.crt", "certs/private.key"); err != nil {
+	creds, err := credentials.NewServerTLSFromFile("certs/concatenated.crt", "certs/private.key")
+	if err != nil {
 		slog.Error("Unable to create TLS credentials", slog.Any("err", err))
 		os.Exit(1)
-	} else {
-		grpcServer := grpc.NewServer(
-			grpc.Creds(creds),
-			grpc.MaxConcurrentStreams(1024),
+	}
 
-			grpc.ReadBufferSize(256<<10),
-			grpc.WriteBufferSize(256<<10),
-			grpc.InitialWindowSize(512<<10),        // per stream setting
-			grpc.InitialConnWindowSize(5*512*1024), // if above 3 change, change the middle value here too - this controls how much data is sent for all streams in a connection
+	grpcServer := grpc.NewServer(
+		grpc.Creds(creds),
+		grpc.MaxConcurrentStreams(1024),
 
-			grpc.KeepaliveParams(keepalive.ServerParameters{
-				MaxConnectionIdle:     1 * time.Minute,  // how long a connection can last while idle
-				MaxConnectionAge:      15 * time.Minute, // total time a connection can live for before killed
-				MaxConnectionAgeGrace: 15 * time.Second, // time after MaxConnectionAge where connection can finish work
-				Time:                  15 * time.Second, // how often to ping client
-				Timeout:               3 * time.Second,  // how fast ping should be
-			}),
-			grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
-				MinTime:             15 * time.Second, // prevents clients from sending pings too often
-				PermitWithoutStream: false,            // allow pings when no active RPC - if true conn will probably never close...
-			}),
-			grpc.ConnectionTimeout(4*time.Second),
+		grpc.ReadBufferSize(256<<10),
+		grpc.WriteBufferSize(256<<10),
+		grpc.InitialWindowSize(512<<10),        // per stream setting
+		grpc.InitialConnWindowSize(5*512*1024), // if above 3 change, change the middle value here too - this controls how much data is sent for all streams in a connection
 
-			grpc.NumStreamWorkers(uint32(runtime.GOMAXPROCS(0))),
-			grpc.SharedWriteBuffer(true),
+		grpc.KeepaliveParams(keepalive.ServerParameters{
+			MaxConnectionIdle:     1 * time.Minute,  // how long a connection can last while idle
+			MaxConnectionAge:      15 * time.Minute, // total time a connection can live for before killed
+			MaxConnectionAgeGrace: 15 * time.Second, // time after MaxConnectionAge where connection can finish work
+			Time:                  15 * time.Second, // how often to ping client
+			Timeout:               3 * time.Second,  // how fast ping should be
+		}),
+		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+			MinTime:             15 * time.Second, // prevents clients from sending pings too often
+			PermitWithoutStream: false,            // allow pings when no active RPC - if true conn will probably never close...
+		}),
+		grpc.ConnectionTimeout(4*time.Second),
 
-			grpc.MaxRecvMsgSize(200<<10),
-			grpc.MaxSendMsgSize(2<<20),
-		)
+		grpc.NumStreamWorkers(uint32(runtime.GOMAXPROCS(0))),
+		grpc.SharedWriteBuffer(true),
 
-		health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
-		ygo.RegisterCardServiceServer(grpcServer, &ygoCardServiceServer{})
-		ygo.RegisterProductServiceServer(grpcServer, &ygoProductServiceServer{})
-		ygo.RegisterCardRestrictionServiceServer(grpcServer, &ygoCardRestrictionServiceServer{})
-		ygo.RegisterScoreServiceServer(grpcServer, &ygoScoreServiceServer{})
+		grpc.MaxRecvMsgSize(200<<10),
+		grpc.MaxSendMsgSize(2<<20),
+	)
 
-		slog.Info("Starting gRPC service", slog.Int("port", port))
-		listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
-		if err != nil {
-			slog.Error("Failed to listen", slog.Any("err", err))
-			os.Exit(1)
-		}
-		if err := grpcServer.Serve(listener); err != nil {
-			slog.Error("Failed to serve grpc", slog.Any("err", err))
-			os.Exit(1)
-		}
+	health.RegisterHealthServiceServer(grpcServer, &healthServiceServer{})
+	ygo.RegisterCardServiceServer(grpcServer, &ygoCardServiceServer{})
+	ygo.RegisterProductServiceServer(grpcServer, &ygoProductServiceServer{})
+	ygo.RegisterCardRestrictionServiceServer(grpcServer, &ygoCardRestrictionServiceServer{})
+	ygo.RegisterScoreServiceServer(grpcServer, &ygoScoreServiceServer{})
+
+	slog.Info("Starting gRPC service", slog.Int("port", port))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if err != nil {
+		slog.Error("Failed to listen", slog.Any("err", err))
+		os.Exit(1)
+	}
+	if err := grpcServer.Serve(listener); err != nil {
+		slog.Error("Failed to serve grpc", slog.Any("err", err))
+		os.Exit(1)
 	}
 }

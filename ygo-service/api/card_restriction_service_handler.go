@@ -21,31 +21,32 @@ func (s *ygoCardRestrictionServiceServer) GetEffectiveTimelineForFormat(ctx cont
 		return nil, status.New(codes.InvalidArgument, "Format not supported").Err()
 	}
 
-	if effectiveDates, err := cardRestrictionRepo.GetDatesForFormat(newCtx, format); err != nil {
+	effectiveDates, err := cardRestrictionRepo.GetDatesForFormat(newCtx, format)
+	if err != nil {
 		return nil, err.Err()
-	} else {
-		now := time.Now().In(chicagoLocation)
-		today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, chicagoLocation)
-		futureDates := []string{}
-		var activeDate string
-
-		for _, effectiveDateStr := range effectiveDates {
-			effectiveDate, err := time.Parse("2006-01-02", effectiveDateStr)
-			if err != nil {
-				logger.Error("Failed to parse effective date", slog.String("effective_date", effectiveDateStr), slog.Any("err", err))
-				continue
-			}
-			if effectiveDate.After(today) {
-				futureDates = append(futureDates, effectiveDateStr)
-			} else {
-				activeDate = effectiveDateStr
-				break
-			}
-		}
-
-		return &ygo.EffectiveTimeline{
-			AllDates:    effectiveDates,
-			FutureDates: futureDates,
-			ActiveDate:  activeDate}, nil
 	}
+
+	now := time.Now().In(chicagoLocation)
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, chicagoLocation)
+	futureDates := []string{}
+	var activeDate string
+
+	for _, effectiveDateStr := range effectiveDates {
+		effectiveDate, parseErr := time.Parse("2006-01-02", effectiveDateStr)
+		if parseErr != nil {
+			logger.Error("Failed to parse effective date", slog.String("effective_date", effectiveDateStr), slog.Any("err", parseErr))
+			continue
+		}
+		if effectiveDate.After(today) {
+			futureDates = append(futureDates, effectiveDateStr)
+		} else {
+			activeDate = effectiveDateStr
+			break
+		}
+	}
+
+	return &ygo.EffectiveTimeline{
+		AllDates:    effectiveDates,
+		FutureDates: futureDates,
+		ActiveDate:  activeDate}, nil
 }

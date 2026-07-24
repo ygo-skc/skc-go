@@ -23,21 +23,22 @@ func (s *ygoScoreServiceServer) GetScoresByFormatAndDate(ctx context.Context, re
 		slog.String("effective_date", effectiveDate),
 	)
 
-	if entries, numEntries, err := scoreRepo.GetScoresByFormatAndDate(newCtx, format, effectiveDate, req.SortOrder); err != nil {
+	entries, numEntries, err := scoreRepo.GetScoresByFormatAndDate(newCtx, format, effectiveDate, req.SortOrder)
+	if err != nil {
 		return nil, err.Err()
-	} else {
-		if numEntries == 0 {
-			logger.Error("Format and date combination not found")
-			return nil, status.New(codes.NotFound, "Format and date combination DNE").Err()
-		}
-
-		return &ygo.ScoresForFormatAndDate{
-			Format:        format,
-			EffectiveDate: effectiveDate,
-			Entries:       entries,
-			TotalEntries:  numEntries,
-		}, nil
 	}
+
+	if numEntries == 0 {
+		logger.Error("Format and date combination not found")
+		return nil, status.New(codes.NotFound, "Format and date combination DNE").Err()
+	}
+
+	return &ygo.ScoresForFormatAndDate{
+		Format:        format,
+		EffectiveDate: effectiveDate,
+		Entries:       entries,
+		TotalEntries:  numEntries,
+	}, nil
 }
 
 func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.ResourceID) (*ygo.CardScore, error) {
@@ -45,15 +46,16 @@ func (s *ygoScoreServiceServer) GetCardScoreByID(ctx context.Context, req *ygo.R
 
 	today := time.Now().In(chicagoLocation)
 	todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
-	if score, err := scoreRepo.GetCardScoreByID(newCtx, req.Id, todaysDate, parser); err != nil {
+	score, err := scoreRepo.GetCardScoreByID(newCtx, req.Id, todaysDate, parser)
+	if err != nil {
 		return nil, err.Err()
-	} else {
-		if len(score.ScoreHistory) == 0 {
-			logger.Error("Scores not retrieved, card ID does not exist")
-			return nil, status.New(codes.NotFound, "Resource not found").Err()
-		}
-		return score, nil
 	}
+
+	if len(score.ScoreHistory) == 0 {
+		logger.Error("Scores not retrieved, card ID does not exist")
+		return nil, status.New(codes.NotFound, "Resource not found").Err()
+	}
+	return score, nil
 }
 
 func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo.GetCardScoresByIDsRequest) (*ygo.GetCardScoresByIDsResponse, error) {
@@ -61,14 +63,15 @@ func (s *ygoScoreServiceServer) GetCardScoresByIDs(ctx context.Context, req *ygo
 
 	today := time.Now().In(chicagoLocation)
 	todaysDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, chicagoLocation)
-	if scores, err := scoreRepo.GetCardScoresByIDs(newCtx, req.Subjects.Ids, todaysDate, parser); err != nil {
+	scores, err := scoreRepo.GetCardScoresByIDs(newCtx, req.Subjects.Ids, todaysDate, parser)
+	if err != nil {
 		return nil, err.Err()
-	} else {
-		return &ygo.GetCardScoresByIDsResponse{Scores: &ygo.CardScores{
-			CardInfo:         scores,
-			UnknownResources: model.FindMissingKeys(scores, model.CardIDs(req.Subjects.Ids)),
-		}}, nil
 	}
+
+	return &ygo.GetCardScoresByIDsResponse{Scores: &ygo.CardScores{
+		CardInfo:         scores,
+		UnknownResources: model.FindMissingKeys(scores, model.CardIDs(req.Subjects.Ids)),
+	}}, nil
 }
 
 func parser(score *ygo.CardScore, entry *ygo.ScoreEntry, todaysDate time.Time) {

@@ -67,28 +67,28 @@ func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.Produ
 	for rows.Next() {
 		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &productPosition, &rarity); err != nil {
 			return nil, nil, handleRowParsingError(util.RetrieveLogger(ctx), err)
-		} else {
-			// either create a new ProductItem or use reference to existing Item and update the rarities
-			key := fmt.Sprintf("%s-%s", id, productPosition)
-			if _, exists := itemByCardIDxPosition[key]; exists {
-				itemByCardIDxPosition[key].Rarities = append(itemByCardIDxPosition[key].Rarities, rarity)
-			} else {
-				item := &ygo.ProductItem{
-					Card: model.NewYGOCardProtoBuilder(id, name).WithColor(color).
-						WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build(),
-					Position: productPosition,
-					Rarities: []string{rarity},
-				}
-				items = append(items, item)
-				itemByCardIDxPosition[key] = item
-			}
+		}
 
-			// running total of all rarities
-			if num, exists := rarityDistribution[rarity]; exists {
-				rarityDistribution[rarity] = num + 1
-			} else {
-				rarityDistribution[rarity] = 1
+		// either create a new ProductItem or use reference to existing Item and update the rarities
+		key := fmt.Sprintf("%s-%s", id, productPosition)
+		if _, exists := itemByCardIDxPosition[key]; exists {
+			itemByCardIDxPosition[key].Rarities = append(itemByCardIDxPosition[key].Rarities, rarity)
+		} else {
+			item := &ygo.ProductItem{
+				Card: model.NewYGOCardProtoBuilder(id, name).WithColor(color).
+					WithAttribute(attribute).WithEffect(effect).WithMonsterType(monsterType).WithAttack(atk).WithDefense(def).Build(),
+				Position: productPosition,
+				Rarities: []string{rarity},
 			}
+			items = append(items, item)
+			itemByCardIDxPosition[key] = item
+		}
+
+		// running total of all rarities
+		if num, exists := rarityDistribution[rarity]; exists {
+			rarityDistribution[rarity] = num + 1
+		} else {
+			rarityDistribution[rarity] = 1
 		}
 	}
 
@@ -110,37 +110,40 @@ func (imp YGOProductRepository) GetCardsByProductID(ctx context.Context, product
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving product data", slog.String("product_id", productID))
 
-	if product, err := queryProductInfo(logger, productID); err != nil {
+	product, err := queryProductInfo(logger, productID)
+	if err != nil {
 		return nil, err
-	} else {
-		query := fmt.Sprintf(cardsByProductIDQuery, cardAttributes)
-		if rows, err := skcDBConn.Query(query, productID); err != nil {
-			return nil, handleQueryError(logger, err)
-		} else {
-			defer rows.Close()
-
-			if items, rarityDistribution, err := parseRowsForProductItems(ctx, rows); err != nil {
-				return nil, err
-			} else {
-				product.Items = items
-				product.TotalItems = uint32(len(items))
-				product.RarityDistribution = rarityDistribution
-				return product, nil
-			}
-		}
 	}
+
+	query := fmt.Sprintf(cardsByProductIDQuery, cardAttributes)
+	rows, dbErr := skcDBConn.Query(query, productID)
+	if dbErr != nil {
+		return nil, handleQueryError(logger, dbErr)
+	}
+	defer rows.Close()
+
+	items, rarityDistribution, err := parseRowsForProductItems(ctx, rows)
+	if err != nil {
+		return nil, err
+	}
+
+	product.Items = items
+	product.TotalItems = uint32(len(items))
+	product.RarityDistribution = rarityDistribution
+	return product, nil
 }
 
 func (imp YGOProductRepository) GetProductSummaryByID(ctx context.Context, productID string) (*ygo.ProductSummary, *status.Status) {
-	if results, err := imp.GetProductsSummaryByID(ctx, []string{productID}); err != nil {
+	results, err := imp.GetProductsSummaryByID(ctx, []string{productID})
+	if err != nil {
 		return nil, err
-	} else {
-		if product, exists := results.Products[productID]; !exists {
-			return nil, status.New(codes.NotFound, "No results found")
-		} else {
-			return product, nil
-		}
 	}
+
+	product, exists := results.Products[productID]
+	if !exists {
+		return nil, status.New(codes.NotFound, "No results found")
+	}
+	return product, nil
 }
 
 func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, products model.ProductIDs) (*ygo.Products, *status.Status) {
@@ -152,25 +155,25 @@ func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, prod
 
 	query := fmt.Sprintf(productInfoByIDs, variablePlaceholders(numProducts))
 
-	if rows, err := skcDBConn.Query(query, args...); err != nil {
+	rows, err := skcDBConn.Query(query, args...)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
+	}
+	defer rows.Close()
 
-		for rows.Next() {
-			var id, locale, name, t, subType, releaseDate string
-			var totalItems uint32
+	for rows.Next() {
+		var id, locale, name, t, subType, releaseDate string
+		var totalItems uint32
 
-			if err := rows.Scan(&id, &locale, &name, &t, &subType, &releaseDate, &totalItems); err != nil {
-				return nil, handleRowParsingError(logger, err)
-			}
-
-			productData[id] = &ygo.ProductSummary{Id: id, Locale: locale, Name: name, Type: t, SubType: subType, ReleaseDate: releaseDate, TotalItems: totalItems}
+		if err := rows.Scan(&id, &locale, &name, &t, &subType, &releaseDate, &totalItems); err != nil {
+			return nil, handleRowParsingError(logger, err)
 		}
 
-		if err := rows.Err(); err != nil {
-			return nil, handleQueryError(logger, err)
-		}
+		productData[id] = &ygo.ProductSummary{Id: id, Locale: locale, Name: name, Type: t, SubType: subType, ReleaseDate: releaseDate, TotalItems: totalItems}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, handleQueryError(logger, err)
 	}
 
 	return &ygo.Products{

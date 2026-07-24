@@ -101,43 +101,43 @@ func (imp YGOScoreRepository) GetScoresByFormatAndDate(
 	}
 
 	query := fmt.Sprintf(cardScoreByFormatAndDateQuery, sortingSubQuery)
-	if rows, err := skcDBConn.Query(query, format, effectiveDate); err != nil {
+	rows, err := skcDBConn.Query(query, format, effectiveDate)
+	if err != nil {
 		return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		var (
-			id, color, name, attribute, effect string
-			monsterType                        *string
-			atk, def                           *uint32
-			score                              uint32
-		)
-		entries := make([]*ygo.CardScoreEntry, 0, 600)
-		var numEntries uint32
-
-		for rows.Next() {
-			if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &score); err != nil {
-				return make([]*ygo.CardScoreEntry, 0), 0, handleRowParsingError(util.RetrieveLogger(ctx), err)
-			}
-			entries = append(entries, &ygo.CardScoreEntry{
-				Card: model.NewYGOCardProtoBuilder(id, name).
-					WithColor(color).
-					WithAttribute(attribute).
-					WithEffect(effect).
-					WithMonsterType(monsterType).
-					WithAttack(atk).
-					WithDefense(def).
-					Build(),
-				Score: score,
-			})
-			numEntries++
-		}
-
-		if err := rows.Err(); err != nil {
-			return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
-		}
-		return entries, numEntries, nil
 	}
+	defer rows.Close()
+
+	var (
+		id, color, name, attribute, effect string
+		monsterType                        *string
+		atk, def                           *uint32
+		score                              uint32
+	)
+	entries := make([]*ygo.CardScoreEntry, 0, 600)
+	var numEntries uint32
+
+	for rows.Next() {
+		if err := rows.Scan(&id, &color, &name, &attribute, &effect, &monsterType, &atk, &def, &score); err != nil {
+			return make([]*ygo.CardScoreEntry, 0), 0, handleRowParsingError(util.RetrieveLogger(ctx), err)
+		}
+		entries = append(entries, &ygo.CardScoreEntry{
+			Card: model.NewYGOCardProtoBuilder(id, name).
+				WithColor(color).
+				WithAttribute(attribute).
+				WithEffect(effect).
+				WithMonsterType(monsterType).
+				WithAttack(atk).
+				WithDefense(def).
+				Build(),
+			Score: score,
+		})
+		numEntries++
+	}
+
+	if err := rows.Err(); err != nil {
+		return make([]*ygo.CardScoreEntry, 0), 0, handleQueryError(logger, err)
+	}
+	return entries, numEntries, nil
 }
 
 func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID string, todaysDate time.Time,
@@ -146,31 +146,31 @@ func (imp YGOScoreRepository) GetCardScoreByID(ctx context.Context, cardID strin
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving card score data", slog.String("card_id", cardID))
 
-	if rows, err := skcDBConn.Query(cardScoreQuery, cardID, cardID); err != nil {
+	rows, err := skcDBConn.Query(cardScoreQuery, cardID, cardID)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
-
-		score := &ygo.CardScore{
-			CurrentScoreByFormat: make(map[string]uint32, 3),
-			UniqueFormats:        make([]string, 0, 3),
-			ScheduledChanges:     make([]string, 0, 3),
-			ScoreHistory:         make([]*ygo.ScoreEntry, 0, 5),
-		}
-
-		for rows.Next() {
-			if entry, _, err := parseRowsForScoreEntry(ctx, rows); err != nil {
-				return nil, err
-			} else {
-				parser(score, entry, todaysDate)
-			}
-		}
-
-		if err := rows.Err(); err != nil {
-			return nil, handleQueryError(logger, err)
-		}
-		return score, nil
 	}
+	defer rows.Close()
+
+	score := &ygo.CardScore{
+		CurrentScoreByFormat: make(map[string]uint32, 3),
+		UniqueFormats:        make([]string, 0, 3),
+		ScheduledChanges:     make([]string, 0, 3),
+		ScoreHistory:         make([]*ygo.ScoreEntry, 0, 5),
+	}
+
+	for rows.Next() {
+		entry, _, parseErr := parseRowsForScoreEntry(ctx, rows)
+		if parseErr != nil {
+			return nil, parseErr
+		}
+		parser(score, entry, todaysDate)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+	return score, nil
 }
 
 func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []string, todaysDate time.Time,
@@ -182,34 +182,35 @@ func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []
 	args, numCards := buildVariableQuerySubjects(cardIDs)
 	query := fmt.Sprintf(multiCardScoreQuery, variablePlaceholders(numCards))
 
-	if rows, err := skcDBConn.Query(query, args...); err != nil {
+	rows, err := skcDBConn.Query(query, args...)
+	if err != nil {
 		return nil, handleQueryError(logger, err)
-	} else {
-		defer rows.Close()
+	}
+	defer rows.Close()
 
-		scoresByID := make(map[string]*ygo.CardScore)
+	scoresByID := make(map[string]*ygo.CardScore)
 
-		for rows.Next() {
-			if score, cardID, err := parseRowsForScoreEntry(ctx, rows); err != nil {
-				return nil, err
-			} else {
-				if _, exists := scoresByID[cardID]; !exists {
-					scoresByID[cardID] = &ygo.CardScore{
-						CurrentScoreByFormat: make(map[string]uint32, 3),
-						UniqueFormats:        make([]string, 0, 3),
-						ScheduledChanges:     make([]string, 0, 3),
-						ScoreHistory:         make([]*ygo.ScoreEntry, 0, 5),
-					}
-				}
-				parser(scoresByID[cardID], score, todaysDate)
+	for rows.Next() {
+		score, cardID, parseErr := parseRowsForScoreEntry(ctx, rows)
+		if parseErr != nil {
+			return nil, parseErr
+		}
+
+		if _, exists := scoresByID[cardID]; !exists {
+			scoresByID[cardID] = &ygo.CardScore{
+				CurrentScoreByFormat: make(map[string]uint32, 3),
+				UniqueFormats:        make([]string, 0, 3),
+				ScheduledChanges:     make([]string, 0, 3),
+				ScoreHistory:         make([]*ygo.ScoreEntry, 0, 5),
 			}
 		}
-
-		if err := rows.Err(); err != nil {
-			return nil, handleQueryError(logger, err)
-		}
-		return scoresByID, nil
+		parser(scoresByID[cardID], score, todaysDate)
 	}
+
+	if err := rows.Err(); err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+	return scoresByID, nil
 }
 
 func parseRowsForScoreEntry(ctx context.Context, rows *sql.Rows) (*ygo.ScoreEntry, string, *status.Status) {
@@ -222,7 +223,6 @@ func parseRowsForScoreEntry(ctx context.Context, rows *sql.Rows) (*ygo.ScoreEntr
 
 	if err := rows.Scan(&format, &effectiveDate, &score, &cardID); err != nil {
 		return nil, "", handleRowParsingError(util.RetrieveLogger(ctx), err)
-	} else {
-		return &ygo.ScoreEntry{Format: format, EffectiveDate: effectiveDate, Score: score}, cardID, nil
 	}
+	return &ygo.ScoreEntry{Format: format, EffectiveDate: effectiveDate, Score: score}, cardID, nil
 }
