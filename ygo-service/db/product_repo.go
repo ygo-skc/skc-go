@@ -54,7 +54,9 @@ SELECT
 FROM
 	product_info
 WHERE
-	DATE_FORMAT(product_release_date, '%m-%d') = ?`
+	DATE_FORMAT(product_release_date, '%m-%d') = ?
+ORDER BY
+	product_release_date DESC`
 )
 
 func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.ProductItem, map[string]uint32, *status.Status) {
