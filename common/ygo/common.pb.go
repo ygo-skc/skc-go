@@ -9,6 +9,7 @@ package ygo
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -443,11 +444,895 @@ func (x *EffectiveTimeline) GetActiveDate() string {
 	return ""
 }
 
+type Card struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Id            string                  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Color         string                  `protobuf:"bytes,2,opt,name=color,proto3" json:"color,omitempty"`
+	Name          string                  `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Attribute     string                  `protobuf:"bytes,4,opt,name=attribute,proto3" json:"attribute,omitempty"`
+	Effect        string                  `protobuf:"bytes,5,opt,name=effect,proto3" json:"effect,omitempty"`
+	MonsterType   *wrapperspb.StringValue `protobuf:"bytes,6,opt,name=monster_type,json=monsterType,proto3" json:"monster_type,omitempty"`
+	Attack        *wrapperspb.UInt32Value `protobuf:"bytes,7,opt,name=attack,proto3" json:"attack,omitempty"`
+	Defense       *wrapperspb.UInt32Value `protobuf:"bytes,8,opt,name=defense,proto3" json:"defense,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Card) Reset() {
+	*x = Card{}
+	mi := &file_common_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Card) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Card) ProtoMessage() {}
+
+func (x *Card) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Card.ProtoReflect.Descriptor instead.
+func (*Card) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *Card) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Card) GetColor() string {
+	if x != nil {
+		return x.Color
+	}
+	return ""
+}
+
+func (x *Card) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Card) GetAttribute() string {
+	if x != nil {
+		return x.Attribute
+	}
+	return ""
+}
+
+func (x *Card) GetEffect() string {
+	if x != nil {
+		return x.Effect
+	}
+	return ""
+}
+
+func (x *Card) GetMonsterType() *wrapperspb.StringValue {
+	if x != nil {
+		return x.MonsterType
+	}
+	return nil
+}
+
+func (x *Card) GetAttack() *wrapperspb.UInt32Value {
+	if x != nil {
+		return x.Attack
+	}
+	return nil
+}
+
+func (x *Card) GetDefense() *wrapperspb.UInt32Value {
+	if x != nil {
+		return x.Defense
+	}
+	return nil
+}
+
+type Cards struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	CardInfo         map[string]*Card       `protobuf:"bytes,1,rep,name=card_info,json=cardInfo,proto3" json:"card_info,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	UnknownResources []string               `protobuf:"bytes,2,rep,name=unknown_resources,json=unknownResources,proto3" json:"unknown_resources,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *Cards) Reset() {
+	*x = Cards{}
+	mi := &file_common_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Cards) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Cards) ProtoMessage() {}
+
+func (x *Cards) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Cards.ProtoReflect.Descriptor instead.
+func (*Cards) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *Cards) GetCardInfo() map[string]*Card {
+	if x != nil {
+		return x.CardInfo
+	}
+	return nil
+}
+
+func (x *Cards) GetUnknownResources() []string {
+	if x != nil {
+		return x.UnknownResources
+	}
+	return nil
+}
+
+type Product struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Locale             string                 `protobuf:"bytes,2,opt,name=locale,proto3" json:"locale,omitempty"`
+	Name               string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Type               string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	SubType            string                 `protobuf:"bytes,5,opt,name=sub_type,json=subType,proto3" json:"sub_type,omitempty"`
+	ReleaseDate        string                 `protobuf:"bytes,6,opt,name=release_date,json=releaseDate,proto3" json:"release_date,omitempty"`
+	TotalItems         uint32                 `protobuf:"varint,7,opt,name=total_items,json=totalItems,proto3" json:"total_items,omitempty"`
+	Items              []*ProductItem         `protobuf:"bytes,8,rep,name=items,proto3" json:"items,omitempty"`
+	RarityDistribution map[string]uint32      `protobuf:"bytes,9,rep,name=rarity_distribution,json=rarityDistribution,proto3" json:"rarity_distribution,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *Product) Reset() {
+	*x = Product{}
+	mi := &file_common_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Product) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Product) ProtoMessage() {}
+
+func (x *Product) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Product.ProtoReflect.Descriptor instead.
+func (*Product) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Product) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Product) GetLocale() string {
+	if x != nil {
+		return x.Locale
+	}
+	return ""
+}
+
+func (x *Product) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Product) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Product) GetSubType() string {
+	if x != nil {
+		return x.SubType
+	}
+	return ""
+}
+
+func (x *Product) GetReleaseDate() string {
+	if x != nil {
+		return x.ReleaseDate
+	}
+	return ""
+}
+
+func (x *Product) GetTotalItems() uint32 {
+	if x != nil {
+		return x.TotalItems
+	}
+	return 0
+}
+
+func (x *Product) GetItems() []*ProductItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *Product) GetRarityDistribution() map[string]uint32 {
+	if x != nil {
+		return x.RarityDistribution
+	}
+	return nil
+}
+
+type ProductItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Card          *Card                  `protobuf:"bytes,1,opt,name=card,proto3" json:"card,omitempty"`
+	Position      string                 `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
+	Rarities      []string               `protobuf:"bytes,3,rep,name=rarities,proto3" json:"rarities,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductItem) Reset() {
+	*x = ProductItem{}
+	mi := &file_common_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductItem) ProtoMessage() {}
+
+func (x *ProductItem) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductItem.ProtoReflect.Descriptor instead.
+func (*ProductItem) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ProductItem) GetCard() *Card {
+	if x != nil {
+		return x.Card
+	}
+	return nil
+}
+
+func (x *ProductItem) GetPosition() string {
+	if x != nil {
+		return x.Position
+	}
+	return ""
+}
+
+func (x *ProductItem) GetRarities() []string {
+	if x != nil {
+		return x.Rarities
+	}
+	return nil
+}
+
+type ProductSummary struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Locale        string                 `protobuf:"bytes,2,opt,name=locale,proto3" json:"locale,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	SubType       string                 `protobuf:"bytes,5,opt,name=sub_type,json=subType,proto3" json:"sub_type,omitempty"`
+	ReleaseDate   string                 `protobuf:"bytes,6,opt,name=release_date,json=releaseDate,proto3" json:"release_date,omitempty"`
+	TotalItems    uint32                 `protobuf:"varint,7,opt,name=total_items,json=totalItems,proto3" json:"total_items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductSummary) Reset() {
+	*x = ProductSummary{}
+	mi := &file_common_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductSummary) ProtoMessage() {}
+
+func (x *ProductSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductSummary.ProtoReflect.Descriptor instead.
+func (*ProductSummary) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ProductSummary) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ProductSummary) GetLocale() string {
+	if x != nil {
+		return x.Locale
+	}
+	return ""
+}
+
+func (x *ProductSummary) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProductSummary) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *ProductSummary) GetSubType() string {
+	if x != nil {
+		return x.SubType
+	}
+	return ""
+}
+
+func (x *ProductSummary) GetReleaseDate() string {
+	if x != nil {
+		return x.ReleaseDate
+	}
+	return ""
+}
+
+func (x *ProductSummary) GetTotalItems() uint32 {
+	if x != nil {
+		return x.TotalItems
+	}
+	return 0
+}
+
+type Products struct {
+	state            protoimpl.MessageState     `protogen:"open.v1"`
+	Products         map[string]*ProductSummary `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	UnknownResources []string                   `protobuf:"bytes,2,rep,name=unknown_resources,json=unknownResources,proto3" json:"unknown_resources,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *Products) Reset() {
+	*x = Products{}
+	mi := &file_common_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Products) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Products) ProtoMessage() {}
+
+func (x *Products) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Products.ProtoReflect.Descriptor instead.
+func (*Products) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *Products) GetProducts() map[string]*ProductSummary {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+func (x *Products) GetUnknownResources() []string {
+	if x != nil {
+		return x.UnknownResources
+	}
+	return nil
+}
+
+type Format struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Format) Reset() {
+	*x = Format{}
+	mi := &file_common_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Format) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Format) ProtoMessage() {}
+
+func (x *Format) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Format.ProtoReflect.Descriptor instead.
+func (*Format) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *Format) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type RestrictedContentRequest struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Format        string                   `protobuf:"bytes,1,opt,name=format,proto3" json:"format,omitempty"`
+	EffectiveDate string                   `protobuf:"bytes,2,opt,name=effective_date,json=effectiveDate,proto3" json:"effective_date,omitempty"`
+	SortOrder     CardRestrictionSortOrder `protobuf:"varint,3,opt,name=sort_order,json=sortOrder,proto3,enum=ygo.CardRestrictionSortOrder" json:"sort_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RestrictedContentRequest) Reset() {
+	*x = RestrictedContentRequest{}
+	mi := &file_common_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestrictedContentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestrictedContentRequest) ProtoMessage() {}
+
+func (x *RestrictedContentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RestrictedContentRequest.ProtoReflect.Descriptor instead.
+func (*RestrictedContentRequest) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *RestrictedContentRequest) GetFormat() string {
+	if x != nil {
+		return x.Format
+	}
+	return ""
+}
+
+func (x *RestrictedContentRequest) GetEffectiveDate() string {
+	if x != nil {
+		return x.EffectiveDate
+	}
+	return ""
+}
+
+func (x *RestrictedContentRequest) GetSortOrder() CardRestrictionSortOrder {
+	if x != nil {
+		return x.SortOrder
+	}
+	return CardRestrictionSortOrder_CARD_RESTRICTION_SORT_ORDER_UNSPECIFIED
+}
+
+type ScoresForFormatAndDate struct {
+	state              protoimpl.MessageState  `protogen:"open.v1"`
+	Format             string                  `protobuf:"bytes,1,opt,name=format,proto3" json:"format,omitempty"`
+	EffectiveDate      string                  `protobuf:"bytes,2,opt,name=effective_date,json=effectiveDate,proto3" json:"effective_date,omitempty"`
+	NextFormatDate     *wrapperspb.StringValue `protobuf:"bytes,3,opt,name=next_format_date,json=nextFormatDate,proto3" json:"next_format_date,omitempty"`
+	PreviousFormatDate *wrapperspb.StringValue `protobuf:"bytes,4,opt,name=previous_format_date,json=previousFormatDate,proto3" json:"previous_format_date,omitempty"`
+	Entries            []*CardScoreEntry       `protobuf:"bytes,5,rep,name=entries,proto3" json:"entries,omitempty"`
+	TotalEntries       uint32                  `protobuf:"varint,6,opt,name=total_entries,json=totalEntries,proto3" json:"total_entries,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *ScoresForFormatAndDate) Reset() {
+	*x = ScoresForFormatAndDate{}
+	mi := &file_common_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ScoresForFormatAndDate) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ScoresForFormatAndDate) ProtoMessage() {}
+
+func (x *ScoresForFormatAndDate) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ScoresForFormatAndDate.ProtoReflect.Descriptor instead.
+func (*ScoresForFormatAndDate) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ScoresForFormatAndDate) GetFormat() string {
+	if x != nil {
+		return x.Format
+	}
+	return ""
+}
+
+func (x *ScoresForFormatAndDate) GetEffectiveDate() string {
+	if x != nil {
+		return x.EffectiveDate
+	}
+	return ""
+}
+
+func (x *ScoresForFormatAndDate) GetNextFormatDate() *wrapperspb.StringValue {
+	if x != nil {
+		return x.NextFormatDate
+	}
+	return nil
+}
+
+func (x *ScoresForFormatAndDate) GetPreviousFormatDate() *wrapperspb.StringValue {
+	if x != nil {
+		return x.PreviousFormatDate
+	}
+	return nil
+}
+
+func (x *ScoresForFormatAndDate) GetEntries() []*CardScoreEntry {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
+}
+
+func (x *ScoresForFormatAndDate) GetTotalEntries() uint32 {
+	if x != nil {
+		return x.TotalEntries
+	}
+	return 0
+}
+
+type CardScoreEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Card          *Card                  `protobuf:"bytes,1,opt,name=card,proto3" json:"card,omitempty"`
+	Score         uint32                 `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CardScoreEntry) Reset() {
+	*x = CardScoreEntry{}
+	mi := &file_common_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CardScoreEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CardScoreEntry) ProtoMessage() {}
+
+func (x *CardScoreEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CardScoreEntry.ProtoReflect.Descriptor instead.
+func (*CardScoreEntry) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *CardScoreEntry) GetCard() *Card {
+	if x != nil {
+		return x.Card
+	}
+	return nil
+}
+
+func (x *CardScoreEntry) GetScore() uint32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
+type CardScore struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	CurrentScoreByFormat map[string]uint32      `protobuf:"bytes,1,rep,name=current_score_by_format,json=currentScoreByFormat,proto3" json:"current_score_by_format,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	UniqueFormats        []string               `protobuf:"bytes,2,rep,name=unique_formats,json=uniqueFormats,proto3" json:"unique_formats,omitempty"`
+	ScoreHistory         []*ScoreEntry          `protobuf:"bytes,3,rep,name=score_history,json=scoreHistory,proto3" json:"score_history,omitempty"`
+	ScheduledChanges     []string               `protobuf:"bytes,4,rep,name=scheduled_changes,json=scheduledChanges,proto3" json:"scheduled_changes,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *CardScore) Reset() {
+	*x = CardScore{}
+	mi := &file_common_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CardScore) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CardScore) ProtoMessage() {}
+
+func (x *CardScore) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CardScore.ProtoReflect.Descriptor instead.
+func (*CardScore) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *CardScore) GetCurrentScoreByFormat() map[string]uint32 {
+	if x != nil {
+		return x.CurrentScoreByFormat
+	}
+	return nil
+}
+
+func (x *CardScore) GetUniqueFormats() []string {
+	if x != nil {
+		return x.UniqueFormats
+	}
+	return nil
+}
+
+func (x *CardScore) GetScoreHistory() []*ScoreEntry {
+	if x != nil {
+		return x.ScoreHistory
+	}
+	return nil
+}
+
+func (x *CardScore) GetScheduledChanges() []string {
+	if x != nil {
+		return x.ScheduledChanges
+	}
+	return nil
+}
+
+type CardScores struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	CardInfo         map[string]*CardScore  `protobuf:"bytes,1,rep,name=card_info,json=cardInfo,proto3" json:"card_info,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	UnknownResources []string               `protobuf:"bytes,2,rep,name=unknown_resources,json=unknownResources,proto3" json:"unknown_resources,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *CardScores) Reset() {
+	*x = CardScores{}
+	mi := &file_common_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CardScores) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CardScores) ProtoMessage() {}
+
+func (x *CardScores) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CardScores.ProtoReflect.Descriptor instead.
+func (*CardScores) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *CardScores) GetCardInfo() map[string]*CardScore {
+	if x != nil {
+		return x.CardInfo
+	}
+	return nil
+}
+
+func (x *CardScores) GetUnknownResources() []string {
+	if x != nil {
+		return x.UnknownResources
+	}
+	return nil
+}
+
+type ScoreEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Format        string                 `protobuf:"bytes,1,opt,name=format,proto3" json:"format,omitempty"`
+	EffectiveDate string                 `protobuf:"bytes,2,opt,name=effective_date,json=effectiveDate,proto3" json:"effective_date,omitempty"`
+	Score         uint32                 `protobuf:"varint,3,opt,name=score,proto3" json:"score,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ScoreEntry) Reset() {
+	*x = ScoreEntry{}
+	mi := &file_common_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ScoreEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ScoreEntry) ProtoMessage() {}
+
+func (x *ScoreEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ScoreEntry.ProtoReflect.Descriptor instead.
+func (*ScoreEntry) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ScoreEntry) GetFormat() string {
+	if x != nil {
+		return x.Format
+	}
+	return ""
+}
+
+func (x *ScoreEntry) GetEffectiveDate() string {
+	if x != nil {
+		return x.EffectiveDate
+	}
+	return ""
+}
+
+func (x *ScoreEntry) GetScore() uint32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
 var File_common_proto protoreflect.FileDescriptor
 
 const file_common_proto_rawDesc = "" +
 	"\n" +
-	"\fcommon.proto\x12\x03ygo\"\x1c\n" +
+	"\fcommon.proto\x12\x03ygo\x1a\x1egoogle/protobuf/wrappers.proto\"\x1c\n" +
 	"\n" +
 	"ResourceID\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
@@ -469,7 +1354,92 @@ const file_common_proto_rawDesc = "" +
 	"\tall_dates\x18\x01 \x03(\tR\ballDates\x12!\n" +
 	"\ffuture_dates\x18\x02 \x03(\tR\vfutureDates\x12\x1f\n" +
 	"\vactive_date\x18\x03 \x01(\tR\n" +
-	"activeDate*\x90\x01\n" +
+	"activeDate\"\xa5\x02\n" +
+	"\x04Card\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05color\x18\x02 \x01(\tR\x05color\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1c\n" +
+	"\tattribute\x18\x04 \x01(\tR\tattribute\x12\x16\n" +
+	"\x06effect\x18\x05 \x01(\tR\x06effect\x12?\n" +
+	"\fmonster_type\x18\x06 \x01(\v2\x1c.google.protobuf.StringValueR\vmonsterType\x124\n" +
+	"\x06attack\x18\a \x01(\v2\x1c.google.protobuf.UInt32ValueR\x06attack\x126\n" +
+	"\adefense\x18\b \x01(\v2\x1c.google.protobuf.UInt32ValueR\adefense\"\xb3\x01\n" +
+	"\x05Cards\x125\n" +
+	"\tcard_info\x18\x01 \x03(\v2\x18.ygo.Cards.CardInfoEntryR\bcardInfo\x12+\n" +
+	"\x11unknown_resources\x18\x02 \x03(\tR\x10unknownResources\x1aF\n" +
+	"\rCardInfoEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x1f\n" +
+	"\x05value\x18\x02 \x01(\v2\t.ygo.CardR\x05value:\x028\x01\"\xfe\x02\n" +
+	"\aProduct\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06locale\x18\x02 \x01(\tR\x06locale\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\x12\x19\n" +
+	"\bsub_type\x18\x05 \x01(\tR\asubType\x12!\n" +
+	"\frelease_date\x18\x06 \x01(\tR\vreleaseDate\x12\x1f\n" +
+	"\vtotal_items\x18\a \x01(\rR\n" +
+	"totalItems\x12&\n" +
+	"\x05items\x18\b \x03(\v2\x10.ygo.ProductItemR\x05items\x12U\n" +
+	"\x13rarity_distribution\x18\t \x03(\v2$.ygo.Product.RarityDistributionEntryR\x12rarityDistribution\x1aE\n" +
+	"\x17RarityDistributionEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"d\n" +
+	"\vProductItem\x12\x1d\n" +
+	"\x04card\x18\x01 \x01(\v2\t.ygo.CardR\x04card\x12\x1a\n" +
+	"\bposition\x18\x02 \x01(\tR\bposition\x12\x1a\n" +
+	"\brarities\x18\x03 \x03(\tR\brarities\"\xbf\x01\n" +
+	"\x0eProductSummary\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06locale\x18\x02 \x01(\tR\x06locale\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\x12\x19\n" +
+	"\bsub_type\x18\x05 \x01(\tR\asubType\x12!\n" +
+	"\frelease_date\x18\x06 \x01(\tR\vreleaseDate\x12\x1f\n" +
+	"\vtotal_items\x18\a \x01(\rR\n" +
+	"totalItems\"\xc2\x01\n" +
+	"\bProducts\x127\n" +
+	"\bproducts\x18\x01 \x03(\v2\x1b.ygo.Products.ProductsEntryR\bproducts\x12+\n" +
+	"\x11unknown_resources\x18\x02 \x03(\tR\x10unknownResources\x1aP\n" +
+	"\rProductsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12)\n" +
+	"\x05value\x18\x02 \x01(\v2\x13.ygo.ProductSummaryR\x05value:\x028\x01\"\x1e\n" +
+	"\x06Format\x12\x14\n" +
+	"\x05value\x18\x01 \x01(\tR\x05value\"\x97\x01\n" +
+	"\x18RestrictedContentRequest\x12\x16\n" +
+	"\x06format\x18\x01 \x01(\tR\x06format\x12%\n" +
+	"\x0eeffective_date\x18\x02 \x01(\tR\reffectiveDate\x12<\n" +
+	"\n" +
+	"sort_order\x18\x03 \x01(\x0e2\x1d.ygo.CardRestrictionSortOrderR\tsortOrder\"\xc3\x02\n" +
+	"\x16ScoresForFormatAndDate\x12\x16\n" +
+	"\x06format\x18\x01 \x01(\tR\x06format\x12%\n" +
+	"\x0eeffective_date\x18\x02 \x01(\tR\reffectiveDate\x12F\n" +
+	"\x10next_format_date\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueR\x0enextFormatDate\x12N\n" +
+	"\x14previous_format_date\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueR\x12previousFormatDate\x12-\n" +
+	"\aentries\x18\x05 \x03(\v2\x13.ygo.CardScoreEntryR\aentries\x12#\n" +
+	"\rtotal_entries\x18\x06 \x01(\rR\ftotalEntries\"E\n" +
+	"\x0eCardScoreEntry\x12\x1d\n" +
+	"\x04card\x18\x01 \x01(\v2\t.ygo.CardR\x04card\x12\x14\n" +
+	"\x05score\x18\x02 \x01(\rR\x05score\"\xbf\x02\n" +
+	"\tCardScore\x12_\n" +
+	"\x17current_score_by_format\x18\x01 \x03(\v2(.ygo.CardScore.CurrentScoreByFormatEntryR\x14currentScoreByFormat\x12%\n" +
+	"\x0eunique_formats\x18\x02 \x03(\tR\runiqueFormats\x124\n" +
+	"\rscore_history\x18\x03 \x03(\v2\x0f.ygo.ScoreEntryR\fscoreHistory\x12+\n" +
+	"\x11scheduled_changes\x18\x04 \x03(\tR\x10scheduledChanges\x1aG\n" +
+	"\x19CurrentScoreByFormatEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"\xc2\x01\n" +
+	"\n" +
+	"CardScores\x12:\n" +
+	"\tcard_info\x18\x01 \x03(\v2\x1d.ygo.CardScores.CardInfoEntryR\bcardInfo\x12+\n" +
+	"\x11unknown_resources\x18\x02 \x03(\tR\x10unknownResources\x1aK\n" +
+	"\rCardInfoEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12$\n" +
+	"\x05value\x18\x02 \x01(\v2\x0e.ygo.CardScoreR\x05value:\x028\x01\"a\n" +
+	"\n" +
+	"ScoreEntry\x12\x16\n" +
+	"\x06format\x18\x01 \x01(\tR\x06format\x12%\n" +
+	"\x0eeffective_date\x18\x02 \x01(\tR\reffectiveDate\x12\x14\n" +
+	"\x05score\x18\x03 \x01(\rR\x05score*\x90\x01\n" +
 	"\x18CardRestrictionSortOrder\x12+\n" +
 	"'CARD_RESTRICTION_SORT_ORDER_UNSPECIFIED\x10\x00\x12G\n" +
 	"CCARD_RESTRICTION_SORT_ORDER_SCORE_DESC_CARD_COLOR_ASC_CARD_NAME_ASC\x10\x01B\x06Z\x04/ygob\x06proto3"
@@ -487,24 +1457,63 @@ func file_common_proto_rawDescGZIP() []byte {
 }
 
 var file_common_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_common_proto_goTypes = []any{
-	(CardRestrictionSortOrder)(0), // 0: ygo.CardRestrictionSortOrder
-	(*ResourceID)(nil),            // 1: ygo.ResourceID
-	(*ResourceIDs)(nil),           // 2: ygo.ResourceIDs
-	(*ResourceName)(nil),          // 3: ygo.ResourceName
-	(*ResourceNames)(nil),         // 4: ygo.ResourceNames
-	(*SearchTerm)(nil),            // 5: ygo.SearchTerm
-	(*Archetype)(nil),             // 6: ygo.Archetype
-	(*BlackListed)(nil),           // 7: ygo.BlackListed
-	(*EffectiveTimeline)(nil),     // 8: ygo.EffectiveTimeline
+	(CardRestrictionSortOrder)(0),    // 0: ygo.CardRestrictionSortOrder
+	(*ResourceID)(nil),               // 1: ygo.ResourceID
+	(*ResourceIDs)(nil),              // 2: ygo.ResourceIDs
+	(*ResourceName)(nil),             // 3: ygo.ResourceName
+	(*ResourceNames)(nil),            // 4: ygo.ResourceNames
+	(*SearchTerm)(nil),               // 5: ygo.SearchTerm
+	(*Archetype)(nil),                // 6: ygo.Archetype
+	(*BlackListed)(nil),              // 7: ygo.BlackListed
+	(*EffectiveTimeline)(nil),        // 8: ygo.EffectiveTimeline
+	(*Card)(nil),                     // 9: ygo.Card
+	(*Cards)(nil),                    // 10: ygo.Cards
+	(*Product)(nil),                  // 11: ygo.Product
+	(*ProductItem)(nil),              // 12: ygo.ProductItem
+	(*ProductSummary)(nil),           // 13: ygo.ProductSummary
+	(*Products)(nil),                 // 14: ygo.Products
+	(*Format)(nil),                   // 15: ygo.Format
+	(*RestrictedContentRequest)(nil), // 16: ygo.RestrictedContentRequest
+	(*ScoresForFormatAndDate)(nil),   // 17: ygo.ScoresForFormatAndDate
+	(*CardScoreEntry)(nil),           // 18: ygo.CardScoreEntry
+	(*CardScore)(nil),                // 19: ygo.CardScore
+	(*CardScores)(nil),               // 20: ygo.CardScores
+	(*ScoreEntry)(nil),               // 21: ygo.ScoreEntry
+	nil,                              // 22: ygo.Cards.CardInfoEntry
+	nil,                              // 23: ygo.Product.RarityDistributionEntry
+	nil,                              // 24: ygo.Products.ProductsEntry
+	nil,                              // 25: ygo.CardScore.CurrentScoreByFormatEntry
+	nil,                              // 26: ygo.CardScores.CardInfoEntry
+	(*wrapperspb.StringValue)(nil),   // 27: google.protobuf.StringValue
+	(*wrapperspb.UInt32Value)(nil),   // 28: google.protobuf.UInt32Value
 }
 var file_common_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	27, // 0: ygo.Card.monster_type:type_name -> google.protobuf.StringValue
+	28, // 1: ygo.Card.attack:type_name -> google.protobuf.UInt32Value
+	28, // 2: ygo.Card.defense:type_name -> google.protobuf.UInt32Value
+	22, // 3: ygo.Cards.card_info:type_name -> ygo.Cards.CardInfoEntry
+	12, // 4: ygo.Product.items:type_name -> ygo.ProductItem
+	23, // 5: ygo.Product.rarity_distribution:type_name -> ygo.Product.RarityDistributionEntry
+	9,  // 6: ygo.ProductItem.card:type_name -> ygo.Card
+	24, // 7: ygo.Products.products:type_name -> ygo.Products.ProductsEntry
+	0,  // 8: ygo.RestrictedContentRequest.sort_order:type_name -> ygo.CardRestrictionSortOrder
+	27, // 9: ygo.ScoresForFormatAndDate.next_format_date:type_name -> google.protobuf.StringValue
+	27, // 10: ygo.ScoresForFormatAndDate.previous_format_date:type_name -> google.protobuf.StringValue
+	18, // 11: ygo.ScoresForFormatAndDate.entries:type_name -> ygo.CardScoreEntry
+	9,  // 12: ygo.CardScoreEntry.card:type_name -> ygo.Card
+	25, // 13: ygo.CardScore.current_score_by_format:type_name -> ygo.CardScore.CurrentScoreByFormatEntry
+	21, // 14: ygo.CardScore.score_history:type_name -> ygo.ScoreEntry
+	26, // 15: ygo.CardScores.card_info:type_name -> ygo.CardScores.CardInfoEntry
+	9,  // 16: ygo.Cards.CardInfoEntry.value:type_name -> ygo.Card
+	13, // 17: ygo.Products.ProductsEntry.value:type_name -> ygo.ProductSummary
+	19, // 18: ygo.CardScores.CardInfoEntry.value:type_name -> ygo.CardScore
+	19, // [19:19] is the sub-list for method output_type
+	19, // [19:19] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_common_proto_init() }
@@ -518,7 +1527,7 @@ func file_common_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_proto_rawDesc), len(file_common_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

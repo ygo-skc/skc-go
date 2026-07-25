@@ -14,10 +14,10 @@ type YGOCardClientImp interface {
 	GetCardByIDProto(context.Context, string) (*ygo.Card, *model.APIError)
 	GetCardsByIDProto(context.Context, model.CardIDs) (*ygo.Cards, *model.APIError)
 	GetCardsByNameProto(context.Context, model.CardNames) (*ygo.Cards, *model.APIError)
-	GetCardsReferencingNameInEffectProto(context.Context, []string) (*ygo.CardList, *model.APIError)
-	GetArchetypalCardsUsingCardNameProto(context.Context, string) (*ygo.CardList, *model.APIError)
-	GetExplicitArchetypalInclusionsProto(context.Context, string) (*ygo.CardList, *model.APIError)
-	GetExplicitArchetypalExclusionsProto(context.Context, string) (*ygo.CardList, *model.APIError)
+	GetCardsReferencingNameInEffectProto(context.Context, []string) ([]*ygo.Card, *model.APIError)
+	GetArchetypalCardsUsingCardNameProto(context.Context, string) ([]*ygo.Card, *model.APIError)
+	GetExplicitArchetypalInclusionsProto(context.Context, string) ([]*ygo.Card, *model.APIError)
+	GetExplicitArchetypalExclusionsProto(context.Context, string) ([]*ygo.Card, *model.APIError)
 	GetRandomCardProto(context.Context, []string) (*ygo.Card, *model.APIError)
 }
 type YGOCardClientImpV1 struct {
@@ -74,7 +74,7 @@ func (imp YGOCardClientImpV1) GetCardsByNameProto(ctx context.Context, cardNames
 	return res.Cards, nil
 }
 
-func (imp YGOCardClientImpV1) GetCardsReferencingNameInEffectProto(ctx context.Context, namesOfCards []string) (*ygo.CardList, *model.APIError) {
+func (imp YGOCardClientImpV1) GetCardsReferencingNameInEffectProto(ctx context.Context, namesOfCards []string) ([]*ygo.Card, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Fetching cards referencing names in card text", slog.Any("names", namesOfCards))
 	res, err := imp.client.GetCardsReferencingNameInEffect(ctx, &ygo.GetCardsReferencingNameInEffectRequest{Subjects: &ygo.ResourceNames{Names: namesOfCards}})
@@ -88,7 +88,7 @@ func (imp YGOCardClientImpV1) GetCardsReferencingNameInEffectProto(ctx context.C
 /*
 Archetype functionality
 */
-func (imp YGOCardClientImpV1) GetArchetypalCardsUsingCardNameProto(ctx context.Context, archetype string) (*ygo.CardList, *model.APIError) {
+func (imp YGOCardClientImpV1) GetArchetypalCardsUsingCardNameProto(ctx context.Context, archetype string) ([]*ygo.Card, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Fetching archetypal cards", slog.String("ygo_service.resource", archetype))
 	res, err := imp.client.GetArchetypalCardsUsingCardName(ctx, &ygo.GetArchetypalCardsUsingCardNameRequest{Subject: &ygo.Archetype{Name: archetype}})
@@ -99,7 +99,7 @@ func (imp YGOCardClientImpV1) GetArchetypalCardsUsingCardNameProto(ctx context.C
 	return res.Cards, nil
 }
 
-func (imp YGOCardClientImpV1) GetExplicitArchetypalInclusionsProto(ctx context.Context, archetype string) (*ygo.CardList, *model.APIError) {
+func (imp YGOCardClientImpV1) GetExplicitArchetypalInclusionsProto(ctx context.Context, archetype string) ([]*ygo.Card, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Fetching explicit archetype inclusions", slog.String("ygo_service.resource", archetype))
 	res, err := imp.client.GetExplicitArchetypalInclusions(ctx, &ygo.GetExplicitArchetypalInclusionsRequest{Subject: &ygo.Archetype{Name: archetype}})
@@ -110,7 +110,7 @@ func (imp YGOCardClientImpV1) GetExplicitArchetypalInclusionsProto(ctx context.C
 	return res.Cards, nil
 }
 
-func (imp YGOCardClientImpV1) GetExplicitArchetypalExclusionsProto(ctx context.Context, archetype string) (*ygo.CardList, *model.APIError) {
+func (imp YGOCardClientImpV1) GetExplicitArchetypalExclusionsProto(ctx context.Context, archetype string) ([]*ygo.Card, *model.APIError) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Fetching explicit archetype exclusions", slog.String("ygo_service.resource", archetype))
 	res, err := imp.client.GetExplicitArchetypalExclusions(ctx, &ygo.GetExplicitArchetypalExclusionsRequest{Subject: &ygo.Archetype{Name: archetype}})

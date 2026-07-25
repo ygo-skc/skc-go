@@ -425,9 +425,10 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ProductService_GetCardsByProductID_FullMethodName    = "/ygo.ProductService/GetCardsByProductID"
-	ProductService_GetProductSummaryByID_FullMethodName  = "/ygo.ProductService/GetProductSummaryByID"
-	ProductService_GetProductsSummaryByID_FullMethodName = "/ygo.ProductService/GetProductsSummaryByID"
+	ProductService_GetCardsByProductID_FullMethodName        = "/ygo.ProductService/GetCardsByProductID"
+	ProductService_GetProductSummaryByID_FullMethodName      = "/ygo.ProductService/GetProductSummaryByID"
+	ProductService_GetProductsSummaryByID_FullMethodName     = "/ygo.ProductService/GetProductsSummaryByID"
+	ProductService_GetProductsReleasedSameDay_FullMethodName = "/ygo.ProductService/GetProductsReleasedSameDay"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -437,6 +438,7 @@ type ProductServiceClient interface {
 	GetCardsByProductID(ctx context.Context, in *GetCardsByProductIDRequest, opts ...grpc.CallOption) (*GetCardsByProductIDResponse, error)
 	GetProductSummaryByID(ctx context.Context, in *GetProductSummaryByIDRequest, opts ...grpc.CallOption) (*GetProductSummaryByIDResponse, error)
 	GetProductsSummaryByID(ctx context.Context, in *GetProductsSummaryByIDRequest, opts ...grpc.CallOption) (*GetProductsSummaryByIDResponse, error)
+	GetProductsReleasedSameDay(ctx context.Context, in *GetProductsReleasedSameDayRequest, opts ...grpc.CallOption) (*GetProductsReleasedSameDayResponse, error)
 }
 
 type productServiceClient struct {
@@ -477,6 +479,16 @@ func (c *productServiceClient) GetProductsSummaryByID(ctx context.Context, in *G
 	return out, nil
 }
 
+func (c *productServiceClient) GetProductsReleasedSameDay(ctx context.Context, in *GetProductsReleasedSameDayRequest, opts ...grpc.CallOption) (*GetProductsReleasedSameDayResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProductsReleasedSameDayResponse)
+	err := c.cc.Invoke(ctx, ProductService_GetProductsReleasedSameDay_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
@@ -484,6 +496,7 @@ type ProductServiceServer interface {
 	GetCardsByProductID(context.Context, *GetCardsByProductIDRequest) (*GetCardsByProductIDResponse, error)
 	GetProductSummaryByID(context.Context, *GetProductSummaryByIDRequest) (*GetProductSummaryByIDResponse, error)
 	GetProductsSummaryByID(context.Context, *GetProductsSummaryByIDRequest) (*GetProductsSummaryByIDResponse, error)
+	GetProductsReleasedSameDay(context.Context, *GetProductsReleasedSameDayRequest) (*GetProductsReleasedSameDayResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -502,6 +515,9 @@ func (UnimplementedProductServiceServer) GetProductSummaryByID(context.Context, 
 }
 func (UnimplementedProductServiceServer) GetProductsSummaryByID(context.Context, *GetProductsSummaryByIDRequest) (*GetProductsSummaryByIDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProductsSummaryByID not implemented")
+}
+func (UnimplementedProductServiceServer) GetProductsReleasedSameDay(context.Context, *GetProductsReleasedSameDayRequest) (*GetProductsReleasedSameDayResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetProductsReleasedSameDay not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -578,6 +594,24 @@ func _ProductService_GetProductsSummaryByID_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_GetProductsReleasedSameDay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductsReleasedSameDayRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetProductsReleasedSameDay(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_GetProductsReleasedSameDay_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetProductsReleasedSameDay(ctx, req.(*GetProductsReleasedSameDayRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -596,6 +630,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProductsSummaryByID",
 			Handler:    _ProductService_GetProductsSummaryByID_Handler,
+		},
+		{
+			MethodName: "GetProductsReleasedSameDay",
+			Handler:    _ProductService_GetProductsReleasedSameDay_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -4,7 +4,6 @@ option go_package = "/ygo";
 package ygo;
 
 import "common.proto";
-import "google/protobuf/wrappers.proto";
 
 service CardService {
   rpc GetCardColors(GetCardColorsRequest) returns (GetCardColorsResponse);
@@ -34,7 +33,7 @@ message GetCardByIDRequest {
 }
 
 message GetCardByIDResponse {
-    Card card = 1;
+    ygo.Card card = 1;
 }
 
 message GetCardsByIDRequest {
@@ -50,7 +49,7 @@ message GetCardsByNameRequest {
 }
 
 message GetCardsByNameResponse {
-    Cards cards = 1;
+    ygo.Cards cards = 1;
 }
 
 message GetCardsReferencingNameInEffectRequest {
@@ -58,7 +57,7 @@ message GetCardsReferencingNameInEffectRequest {
 }
 
 message GetCardsReferencingNameInEffectResponse {
-    CardList cards = 1;
+    repeated ygo.Card cards = 1;
 }
 
 message GetArchetypalCardsUsingCardNameRequest {
@@ -66,7 +65,7 @@ message GetArchetypalCardsUsingCardNameRequest {
 }
 
 message GetArchetypalCardsUsingCardNameResponse {
-    CardList cards = 1;
+    repeated ygo.Card cards = 1;
 }
 
 message GetExplicitArchetypalInclusionsRequest {
@@ -74,7 +73,7 @@ message GetExplicitArchetypalInclusionsRequest {
 }
 
 message GetExplicitArchetypalInclusionsResponse {
-    CardList cards = 1;
+    repeated ygo.Card cards = 1;
 }
 
 message GetExplicitArchetypalExclusionsRequest {
@@ -82,7 +81,7 @@ message GetExplicitArchetypalExclusionsRequest {
 }
 
 message GetExplicitArchetypalExclusionsResponse {
-    CardList cards = 1;
+    repeated ygo.Card cards = 1;
 }
 
 message GetRandomCardRequest {
@@ -90,7 +89,7 @@ message GetRandomCardRequest {
 }
 
 message GetRandomCardResponse {
-    Card card = 1;
+    ygo.Card card = 1;
 }
 
 service ProductService {
@@ -98,6 +97,8 @@ service ProductService {
 
 	rpc GetProductSummaryByID(GetProductSummaryByIDRequest) returns (GetProductSummaryByIDResponse);
 	rpc GetProductsSummaryByID(GetProductsSummaryByIDRequest) returns (GetProductsSummaryByIDResponse);
+
+	rpc GetProductsReleasedSameDay(GetProductsReleasedSameDayRequest) returns (GetProductsReleasedSameDayResponse);
 }
 
 message GetCardsByProductIDRequest {
@@ -105,7 +106,7 @@ message GetCardsByProductIDRequest {
 }
 
 message GetCardsByProductIDResponse {
-    Product product = 1;
+    ygo.Product product = 1;
 }
 
 message GetProductSummaryByIDRequest {
@@ -113,7 +114,7 @@ message GetProductSummaryByIDRequest {
 }
 
 message GetProductSummaryByIDResponse {
-    ProductSummary product_summary = 1;
+    ygo.ProductSummary product_summary = 1;
 }
 
 message GetProductsSummaryByIDRequest {
@@ -121,7 +122,15 @@ message GetProductsSummaryByIDRequest {
 }
 
 message GetProductsSummaryByIDResponse {
-    Products products = 1;
+    ygo.Products products = 1;
+}
+
+message GetProductsReleasedSameDayRequest {
+    string date = 1;
+}
+
+message GetProductsReleasedSameDayResponse {
+    repeated ProductSummary product = 1;
 }
 
 service CardRestrictionService {
@@ -140,102 +149,5 @@ message GetCardScoresByIDsRequest {
 }
 
 message GetCardScoresByIDsResponse {
-    CardScores scores = 1;
-}
-
-message Card {
-  string id = 1;
-  string color = 2;
-  string name = 3;
-  string attribute = 4;
-  string effect = 5;
-  google.protobuf.StringValue monster_type = 6 [json_name = "monsterType"];
-  google.protobuf.UInt32Value attack = 7;
-  google.protobuf.UInt32Value defense = 8;
-}
-
-message Cards {
-	map<string, Card> card_info = 1;
-	repeated string unknown_resources = 2;
-}
-
-message CardList {
-	repeated Card cards = 1;
-}
-
-message Product {
-  string id = 1;
-  string locale = 2;
-  string name = 3;
-  string type = 4;
-  string sub_type = 5;
-  string release_date = 6;
-  uint32 total_items = 7;
-  repeated ProductItem items = 8;
-  map<string, uint32> rarity_distribution = 9;
-}
-
-message ProductItem {
-  Card card = 1;
-  string position = 2;
-  repeated string rarities = 3;
-}
-
-message ProductSummary {
-  string id = 1;
-  string locale = 2;
-  string name = 3;
-  string type = 4;
-  string sub_type = 5;
-  string release_date = 6;
-  uint32 total_items = 7;
-}
-
-message Products {
-	map<string, ProductSummary> products = 1;
-	repeated string unknown_resources = 2;
-}
-
-message Format {
-	string value = 1;
-}
-
-message RestrictedContentRequest {
-	string format = 1;
-	string effective_date = 2;
-	ygo.CardRestrictionSortOrder sort_order = 3;
-}
-
-// score specific data types
-
-message ScoresForFormatAndDate {
-	string format = 1;
-	string effective_date = 2;
-	google.protobuf.StringValue next_format_date = 3;
-	google.protobuf.StringValue previous_format_date = 4;
-	repeated CardScoreEntry entries = 5;
-	uint32 total_entries = 6;
-}
-
-message CardScoreEntry {
-	Card card = 1;
-	uint32 score = 2;
-}
-
-message CardScore {
-  map<string, uint32> current_score_by_format = 1;
-  repeated string unique_formats = 2;
-  repeated ScoreEntry score_history = 3;
-  repeated string scheduled_changes = 4;;
-}
-
-message CardScores {
-	map<string, CardScore> card_info = 1;
-	repeated string unknown_resources = 2;
-}
-
-message ScoreEntry {
-	string format = 1;
-	string effective_date = 2;
-	uint32 score = 3;
+    ygo.CardScores scores = 1;
 }

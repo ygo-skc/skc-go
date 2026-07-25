@@ -3,6 +3,8 @@ syntax = "proto3";
 option go_package = "/ygo";
 package ygo;
 
+import "google/protobuf/wrappers.proto";
+
 message ResourceID {
   string id = 1;
 }
@@ -36,6 +38,99 @@ message EffectiveTimeline {
   repeated string all_dates = 1;
   repeated string future_dates = 2;
   string active_date = 3;
+}
+
+message Card {
+  string id = 1;
+  string color = 2;
+  string name = 3;
+  string attribute = 4;
+  string effect = 5;
+  google.protobuf.StringValue monster_type = 6 [json_name = "monsterType"];
+  google.protobuf.UInt32Value attack = 7;
+  google.protobuf.UInt32Value defense = 8;
+}
+
+message Cards {
+	map<string, Card> card_info = 1;
+	repeated string unknown_resources = 2;
+}
+
+message Product {
+  string id = 1;
+  string locale = 2;
+  string name = 3;
+  string type = 4;
+  string sub_type = 5;
+  string release_date = 6;
+  uint32 total_items = 7;
+  repeated ProductItem items = 8;
+  map<string, uint32> rarity_distribution = 9;
+}
+
+message ProductItem {
+  Card card = 1;
+  string position = 2;
+  repeated string rarities = 3;
+}
+
+message ProductSummary {
+  string id = 1;
+  string locale = 2;
+  string name = 3;
+  string type = 4;
+  string sub_type = 5;
+  string release_date = 6;
+  uint32 total_items = 7;
+}
+
+message Products {
+	map<string, ProductSummary> products = 1;
+	repeated string unknown_resources = 2;
+}
+
+message Format {
+	string value = 1;
+}
+
+message RestrictedContentRequest {
+	string format = 1;
+	string effective_date = 2;
+	ygo.CardRestrictionSortOrder sort_order = 3;
+}
+
+// score specific data types
+
+message ScoresForFormatAndDate {
+	string format = 1;
+	string effective_date = 2;
+	google.protobuf.StringValue next_format_date = 3;
+	google.protobuf.StringValue previous_format_date = 4;
+	repeated CardScoreEntry entries = 5;
+	uint32 total_entries = 6;
+}
+
+message CardScoreEntry {
+	Card card = 1;
+	uint32 score = 2;
+}
+
+message CardScore {
+  map<string, uint32> current_score_by_format = 1;
+  repeated string unique_formats = 2;
+  repeated ScoreEntry score_history = 3;
+  repeated string scheduled_changes = 4;;
+}
+
+message CardScores {
+	map<string, CardScore> card_info = 1;
+	repeated string unknown_resources = 2;
+}
+
+message ScoreEntry {
+	string format = 1;
+	string effective_date = 2;
+	uint32 score = 3;
 }
 
 enum CardRestrictionSortOrder {

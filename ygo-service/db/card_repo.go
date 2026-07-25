@@ -204,11 +204,11 @@ type CardRepository interface {
 	GetCardsByIDs(context.Context, model.CardIDs) (*ygo.Cards, *status.Status)
 
 	GetCardsByNames(context.Context, model.CardNames) (*ygo.Cards, *status.Status)
-	GetCardsReferencingNameInEffect(context.Context, []string) (*ygo.CardList, *status.Status)
+	GetCardsReferencingNameInEffect(context.Context, []string) ([]*ygo.Card, *status.Status)
 
-	GetArchetypalCardsUsingCardName(context.Context, string) (*ygo.CardList, *status.Status)
-	GetExplicitArchetypalInclusions(context.Context, string) (*ygo.CardList, *status.Status)
-	GetExplicitArchetypalExclusions(context.Context, string) (*ygo.CardList, *status.Status)
+	GetArchetypalCardsUsingCardName(context.Context, string) ([]*ygo.Card, *status.Status)
+	GetExplicitArchetypalInclusions(context.Context, string) ([]*ygo.Card, *status.Status)
+	GetExplicitArchetypalExclusions(context.Context, string) ([]*ygo.Card, *status.Status)
 
 	GetRandomCard(context.Context, []string) (*ygo.Card, *status.Status)
 }
@@ -313,12 +313,12 @@ func (imp YGOCardRepository) GetCardsByNames(ctx context.Context, cardNames mode
 	}, nil
 }
 
-func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context, namesOfCards []string) (*ygo.CardList, *status.Status) {
+func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context, namesOfCards []string) ([]*ygo.Card, *status.Status) {
 	numCards := len(namesOfCards)
 	logger := util.RetrieveLogger(ctx)
 	if numCards == 0 {
 		logger.Info("No card names provided, returning empty list of references")
-		return &ygo.CardList{Cards: []*ygo.Card{}}, nil
+		return []*ygo.Card{}, nil
 	}
 	logger.Info("Retrieving cards referencing card names in effect text", slog.Any("names", namesOfCards))
 
@@ -338,10 +338,10 @@ func (imp YGOCardRepository) GetCardsReferencingNameInEffect(ctx context.Context
 	if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 		return nil, err
 	}
-	return &ygo.CardList{Cards: cards}, nil
+	return cards, nil
 }
 
-func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
+func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context, archetypeName string) ([]*ygo.Card, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving cards by archetype name", slog.String("archetype", archetypeName))
 	searchTerm := `%` + archetypeName + `%`
@@ -357,10 +357,10 @@ func (imp YGOCardRepository) GetArchetypalCardsUsingCardName(ctx context.Context
 	if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 		return nil, err
 	}
-	return &ygo.CardList{Cards: cards}, nil
+	return cards, nil
 }
 
-func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
+func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context, archetypeName string) ([]*ygo.Card, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving explicit archetype inclusions", slog.String("archetype", archetypeName))
 
@@ -376,9 +376,9 @@ func (imp YGOCardRepository) GetExplicitArchetypalInclusions(ctx context.Context
 	if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 		return nil, err
 	}
-	return &ygo.CardList{Cards: cards}, nil
+	return cards, nil
 }
-func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) (*ygo.CardList, *status.Status) {
+func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context, archetypeName string) ([]*ygo.Card, *status.Status) {
 	logger := util.RetrieveLogger(ctx)
 	logger.Info("Retrieving explicit archetype exclusions", slog.String("archetype", archetypeName))
 
@@ -394,7 +394,7 @@ func (imp YGOCardRepository) GetExplicitArchetypalExclusions(ctx context.Context
 	if err := parseCardRows(ctx, rows, &cards, collectWithList); err != nil {
 		return nil, err
 	}
-	return &ygo.CardList{Cards: cards}, nil
+	return cards, nil
 }
 
 func (imp YGOCardRepository) GetRandomCard(ctx context.Context, blacklistedCards []string) (*ygo.Card, *status.Status) {

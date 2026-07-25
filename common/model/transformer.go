@@ -18,9 +18,9 @@ func YGOCardRESTFromProto(c *ygo.Card) YGOCard {
 	}
 }
 
-func YGOCardListRESTFromProto(c *ygo.CardList) []YGOCard {
-	cards := make([]YGOCard, len(c.Cards))
-	for i, c := range c.Cards {
+func YGOCardListRESTFromProto(c []*ygo.Card) []YGOCard {
+	cards := make([]YGOCard, len(c))
+	for i, c := range c {
 		cards[i] = YGOCardRESTFromProto(c)
 	}
 	return cards
