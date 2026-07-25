@@ -130,7 +130,7 @@ message GetProductsReleasedSameDayRequest {
 }
 
 message GetProductsReleasedSameDayResponse {
-    repeated ProductSummary product = 1;
+    repeated ProductSummary products = 1;
 }
 
 service CardRestrictionService {

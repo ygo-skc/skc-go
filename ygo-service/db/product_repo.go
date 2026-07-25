@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/ygo-skc/skc-go/common/v3/model"
 	"github.com/ygo-skc/skc-go/common/v3/util"
@@ -41,17 +42,19 @@ ORDER BY
 
 	productInfoByIDs = `
 SELECT
-	product_id,
-	product_locale,
-	product_name,
-	product_type,
-	product_sub_type,
-	product_release_date,
-	product_content_total
+	product_id, product_locale, product_name, product_type, product_sub_type, product_release_date, product_content_total
 FROM
 	product_info
 WHERE
 	product_id IN (%s)`
+
+	productReleasedOnDate = `
+SELECT 
+	product_id, product_locale, product_name, product_type, product_sub_type, product_release_date, product_content_total
+FROM
+	product_info
+WHERE
+	DATE_FORMAT(product_release_date, '%m-%d') = ?`
 )
 
 func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.ProductItem, map[string]uint32, *status.Status) {
@@ -99,6 +102,8 @@ type ProductRepository interface {
 
 	GetProductSummaryByID(context.Context, string) (*ygo.ProductSummary, *status.Status)
 	GetProductsSummaryByID(context.Context, model.ProductIDs) (*ygo.Products, *status.Status)
+
+	GetProductsReleasedSameDay(context.Context, time.Time) ([]*ygo.ProductSummary, *status.Status)
 }
 type YGOProductRepository struct{}
 
@@ -180,4 +185,44 @@ func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, prod
 		Products:         productData,
 		UnknownResources: model.FindMissingKeys(productData, products),
 	}, nil
+}
+
+func (imp YGOProductRepository) GetProductsReleasedSameDay(ctx context.Context, date time.Time) ([]*ygo.ProductSummary, *status.Status) {
+	logger := util.RetrieveLogger(ctx)
+	logger.Info("Retrieving products released on the same month/day provided",
+		slog.String("month", date.Month().String()),
+		slog.Int("day", date.Day()))
+
+	rows, err := skcDBConn.QueryContext(ctx, productReleasedOnDate, date.Format("01-02"))
+	if err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+	defer rows.Close()
+
+	products := make([]*ygo.ProductSummary, 0, 10)
+	for rows.Next() {
+		var id, locale, name, t, subType, releaseDate string
+		var totalItems uint32
+
+		if err := rows.Scan(&id, &locale, &name, &t, &subType, &releaseDate, &totalItems); err != nil {
+			return nil, handleRowParsingError(logger, err)
+		}
+
+		products = append(products, &ygo.ProductSummary{
+			Id:          id,
+			Locale:      locale,
+			Name:        name,
+			Type:        t,
+			SubType:     subType,
+			ReleaseDate: releaseDate,
+			TotalItems:  totalItems})
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, handleQueryError(logger, err)
+	}
+
+	logger.Info("Succesfully retrieved products", slog.Int("num_products", len(products)))
+
+	return products, nil
 }

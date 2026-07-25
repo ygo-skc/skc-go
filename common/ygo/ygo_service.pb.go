@@ -1115,7 +1115,7 @@ func (x *GetProductsReleasedSameDayRequest) GetDate() string {
 
 type GetProductsReleasedSameDayResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Product       []*ProductSummary      `protobuf:"bytes,1,rep,name=product,proto3" json:"product,omitempty"`
+	Products      []*ProductSummary      `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1150,9 +1150,9 @@ func (*GetProductsReleasedSameDayResponse) Descriptor() ([]byte, []int) {
 	return file_ygo_service_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *GetProductsReleasedSameDayResponse) GetProduct() []*ProductSummary {
+func (x *GetProductsReleasedSameDayResponse) GetProducts() []*ProductSummary {
 	if x != nil {
-		return x.Product
+		return x.Products
 	}
 	return nil
 }
@@ -1303,9 +1303,9 @@ const file_ygo_service_proto_rawDesc = "" +
 	"\x1eGetProductsSummaryByIDResponse\x12)\n" +
 	"\bproducts\x18\x01 \x01(\v2\r.ygo.ProductsR\bproducts\"7\n" +
 	"!GetProductsReleasedSameDayRequest\x12\x12\n" +
-	"\x04date\x18\x01 \x01(\tR\x04date\"S\n" +
-	"\"GetProductsReleasedSameDayResponse\x12-\n" +
-	"\aproduct\x18\x01 \x03(\v2\x13.ygo.ProductSummaryR\aproduct\"I\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\"U\n" +
+	"\"GetProductsReleasedSameDayResponse\x12/\n" +
+	"\bproducts\x18\x01 \x03(\v2\x13.ygo.ProductSummaryR\bproducts\"I\n" +
 	"\x19GetCardScoresByIDsRequest\x12,\n" +
 	"\bsubjects\x18\x01 \x01(\v2\x10.ygo.ResourceIDsR\bsubjects\"E\n" +
 	"\x1aGetCardScoresByIDsResponse\x12'\n" +
@@ -1416,7 +1416,7 @@ var file_ygo_service_proto_depIdxs = []int32{
 	37, // 20: ygo.GetProductSummaryByIDResponse.product_summary:type_name -> ygo.ProductSummary
 	31, // 21: ygo.GetProductsSummaryByIDRequest.subjects:type_name -> ygo.ResourceIDs
 	38, // 22: ygo.GetProductsSummaryByIDResponse.products:type_name -> ygo.Products
-	37, // 23: ygo.GetProductsReleasedSameDayResponse.product:type_name -> ygo.ProductSummary
+	37, // 23: ygo.GetProductsReleasedSameDayResponse.products:type_name -> ygo.ProductSummary
 	31, // 24: ygo.GetCardScoresByIDsRequest.subjects:type_name -> ygo.ResourceIDs
 	39, // 25: ygo.GetCardScoresByIDsResponse.scores:type_name -> ygo.CardScores
 	0,  // 26: ygo.CardService.GetCardColors:input_type -> ygo.GetCardColorsRequest
