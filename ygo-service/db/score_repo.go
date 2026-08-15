@@ -198,15 +198,17 @@ func (imp YGOScoreRepository) GetCardScoresByIDs(ctx context.Context, cardIDs []
 			return nil, parseErr
 		}
 
-		if _, exists := scoresByID[cardID]; !exists {
-			scoresByID[cardID] = &ygo.CardScore{
+		cardScore, exists := scoresByID[cardID]
+		if !exists {
+			cardScore = &ygo.CardScore{
 				CurrentScoreByFormat: make(map[string]uint32, 3),
 				UniqueFormats:        make([]string, 0, 3),
 				ScheduledChanges:     make([]string, 0, 3),
 				ScoreHistory:         make([]*ygo.ScoreEntry, 0, 5),
 			}
+			scoresByID[cardID] = cardScore
 		}
-		parser(scoresByID[cardID], score, todaysDate)
+		parser(cardScore, score, todaysDate)
 	}
 
 	if err := rows.Err(); err != nil {
