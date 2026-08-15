@@ -226,10 +226,11 @@ func (imp YGOCardRepository) GetCardColorIDs(ctx context.Context) (map[string]ui
 	defer rows.Close()
 
 	cardColorIDs := make(map[string]uint32, 18)
+	var (
+		colorId   uint32
+		cardColor string
+	)
 	for rows.Next() {
-		var colorId uint32
-		var cardColor string
-
 		if err := rows.Scan(&colorId, &cardColor); err != nil {
 			return nil, handleRowParsingError(logger, err)
 		}
