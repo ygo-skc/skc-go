@@ -76,8 +76,8 @@ func parseRowsForProductItems(ctx context.Context, rows *sql.Rows) ([]*ygo.Produ
 
 		// either create a new ProductItem or use reference to existing Item and update the rarities
 		key := fmt.Sprintf("%s-%s", id, productPosition)
-		if _, exists := itemByCardIDxPosition[key]; exists {
-			itemByCardIDxPosition[key].Rarities = append(itemByCardIDxPosition[key].Rarities, rarity)
+		if existing, exists := itemByCardIDxPosition[key]; exists {
+			existing.Rarities = append(existing.Rarities, rarity)
 		} else {
 			item := &ygo.ProductItem{
 				Card: model.NewYGOCardProtoBuilder(id, name).WithColor(color).
@@ -168,10 +168,11 @@ func (imp YGOProductRepository) GetProductsSummaryByID(ctx context.Context, prod
 	}
 	defer rows.Close()
 
+	var (
+		id, locale, name, t, subType, releaseDate string
+		totalItems                                uint32
+	)
 	for rows.Next() {
-		var id, locale, name, t, subType, releaseDate string
-		var totalItems uint32
-
 		if err := rows.Scan(&id, &locale, &name, &t, &subType, &releaseDate, &totalItems); err != nil {
 			return nil, handleRowParsingError(logger, err)
 		}
@@ -202,10 +203,11 @@ func (imp YGOProductRepository) GetProductsReleasedSameDay(ctx context.Context, 
 	defer rows.Close()
 
 	products := make([]*ygo.ProductSummary, 0, 10)
+	var (
+		id, locale, name, t, subType, releaseDate string
+		totalItems                                uint32
+	)
 	for rows.Next() {
-		var id, locale, name, t, subType, releaseDate string
-		var totalItems uint32
-
 		if err := rows.Scan(&id, &locale, &name, &t, &subType, &releaseDate, &totalItems); err != nil {
 			return nil, handleRowParsingError(logger, err)
 		}
