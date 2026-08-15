@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git diff *)",
+      "Bash(gh pr list *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "statusMessage": "gofmt + go vet + go test on changed package",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in *.go) gofmt -w \"$f\"; d=$(dirname \"$f\"); m=\"$d\"; while [ \"$m\" != \"/\" ] && [ ! -f \"$m/go.mod\" ]; do m=$(dirname \"$m\"); done; [ -f \"$m/go.mod\" ] || exit 0; rel=${d#\"$m\"/}; [ \"$rel\" = \"$d\" ] && rel=\".\"; cd \"$m\" && go vet \"./$rel\" && go test \"./$rel\";; esac; } 2>&1 || true"
+          }
+        ]
+      }
+    ]
+  }
+}
