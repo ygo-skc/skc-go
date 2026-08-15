@@ -1,6 +1,9 @@
 package parser
 
-import "strings"
+import (
+	"slices"
+	"strings"
+)
 
 func TextContainsSubStr(text, substring string) bool {
 	return OccurrencesOfQuotedSubStr(text, substring, true) == 1
@@ -27,7 +30,7 @@ func OccurrencesOfQuotedSubStr(text, substring string, exitOnFirstOccurrence boo
 				continue
 			}
 
-			if string(runes[start:end]) == substring {
+			if slices.Equal(runes[start:end], nameRunes) {
 				if exitOnFirstOccurrence {
 					return 1
 				}
