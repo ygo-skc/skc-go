@@ -53,11 +53,13 @@ func NewLogger(ctx context.Context, flow string, customAttributes ...slog.Attr) 
 		}
 	}
 
-	defaults := []any{
+	// len of 5 = 3 below and potential 2 if condidition appends
+	defaults := make([]any, 0, 5+len(customAttributes))
+	defaults = append(defaults,
 		slog.String(traceIDKey, traceID),
 		slog.String(spanIDKey, uuid.New().String()),
 		slog.String(flowKey, flow),
-	}
+	)
 	if originatingFlow != "" {
 		defaults = append(defaults, slog.String(originatingFlowKey, originatingFlow))
 	}

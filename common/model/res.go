@@ -20,6 +20,7 @@ func (e *APIError) HandleServerResponse(res http.ResponseWriter) {
 	if e.StatusCode == 0 {
 		e.StatusCode = 500 // default error code
 	}
+	res.Header().Set("Content-Type", "application/json")
 	res.WriteHeader(e.StatusCode)
 	if err := json.NewEncoder(res).Encode(e); err != nil {
 		slog.Error("Failed to encode API error response", slog.Any("err", err))

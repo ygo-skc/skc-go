@@ -54,7 +54,7 @@ type BatchData[RK YGOResourceKey] interface {
 // Data Map Key Funcs
 // =======================
 func FindMissingKeys[T CardIDs | CardNames | ProductIDs | ProductNames, R *ygo.Card | *ygo.ProductSummary | *ygo.CardScore](cards map[string]R, cardIDs T) T {
-	missingIDs := make(T, 0, 10)
+	missingIDs := make(T, 0)
 
 	for _, cardID := range cardIDs {
 		if _, containsKey := cards[cardID]; !containsKey {
