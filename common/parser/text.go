@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"slices"
 	"strings"
 )
 
@@ -10,15 +9,13 @@ func TextContainsSubStr(text, substring string) bool {
 }
 
 func OccurrencesOfQuotedSubStr(text, substring string, exitOnFirstOccurrence bool) int {
-	runes := []rune(text)
-	nameRunes := []rune(substring)
-	textLen := len(runes)
-	nameLen := len(nameRunes)
+	textLen := len(text)
+	nameLen := len(substring)
 
 	occurrences := 0
 
 	for i := 0; i < textLen; i++ {
-		if runes[i] == '"' || runes[i] == '\'' {
+		if text[i] == '"' || text[i] == '\'' {
 			start := i + 1
 			end := start + nameLen
 
@@ -26,11 +23,11 @@ func OccurrencesOfQuotedSubStr(text, substring string, exitOnFirstOccurrence boo
 				break
 			}
 
-			if runes[end] != runes[i] {
+			if text[end] != text[i] {
 				continue
 			}
 
-			if slices.Equal(runes[start:end], nameRunes) {
+			if text[start:end] == substring {
 				if exitOnFirstOccurrence {
 					return 1
 				}
