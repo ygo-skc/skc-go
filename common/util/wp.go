@@ -48,9 +48,7 @@ func NewWorkerPool(tasks []Task, options ...WPOption) *WorkerPool {
 	return wp
 }
 
-func (wp *WorkerPool) worker(wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func (wp *WorkerPool) worker() {
 	for {
 		select {
 		case <-wp.ctx.Done():
@@ -66,10 +64,9 @@ func (wp *WorkerPool) worker(wg *sync.WaitGroup) {
 
 func (wp *WorkerPool) Run() {
 	wg := sync.WaitGroup{}
-	wg.Add(wp.workers)
 
 	for range wp.workers {
-		go wp.worker(&wg)
+		wg.Go(wp.worker)
 	}
 
 	for _, task := range wp.tasks {
