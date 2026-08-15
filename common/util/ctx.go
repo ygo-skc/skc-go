@@ -18,11 +18,11 @@ type traceKeyType struct{}
 var traceCtxKey = traceKeyType{}
 
 func traceFromContext(ctx context.Context) string {
-	if t := ctx.Value(traceCtxKey); t == nil {
+	t := ctx.Value(traceCtxKey)
+	if t == nil {
 		return uuid.New().String()
-	} else {
-		return t.(string)
 	}
+	return t.(string)
 }
 
 func ContextWithMetadata(ctx context.Context, clientID, flow string) context.Context {

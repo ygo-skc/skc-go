@@ -29,12 +29,12 @@ const (
 )
 
 func RetrieveLogger(ctx context.Context) *slog.Logger {
-	if l := ctx.Value(loggerKey); l == nil {
+	l := ctx.Value(loggerKey)
+	if l == nil {
 		slog.Warn("Using default slog as context does not have logger info")
 		return slog.Default()
-	} else {
-		return l.(*slog.Logger)
 	}
+	return l.(*slog.Logger)
 }
 
 func NewLogger(ctx context.Context, flow string, customAttributes ...slog.Attr) (*slog.Logger, context.Context) {
@@ -55,7 +55,7 @@ func NewLogger(ctx context.Context, flow string, customAttributes ...slog.Attr) 
 
 	defaults := []any{
 		slog.String(traceIDKey, traceID),
-		slog.String(spanIDKey,uuid.New().String()),
+		slog.String(spanIDKey, uuid.New().String()),
 		slog.String(flowKey, flow),
 	}
 	if originatingFlow != "" {
