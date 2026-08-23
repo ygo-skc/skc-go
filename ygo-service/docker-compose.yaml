@@ -19,6 +19,7 @@ services:
       - skc
     environment:
       - YGO_SERVICE_DOT_ENV_FILE=.env_prod
+      - GOMEMLIMIT=60MiB
     labels:
       com.datadoghq.tags.runtime: "golang"
       com.datadoghq.ad.init_configs: "[{}]"
