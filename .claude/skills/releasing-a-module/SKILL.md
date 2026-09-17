@@ -42,10 +42,15 @@ limited to that string is still a patch, not an API change.
 
 ## Release notes
 
-The notes are exactly these parts, in this order:
+The notes are exactly these parts, in this order. Drop a section that would be empty.
 
-1. `## Changes`
-2. One bullet per user-visible change in that module
+1. `## Changes` — one bullet per user-visible change in that module that is **not** a dependency
+   bump: code, build flags, deploy config, the `go` directive, and for `ygo-service` the
+   `APIStatus` version.
+2. `## Dependencies` — one bullet per direct `require` whose version moved, as
+   ``Updated `<module path>` to vX.Y.Z``. This includes `common/v3` in `ygo-service`, even though
+   the `replace` hides it locally. Skip `// indirect` bumps unless one adds or drops a module;
+   then say so on the bullet of the direct dependency that caused it.
 3. A blank line, then
    `**Full Changelog**: https://github.com/ygo-skc/skc-go/compare/<PREV>...<NEW>`
 
