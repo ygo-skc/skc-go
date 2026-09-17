@@ -11,5 +11,5 @@ func (s *healthServiceServer) APIStatus(ctx context.Context, req *health.APIStat
 	logger, _ := util.NewLogger(ctx, "Status")
 	logger.Info("Retrieving status of gRPC service")
 
-	return &health.APIStatusResponse{Version: "3.0.3"}, nil
+	return &health.APIStatusResponse{Version: "3.0.4"}, nil
 }
