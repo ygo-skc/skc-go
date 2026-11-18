@@ -35,6 +35,8 @@ services:
       resources:
         limits:
           memory: 50m
+          cpus: "1.0" # Go 1.25+ derives GOMAXPROCS from this
+          pids: 128
     networks:
       - skc
     environment:
