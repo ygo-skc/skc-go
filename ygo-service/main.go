@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"strings"
+	_ "time/tzdata" // embed tz database - container image has none
 
 	"github.com/ygo-skc/skc-go/ygo-service/api"
 	"github.com/ygo-skc/skc-go/ygo-service/db"
